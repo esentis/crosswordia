@@ -51,7 +51,13 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+      kLog.i('Logged out');
+    } catch (e) {
+      kLog.e(e);
+    }
+
     notifyListeners();
   }
 
