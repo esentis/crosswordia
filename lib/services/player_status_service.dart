@@ -72,6 +72,20 @@ class PlayerStatusService {
     }
   }
 
+  Future<void> updateFoundWords(
+      String playerId, List<String> foundWords) async {
+    kLog.i('Updating found words for $playerId');
+    try {
+      final data = await Supabase.instance.client.from('player_status').update({
+        'found_words': foundWords,
+      }).eq('player_id', playerId);
+
+      kLog.wtf(data);
+    } catch (e) {
+      kLog.e(e);
+    }
+  }
+
   // Increments the total coins of the player
   Future<void> incrementTotalWordsFound(String playerId, int wordscount) async {
     kLog.i('Incrementing total words found for $playerId');
