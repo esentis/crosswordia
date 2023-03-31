@@ -17,6 +17,7 @@ class LetterConnector extends StatefulWidget {
     this.letterStyle = LetterStyle.circle,
     this.distanceOfLetters,
     this.letterSize,
+    this.borderColor,
     super.key,
   });
   final List<String> letters;
@@ -26,6 +27,7 @@ class LetterConnector extends StatefulWidget {
   final LetterStyle letterStyle;
   final num? distanceOfLetters;
   final num? letterSize;
+  final Color? borderColor;
   @override
   State<StatefulWidget> createState() => _LetterConnectorState();
 }
@@ -66,6 +68,7 @@ class _LetterConnectorState extends State<LetterConnector> {
           snappedLetters: snappedLettersIndexes,
           letterSize: widget.letterSize,
           path: path,
+          borderColor: widget.borderColor,
           currentOffset: currentOffset,
           currentIndex:
               _getLetterIndexAtOffset(currentOffset ?? const Offset(0, 0)),
@@ -73,7 +76,7 @@ class _LetterConnectorState extends State<LetterConnector> {
           distanceOfLetters: widget.distanceOfLetters,
         ),
         child: SizedBox(
-          height: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
         ),
       ),
@@ -184,6 +187,7 @@ class _LetterConnectPainter extends CustomPainter {
   final LetterStyle letterStyle;
   final num? distanceOfLetters;
   final num? letterSize;
+  final Color? borderColor;
   _LetterConnectPainter({
     required this.letterPositions,
     required this.letters,
@@ -194,6 +198,7 @@ class _LetterConnectPainter extends CustomPainter {
     required this.letterStyle,
     this.distanceOfLetters,
     this.letterSize,
+    this.borderColor,
   });
 
   @override
@@ -242,7 +247,8 @@ class _LetterConnectPainter extends CustomPainter {
 
     // Draw the border
     Paint borderPaint = Paint()
-      ..color = Colors.black // Set your desired border color here
+      ..color =
+          borderColor ?? Colors.black // Set your desired border color here
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawRRect(roundedRect, borderPaint);
@@ -274,7 +280,8 @@ class _LetterConnectPainter extends CustomPainter {
 
     // Draw the border
     Paint borderPaint = Paint()
-      ..color = Colors.black // Set your desired border color here
+      ..color =
+          borderColor ?? Colors.black // Set your desired border color here
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(position, circleRadius, borderPaint);
