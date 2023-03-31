@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:crosswordia/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/board/helpers/vertical_check.dart';
@@ -501,199 +502,262 @@ space from bottom $spaceFromBottom
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Center(
-              child: SizedBox(
-                width: 350,
-                height: MediaQuery.of(context).size.height / 1.9,
-                child: GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  key: ValueKey(foundLetterPositions.hashCode),
-                  padding: const EdgeInsets.all(10),
-                  itemCount: 10 * 10,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 10,
+      body: Stack(
+        children: [
+          Positioned.fill(
+              child: Image.asset(
+            'assets/bg.webp',
+            fit: BoxFit.cover,
+          )),
+          Container(
+            color: Colors.white.withOpacity(0.6),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                height: 60,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
                   ),
-                  itemBuilder: (BuildContext context, int index) {
-                    int row = (index ~/ 10) + 1;
-                    int col = (index % 10) + 1;
+                ),
+                child: Center(
+                  child: Text(
+                    'Level 1',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(),
+                Center(
+                  child: SizedBox(
+                    width: 350,
+                    height: MediaQuery.of(context).size.height / 1.9,
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      key: ValueKey(foundLetterPositions.hashCode),
+                      padding: const EdgeInsets.all(10),
+                      itemCount: 10 * 10,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 10,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        int row = (index ~/ 10) + 1;
+                        int col = (index % 10) + 1;
 
-                    final currentPosition = '$row.$col';
+                        final currentPosition = '$row.$col';
 
-                    final Map<String, dynamic> letterFound =
-                        letterPositions.whereValue(
-                            (letters) => letters.contains(currentPosition));
+                        final Map<String, dynamic> letterFound =
+                            letterPositions.whereValue(
+                                (letters) => letters.contains(currentPosition));
 
-                    return GestureDetector(
-                      onTap: () {
-                        if (letterFound.isNotEmpty) {
-                          setState(() {
-                            revealedLetterPositions.add(currentPosition);
-                          });
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: letterFound.isNotEmpty
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(6),
-                            border: letterFound.isNotEmpty
-                                ? Border.all(
-                                    color: Colors.black,
-                                    width: 2,
-                                  )
-                                : Border.all(color: Colors.transparent),
-                          ),
-                          // child: Center(
-                          //   child: Text(
-                          //     letterFound.isNotEmpty
-                          //         ? letterFound.keys.first.toUpperCase()
-                          //         : "$row|$col\n${index + 1}",
-                          //     style: TextStyle(
-                          //       color: letterFound.isNotEmpty
-                          //           ? Colors.black
-                          //           : Colors.black,
-                          //       fontSize: letterFound.isNotEmpty ? 20 : 10,
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //   ),
-                          // ),
-                          child: Center(
-                            child: Text(
-                              letterFound.isNotEmpty
-                                  ? foundLetterPositions.values.any((element) =>
-                                              element.contains("$row.$col")) ||
-                                          revealedLetterPositions
-                                              .contains("$row.$col")
-                                      ? letterFound.keys.first.toUpperCase()
-                                      : ""
-                                  : "$row|$col\n${index + 1}",
-                              style: TextStyle(
+                        return GestureDetector(
+                          onTap: () {
+                            if (letterFound.isNotEmpty) {
+                              setState(() {
+                                revealedLetterPositions.add(currentPosition);
+                              });
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: letterFound.isNotEmpty
-                                    ? Colors.black
+                                    ? Colors.white
                                     : Colors.transparent,
-                                fontSize: letterFound.isNotEmpty ? 20 : 10,
-                                fontWeight: FontWeight.bold,
+                                borderRadius: BorderRadius.circular(6),
+                                border: letterFound.isNotEmpty
+                                    ? Border.all(
+                                        color: Colors.black,
+                                        width: 2,
+                                      )
+                                    : Border.all(color: Colors.transparent),
+                              ),
+                              // child: Center(
+                              //   child: Text(
+                              //     letterFound.isNotEmpty
+                              //         ? letterFound.keys.first.toUpperCase()
+                              //         : "$row|$col\n${index + 1}",
+                              //     style: TextStyle(
+                              //       color: letterFound.isNotEmpty
+                              //           ? Colors.black
+                              //           : Colors.black,
+                              //       fontSize: letterFound.isNotEmpty ? 20 : 10,
+                              //       fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ),
+                              // ),
+                              child: Center(
+                                child: Text(
+                                  letterFound.isNotEmpty
+                                      ? foundLetterPositions.values.any(
+                                                  (element) => element
+                                                      .contains("$row.$col")) ||
+                                              revealedLetterPositions
+                                                  .contains("$row.$col")
+                                          ? letterFound.keys.first.toUpperCase()
+                                          : ""
+                                      : "$row|$col\n${index + 1}",
+                                  style: TextStyle(
+                                    color: letterFound.isNotEmpty
+                                        ? Colors.black
+                                        : Colors.transparent,
+                                    fontSize: letterFound.isNotEmpty ? 20 : 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                //  kLog.wtf('Αγία'.hasUniqueCharacters());
-                //   filterWords();
-                // kLog.wtf(words2
-                //     .where((element) =>
-                //         element.toGreekUpperCase()!.hasUniqueCharacters())
-                //     .toList());
-                // kLog.wtf(groupedWords);
-                // kLog.wtf(mergeMap(groupedWords));
-                // kLog.wtf('abcd'.countUncommonLetters('abcdeef'));
-                // kLog.wtf(
-                //   filterWords(
-                //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
-                //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
-                //   ),
-                // );
-              },
-              child: Text('try'),
-            ),
-            Text(
-              'WORD: $createdWord',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: 10 + MediaQuery.of(context).padding.bottom,
-                top: 10,
-              ),
-              child: SizedBox(
-                height: 200,
-                width: 200,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: LetterConnector(
-                        letterStyle: LetterStyle.circle,
-                        distanceOfLetters: 80,
-                        onLetterSelected: (letter) {
-                          setState(() {
-                            createdWord += letter;
-                          });
-                        },
-                        onUnsnap: () {
-                          setState(() {
-                            createdWord = createdWord.removeLast(1)!;
-                          });
-                        },
-                        onCompleted: (word) {
-                          setState(() {
-                            createdWord = '';
-                          });
-                          final joinedWord = word.join();
-                          kLog.wtf('$word joined word: $joinedWord');
-                          // Search for the word in the wordPositions map
-                          final MapEntry<String, List<String>> wordFound =
-                              wordPositions.entries.firstWhere(
-                            (element) => element.key == joinedWord,
-                            orElse: () => const MapEntry(
-                              '',
-                              [],
+                TextButton(
+                  onPressed: () {
+                    //  kLog.wtf('Αγία'.hasUniqueCharacters());
+                    //   filterWords();
+                    // kLog.wtf(words2
+                    //     .where((element) =>
+                    //         element.toGreekUpperCase()!.hasUniqueCharacters())
+                    //     .toList());
+                    // kLog.wtf(groupedWords);
+                    // kLog.wtf(mergeMap(groupedWords));
+                    // kLog.wtf('abcd'.countUncommonLetters('abcdeef'));
+                    // kLog.wtf(
+                    //   filterWords(
+                    //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
+                    //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
+                    //   ),
+                    // );
+                  },
+                  child: Text('try'),
+                ),
+                Text(
+                  'WORD: $createdWord',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 30 + MediaQuery.of(context).padding.bottom,
+                    top: 10,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        height: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.pink.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 5,
                             ),
-                          );
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: LetterConnector(
+                                letterStyle: LetterStyle.circle,
+                                distanceOfLetters: 70,
+                                letterSize: 23,
+                                borderColor: Colors.white,
+                                onLetterSelected: (letter) {
+                                  setState(() {
+                                    createdWord += letter;
+                                  });
+                                },
+                                onUnsnap: () {
+                                  setState(() {
+                                    createdWord = createdWord.removeLast(1)!;
+                                  });
+                                },
+                                onCompleted: (word) {
+                                  setState(() {
+                                    createdWord = '';
+                                  });
+                                  final joinedWord = word.join();
+                                  kLog.wtf('$word joined word: $joinedWord');
+                                  // Search for the word in the wordPositions map
+                                  final MapEntry<String, List<String>>
+                                      wordFound =
+                                      wordPositions.entries.firstWhere(
+                                    (element) => element.key == joinedWord,
+                                    orElse: () => const MapEntry(
+                                      '',
+                                      [],
+                                    ),
+                                  );
 
-                          kLog.wtf('word found ? ${wordFound.key != ''}');
-                          setState(() {
-                            createdWord = '';
-                            if (wordFound.key != '') {
-                              foundLetterPositions.addAll(
-                                Map.fromEntries([wordFound]),
-                              );
+                                  kLog.wtf(
+                                      'word found ? ${wordFound.key != ''}');
+                                  setState(() {
+                                    createdWord = '';
+                                    if (wordFound.key != '') {
+                                      foundLetterPositions.addAll(
+                                        Map.fromEntries([wordFound]),
+                                      );
 
-                              kLog.wtf(foundLetterPositions);
-                            }
-                          });
-                        },
-                        letters: lettersForTheBoard,
-                        key: ValueKey(lettersForTheBoard.last +
-                            lettersForTheBoard.first +
-                            lettersForTheBoard[1]),
+                                      kLog.wtf(foundLetterPositions);
+                                    }
+                                  });
+                                },
+                                letters: lettersForTheBoard,
+                                key: ValueKey(lettersForTheBoard.last +
+                                    lettersForTheBoard.first +
+                                    lettersForTheBoard[1]),
+                              ),
+                            ),
+                            Center(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    lettersForTheBoard.shuffle();
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.shuffle,
+                                  size: 50,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            lettersForTheBoard.shuffle();
-                          });
-                        },
-                        child: Icon(
-                          Icons.shuffle,
-                          size: 50,
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
