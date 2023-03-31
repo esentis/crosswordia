@@ -29,7 +29,7 @@ class SignupScreen extends StatelessWidget {
                   );
                   Navigator.pop(context);
                 } catch (e) {
-                  kLog.e('Rethrown');
+                  kLog.e('Rethrown\n$e');
                 }
               },
               child: Text('Signup'),
