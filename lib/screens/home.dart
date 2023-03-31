@@ -1,3 +1,4 @@
+import 'package:crosswordia/board/crossword_board.dart';
 import 'package:crosswordia/providers/auth_provider.dart';
 import 'package:crosswordia/screens/login.dart';
 import 'package:crosswordia/services/grouped_words_service.dart';
@@ -61,6 +62,16 @@ class HomeScreen extends StatelessWidget {
                       GroupedWordsService.instance.addGroupedWordsFromMap();
                     },
                     child: const Text('Add grouped words in DB'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CrossWordBoard(),
+                          ));
+                    },
+                    child: const Text('Go to board'),
                   ),
                   TextButton(
                     onPressed: () {
