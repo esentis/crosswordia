@@ -72,20 +72,6 @@ class PlayerStatusService {
     }
   }
 
-  Future<void> updateFoundWords(
-      String playerId, List<String> foundWords) async {
-    kLog.i('Updating found words for $playerId');
-    try {
-      final data = await Supabase.instance.client.from('player_status').update({
-        'found_words': foundWords,
-      }).eq('player_id', playerId);
-
-      kLog.wtf(data);
-    } catch (e) {
-      kLog.e(e);
-    }
-  }
-
   // Increments the total coins of the player
   Future<void> incrementTotalWordsFound(String playerId, int wordscount) async {
     kLog.i('Incrementing total words found for $playerId');
@@ -112,6 +98,20 @@ class PlayerStatusService {
       kLog.e(e);
     }
   }
+
+  Future<void> updateLevelsProgress(
+      String playerId, List<Map<String, dynamic>> levelsProgress) async {
+    kLog.i('Updating found words for $playerId');
+    try {
+      final data = await Supabase.instance.client.from('player_status').update({
+        'levels_progress': levelsProgress,
+      }).eq('player_id', playerId);
+
+      kLog.wtf(data);
+    } catch (e) {
+      kLog.e(e);
+    }
+  }
 }
 
 class PlayerStatus {
@@ -119,11 +119,13 @@ class PlayerStatus {
   final int totalWordsFound;
   final int coins;
   final int currentLevel;
+  final List<Map<String, dynamic>> levelsProgress;
   PlayerStatus({
     required this.playerId,
     required this.totalWordsFound,
     required this.coins,
     required this.currentLevel,
+    required this.levelsProgress,
   });
 
   factory PlayerStatus.fromJson(Map<String, dynamic> json) {
@@ -132,6 +134,7 @@ class PlayerStatus {
       totalWordsFound: json['total_words_found'],
       coins: json['coins'],
       currentLevel: json['current_level'],
+      levelsProgress: json['levels_progress'] ?? [],
     );
   }
 
@@ -141,6 +144,7 @@ class PlayerStatus {
       totalWordsFound: 0,
       coins: 500,
       currentLevel: 1,
+      levelsProgress: [],
     );
   }
 }
