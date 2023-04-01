@@ -45,13 +45,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      PlayerStatusService.instance.updateFoundWords(
-                          status.session!.user.id, ['hello', 'world', 'test']);
-                    },
-                    child: const Text('Update current level words'),
-                  ),
-                  TextButton(
-                    onPressed: () {
                       PlayerStatusService.instance
                           .incrementLevel(status.session!.user.id);
                     },
@@ -62,6 +55,19 @@ class HomeScreen extends StatelessWidget {
                       GroupedWordsService.instance.addGroupedWordsFromMap();
                     },
                     child: const Text('Add grouped words in DB'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      PlayerStatusService.instance
+                          .updateLevelsProgress(status.session!.user.id, [
+                        {
+                          "1": ['hello', 'world', 'test'],
+                          "2": ['hello', 'world', 'test'],
+                          "3": ['hello', 'world', 'test'],
+                        }
+                      ]);
+                    },
+                    child: const Text('Update levels progress'),
                   ),
                   TextButton(
                     onPressed: () {

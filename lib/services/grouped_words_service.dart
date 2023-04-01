@@ -1098,7 +1098,18 @@ class GroupedWordsService {
   Future<void> addGroupedWordsFromMap() async {
     try {
       var level = 1;
-      words.forEach((key, value) async {
+
+      List<String> sortedWords = words.keys.toList()
+        ..sort(
+          (a, b) => a.length.compareTo(b.length),
+        );
+
+      Map<String, dynamic> sortedMap = Map<String, dynamic>.fromIterable(
+          sortedWords,
+          key: (key) => key,
+          value: (key) => words[key]);
+
+      sortedMap.forEach((key, value) async {
         kLog.wtf('Add $key');
         await Supabase.instance.client.from('grouped_words').insert({
           'words': value,
