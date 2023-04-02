@@ -1,4 +1,5 @@
 import 'package:crosswordia/board/crossword_board.dart';
+import 'package:crosswordia/levels/level_screen.dart';
 import 'package:crosswordia/providers/auth_provider.dart';
 import 'package:crosswordia/screens/login.dart';
 import 'package:crosswordia/services/grouped_words_service.dart';
@@ -68,6 +69,16 @@ class HomeScreen extends StatelessWidget {
                       ]);
                     },
                     child: const Text('Update levels progress'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LevelScreen(),
+                          ));
+                    },
+                    child: const Text('Go to levels screen'),
                   ),
                   TextButton(
                     onPressed: () {

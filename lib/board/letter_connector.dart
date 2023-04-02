@@ -18,6 +18,10 @@ class LetterConnector extends StatefulWidget {
     this.distanceOfLetters,
     this.letterSize,
     this.borderColor,
+    this.lineColor,
+    this.selectedColor,
+    this.unselectedColor,
+    this.textStyle,
     super.key,
   });
   final List<String> letters;
@@ -28,6 +32,10 @@ class LetterConnector extends StatefulWidget {
   final num? distanceOfLetters;
   final num? letterSize;
   final Color? borderColor;
+  final Color? lineColor;
+  final Color? selectedColor;
+  final Color? unselectedColor;
+  final TextStyle? textStyle;
   @override
   State<StatefulWidget> createState() => _LetterConnectorState();
 }
@@ -74,6 +82,10 @@ class _LetterConnectorState extends State<LetterConnector> {
               _getLetterIndexAtOffset(currentOffset ?? const Offset(0, 0)),
           letterStyle: widget.letterStyle,
           distanceOfLetters: widget.distanceOfLetters,
+          lineColor: widget.lineColor,
+          selectedLetterColor: widget.selectedColor,
+          unselectedLetterColor: widget.unselectedColor,
+          letterTextStyle: widget.textStyle,
         ),
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
@@ -188,6 +200,10 @@ class _LetterConnectPainter extends CustomPainter {
   final num? distanceOfLetters;
   final num? letterSize;
   final Color? borderColor;
+  final Color? selectedLetterColor;
+  final Color? unselectedLetterColor;
+  final Color? lineColor;
+  final TextStyle? letterTextStyle;
   _LetterConnectPainter({
     required this.letterPositions,
     required this.letters,
@@ -199,6 +215,10 @@ class _LetterConnectPainter extends CustomPainter {
     this.distanceOfLetters,
     this.letterSize,
     this.borderColor,
+    this.selectedLetterColor,
+    this.unselectedLetterColor,
+    this.lineColor,
+    this.letterTextStyle,
   });
 
   @override
@@ -222,7 +242,9 @@ class _LetterConnectPainter extends CustomPainter {
         letterPositions.add(position);
       }
 
-      Color color = snappedLetters.contains(i) ? Colors.red : Colors.white;
+      Color color = snappedLetters.contains(i)
+          ? selectedLetterColor ?? Colors.red
+          : unselectedLetterColor ?? Colors.white;
       letterStyle == LetterStyle.circle
           ? _drawLetterInCircle(canvas, letters[i], position, color)
           : _drawLetterInSquare(canvas, letters[i], position, color);
@@ -257,7 +279,8 @@ class _LetterConnectPainter extends CustomPainter {
     TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: letter,
-        style: const TextStyle(fontSize: 24, color: Colors.black),
+        style: letterTextStyle ??
+            const TextStyle(fontSize: 24, color: Colors.black),
       ),
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
@@ -290,7 +313,8 @@ class _LetterConnectPainter extends CustomPainter {
     TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: letter,
-        style: const TextStyle(fontSize: 24, color: Colors.black),
+        style: letterTextStyle ??
+            const TextStyle(fontSize: 24, color: Colors.black),
       ),
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
@@ -302,7 +326,7 @@ class _LetterConnectPainter extends CustomPainter {
 
   void _drawPath(Canvas canvas) {
     Paint paint = Paint()
-      ..color = Colors.red
+      ..color = lineColor ?? Colors.red
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8.0;
 

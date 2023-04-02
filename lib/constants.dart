@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 final words1 = [
   "μεσοπέλαα",
   "αέναα",
@@ -55783,3 +55785,10 @@ final words20 = [
   "σφάζω",
   "τριγυρίζω"
 ];
+
+TextStyle kStyle = const TextStyle(
+  fontSize: 20,
+  color: Colors.black,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'Arima',
+);

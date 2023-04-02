@@ -131,58 +131,58 @@ bool canStartVertically({
         final bool rightLocationHasConflict =
             (value.contains(rightLocationToCheck) &&
                 locationToCheck != location);
-        if (word == 'ΑΤΙ' &&
-            actualVerticalStartingLocationIfAvailable == '2.9') {
-          kLog.wtf('''
-Actual vertical row $actualVerticalRow
+//         if (word == 'ΑΤΙ' &&
+//             actualVerticalStartingLocationIfAvailable == '2.9') {
+//           kLog.wtf('''
+// Actual vertical row $actualVerticalRow
 
-Letter $letter letterIndex $letterIndex
-Current k $k
-Iterating over letter ${word.charAt(k)}
-word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
-Possible start $actualVerticalStartingLocationIfAvailable
-Possible end $actualVerticalEndingLocationIfAvailable
-Before start $beforeStartWordLetterLocation actual $actualVerticalBeforeStartingLocationIfAvailable
-After end $afterEndWordLetterLocation actual $actualVerticalAfterEndingLocationIfAvailable
+// Letter $letter letterIndex $letterIndex
+// Current k $k
+// Iterating over letter ${word.charAt(k)}
+// word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
+// Possible start $actualVerticalStartingLocationIfAvailable
+// Possible end $actualVerticalEndingLocationIfAvailable
+// Before start $beforeStartWordLetterLocation actual $actualVerticalBeforeStartingLocationIfAvailable
+// After end $afterEndWordLetterLocation actual $actualVerticalAfterEndingLocationIfAvailable
 
-locationToCheck $locationToCheck
-locationToCheck letter $checkingLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
-location $location
-Intersection location $location
-letter positions $value
+// locationToCheck $locationToCheck
+// locationToCheck letter $checkingLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
+// location $location
+// Intersection location $location
+// letter positions $value
 
---- Conflicts ---
-Top location $topLocationToCheck conflict
-Bottom location $bottomLocationToCheck conflict
+// --- Conflicts ---
+// Top location $topLocationToCheck conflict
+// Bottom location $bottomLocationToCheck conflict
 
-Left location $leftLocationToCheck conflict $leftLocationHasConflict
-Left top location $leftTopLocationToCheck conflict $leftTopLocationHasConflict
-Left bottom location $leftBottomLocationToCheck conflict $leftBottomLocationHasConflict
+// Left location $leftLocationToCheck conflict $leftLocationHasConflict
+// Left top location $leftTopLocationToCheck conflict $leftTopLocationHasConflict
+// Left bottom location $leftBottomLocationToCheck conflict $leftBottomLocationHasConflict
 
-Right location $rightLocationToCheck conflict $rightLocationHasConflict
-Right top location $rightTopLocationToCheck conflict topLeftLocationHasConflict
-Right bottom location $rightBottomLocationToCheck conflict $rightBottomLocationHasConflict
+// Right location $rightLocationToCheck conflict $rightLocationHasConflict
+// Right top location $rightTopLocationToCheck conflict topLeftLocationHasConflict
+// Right bottom location $rightBottomLocationToCheck conflict $rightBottomLocationHasConflict
 
-First condition (${((value.contains(locationToCheck) && locationToCheck != location && !isCurrentLetterPartOfTheWord))})
-letterIndex$letterIndex != word.length${word.length} ${letterIndex != word.length}
+// First condition (${((value.contains(locationToCheck) && locationToCheck != location && !isCurrentLetterPartOfTheWord))})
+// letterIndex$letterIndex != word.length${word.length} ${letterIndex != word.length}
 
-Before start conflict $beforeStartHasConflicts
-After end conflict $afterEndHasConflicts
-Current location conflict $currentLocationHasConflict
+// Before start conflict $beforeStartHasConflicts
+// After end conflict $afterEndHasConflicts
+// Current location conflict $currentLocationHasConflict
 
---- Conflicts ---
-Space from top $spaceFromTop
-Space from bottom $spaceFromBottom
-Distance from top of intersection $distanceFromTopOfLetter
-Distance from bottom $distanceFromBottomtOfLetter
+// --- Conflicts ---
+// Space from top $spaceFromTop
+// Space from bottom $spaceFromBottom
+// Distance from top of intersection $distanceFromTopOfLetter
+// Distance from bottom $distanceFromBottomtOfLetter
 
-All letter positions: 
-$letterPositions
+// All letter positions:
+// $letterPositions
 
-Found locations
-$foundLocations
-''');
-        }
+// Found locations
+// $foundLocations
+// ''');
+//         }
         return ((value.contains(locationToCheck) &&
                 locationToCheck != location &&
                 !isCurrentLetterPartOfTheWord) ||
