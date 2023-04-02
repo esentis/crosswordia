@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:crosswordia/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/board/helpers/vertical_check.dart';
 import 'package:crosswordia/board/letter_connector.dart';
+import 'package:crosswordia/board/widgets/blur_container.dart';
 import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
 import 'package:flutter/material.dart';
@@ -229,7 +229,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     required bool isHorizontal,
     required int startingPoint,
   }) {
-    kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}');
+    // kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}');
     placedWords.add(word);
     int rowInt = int.parse(row);
     int colInt = int.parse(col);
@@ -283,7 +283,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
 
     words.addAll(sortedWords);
 
-    kLog.wtf(words);
+    // kLog.wtf(words);
 
     words.sort((a, b) => b.length.compareTo(a.length));
     for (var i = 0; i < words.length; i++) {
@@ -512,28 +512,23 @@ space from bottom $spaceFromBottom
           Container(
             color: Colors.white.withOpacity(0.6),
           ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back),
+          ),
           Padding(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: Align(
               alignment: Alignment.topCenter,
-              child: Container(
+              child: BlurContainer(
                 height: 60,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                ),
+                width: 200,
+                color: Colors.blue,
+                borderColor: Colors.blue,
                 child: Center(
                   child: Text(
                     'Level 1',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: kStyle,
                   ),
                 ),
               ),
@@ -547,7 +542,7 @@ space from bottom $spaceFromBottom
                 const SizedBox(),
                 Center(
                   child: SizedBox(
-                    width: 350,
+                    width: 420,
                     height: MediaQuery.of(context).size.height / 1.9,
                     child: GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
@@ -581,12 +576,12 @@ space from bottom $spaceFromBottom
                             child: Container(
                               decoration: BoxDecoration(
                                 color: letterFound.isNotEmpty
-                                    ? Colors.white
+                                    ? Colors.white.withOpacity(0.5)
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(6),
                                 border: letterFound.isNotEmpty
                                     ? Border.all(
-                                        color: Colors.black,
+                                        color: Colors.blue.withOpacity(0.4),
                                         width: 2,
                                       )
                                     : Border.all(color: Colors.transparent),
@@ -616,7 +611,7 @@ space from bottom $spaceFromBottom
                                           ? letterFound.keys.first.toUpperCase()
                                           : ""
                                       : "$row|$col\n${index + 1}",
-                                  style: TextStyle(
+                                  style: kStyle.copyWith(
                                     color: letterFound.isNotEmpty
                                         ? Colors.black
                                         : Colors.transparent,
@@ -632,30 +627,40 @@ space from bottom $spaceFromBottom
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    //  kLog.wtf('Αγία'.hasUniqueCharacters());
-                    //   filterWords();
-                    // kLog.wtf(words2
-                    //     .where((element) =>
-                    //         element.toGreekUpperCase()!.hasUniqueCharacters())
-                    //     .toList());
-                    // kLog.wtf(groupedWords);
-                    // kLog.wtf(mergeMap(groupedWords));
-                    // kLog.wtf('abcd'.countUncommonLetters('abcdeef'));
-                    // kLog.wtf(
-                    //   filterWords(
-                    //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
-                    //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
-                    //   ),
-                    // );
-                  },
-                  child: Text('try'),
-                ),
-                Text(
-                  'WORD: $createdWord',
-                  style: TextStyle(
-                    fontSize: 20,
+                // TextButton(
+                //   onPressed: () {
+                //     //  kLog.wtf('Αγία'.hasUniqueCharacters());
+                //     //   filterWords();
+                //     // kLog.wtf(words2
+                //     //     .where((element) =>
+                //     //         element.toGreekUpperCase()!.hasUniqueCharacters())
+                //     //     .toList());
+                //     // kLog.wtf(groupedWords);
+                //     // kLog.wtf(mergeMap(groupedWords));
+                //     // kLog.wtf('abcd'.countUncommonLetters('abcdeef'));
+                //     // kLog.wtf(
+                //     //   filterWords(
+                //     //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
+                //     //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
+                //     //   ),
+                //     // );
+                //   },
+                //   child: Text('try'),
+                // ),
+                BlurContainer(
+                  color: Colors.blue,
+                  borderColor: Colors.blue,
+                  opacity: 0.2,
+                  height: 60,
+                  child: Center(
+                    child: Text(
+                      createdWord,
+                      style: kStyle.copyWith(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ),
                 Padding(
@@ -663,94 +668,81 @@ space from bottom $spaceFromBottom
                     bottom: 30 + MediaQuery.of(context).padding.bottom,
                     top: 10,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        height: 200,
-                        width: 200,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.pink.withOpacity(0.2),
-                              blurRadius: 10,
-                              spreadRadius: 5,
+                  child: BlurContainer(
+                    color: Colors.blue,
+                    borderColor: Colors.blue,
+                    opacity: 0.2,
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: LetterConnector(
+                            letterStyle: LetterStyle.circle,
+                            distanceOfLetters: 70,
+                            letterSize: 23,
+                            borderColor: Colors.white,
+                            selectedColor: Colors.blue,
+                            lineColor: Colors.blue,
+                            textStyle: kStyle.copyWith(
+                              fontSize: 25,
                             ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: LetterConnector(
-                                letterStyle: LetterStyle.circle,
-                                distanceOfLetters: 70,
-                                letterSize: 23,
-                                borderColor: Colors.white,
-                                onLetterSelected: (letter) {
-                                  setState(() {
-                                    createdWord += letter;
-                                  });
-                                },
-                                onUnsnap: () {
-                                  setState(() {
-                                    createdWord = createdWord.removeLast(1)!;
-                                  });
-                                },
-                                onCompleted: (word) {
-                                  setState(() {
-                                    createdWord = '';
-                                  });
-                                  final joinedWord = word.join();
-                                  kLog.wtf('$word joined word: $joinedWord');
-                                  // Search for the word in the wordPositions map
-                                  final MapEntry<String, List<String>>
-                                      wordFound =
-                                      wordPositions.entries.firstWhere(
-                                    (element) => element.key == joinedWord,
-                                    orElse: () => const MapEntry(
-                                      '',
-                                      [],
-                                    ),
+                            onLetterSelected: (letter) {
+                              setState(() {
+                                createdWord += letter;
+                              });
+                            },
+                            onUnsnap: () {
+                              setState(() {
+                                createdWord = createdWord.removeLast(1)!;
+                              });
+                            },
+                            onCompleted: (word) {
+                              setState(() {
+                                createdWord = '';
+                              });
+                              final joinedWord = word.join();
+                              kLog.wtf('$word joined word: $joinedWord');
+                              // Search for the word in the wordPositions map
+                              final MapEntry<String, List<String>> wordFound =
+                                  wordPositions.entries.firstWhere(
+                                (element) => element.key == joinedWord,
+                                orElse: () => const MapEntry(
+                                  '',
+                                  [],
+                                ),
+                              );
+
+                              kLog.wtf('word found ? ${wordFound.key != ''}');
+                              setState(() {
+                                createdWord = '';
+                                if (wordFound.key != '') {
+                                  foundLetterPositions.addAll(
+                                    Map.fromEntries([wordFound]),
                                   );
 
-                                  kLog.wtf(
-                                      'word found ? ${wordFound.key != ''}');
-                                  setState(() {
-                                    createdWord = '';
-                                    if (wordFound.key != '') {
-                                      foundLetterPositions.addAll(
-                                        Map.fromEntries([wordFound]),
-                                      );
-
-                                      kLog.wtf(foundLetterPositions);
-                                    }
-                                  });
-                                },
-                                letters: lettersForTheBoard,
-                                key: ValueKey(lettersForTheBoard.last +
-                                    lettersForTheBoard.first +
-                                    lettersForTheBoard[1]),
-                              ),
-                            ),
-                            Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    lettersForTheBoard.shuffle();
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.shuffle,
-                                  size: 50,
-                                ),
-                              ),
-                            )
-                          ],
+                                  kLog.wtf(foundLetterPositions);
+                                }
+                              });
+                            },
+                            letters: lettersForTheBoard,
+                            key: ValueKey(lettersForTheBoard.last +
+                                lettersForTheBoard.first +
+                                lettersForTheBoard[1]),
+                          ),
                         ),
-                      ),
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                lettersForTheBoard.shuffle();
+                              });
+                            },
+                            child: const Icon(
+                              Icons.shuffle,
+                              size: 40,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
