@@ -204,22 +204,22 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
   }
 
   Set<String> testWords = {
-    "τσίμα",
-    "τσάι",
-    "τάσι",
-    "στια",
-    "σιμά",
+    "τσαμπί",
+    "πιτσα",
+    "πιστα",
+    "πιτα",
+    "πια",
+    "μια",
+    "μαστ",
     "ματς",
-    "μάτι",
-    "τιμ",
-    "άτι",
-    "ίσα",
-    "σία",
-    "ματ",
-    "μις",
-    "μία",
-    "στα",
-    "μας"
+    "τιμα",
+    "τσίπα",
+    "τσίμα",
+    "τσαπί",
+    "ταπί",
+    "τάσι",
+    "τσιπ",
+    "τσάι",
   };
 
   void _placeWord({
@@ -231,6 +231,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
   }) {
     // kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}');
     placedWords.add(word);
+    //kLog.i('Added word $word');
     int rowInt = int.parse(row);
     int colInt = int.parse(col);
 
@@ -535,7 +536,8 @@ space from bottom $spaceFromBottom
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).padding.top + 50),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
