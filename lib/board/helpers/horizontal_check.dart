@@ -191,8 +191,9 @@ Checking at $location
         final bool isBottomLeftOutOfReach =
             actualHorizontalRow > bottomLeftLocationToCheck.after('.').toInt()!;
 
-        final bool bottomLocationHasConflict = (value
-                .contains(bottomLocationToCheck)) &&
+        final bool bottomLocationHasConflict = letterPositions.anyValue(
+              (v) => v.contains(bottomLeftLocationToCheck),
+            ) &&
             // If the bottom right letter cant conflict with the word since it's right of the end. Thus we only check if it conflicts from bottom left
             (isBottomRightOutOfReach
                 ? bottomLeftLocationHasConflict
@@ -201,7 +202,7 @@ Checking at $location
                     : bottomLeftLocationHasConflict &&
                         bottomRightLocationHasConflict);
 
-        if (false && actualHorizontalStartingLocationIfAvailable == '8.5') {
+        if (false && actualHorizontalStartingLocationIfAvailable == '9.5') {
           kLog.wtf('''
 Letter $letter letterIndex $letterIndex
 Iterating over letter ${word.charAt(k)}
