@@ -111,6 +111,8 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
 
   Map<String, Set<String>> groupedWords = {};
 
+  Set<String> foundWords = {};
+
   /// Checks if the List a is a subset of List b
   bool isSubset(List<String> a, List<String> b) {
     int i = 0, j = 0;
@@ -153,7 +155,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
       ..sort((a, b) => b.length.compareTo(a.length));
 
     for (final word in wordsToLook) {
-      if (word.length >= 3 && word.length <= 5) {
+      if (word.length <= 4 && word.length >= 3) {
         final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
         final String wordUpperAndSorted = wordSlicedAndSorted.join();
 
@@ -165,7 +167,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     for (final key in groupedWords.keys) {
       final keyChars = key.split('');
       for (final wordToCheck in wordsToLook) {
-        if (wordToCheck.length >= 3 && wordToCheck.length <= 6) {
+        if (wordToCheck.length <= 4 && wordToCheck.length >= 3) {
           final wordToCheckSlicedAndSorted =
               wordToCheck.toGreekUpperCase()!.split('')..sort();
           final String wordToCheckUpperAndSorted =
@@ -206,10 +208,21 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
   Set<String> testWords = {
     "τσαμπί",
     "πιτσα",
+    "πατσι",
     "πιστα",
     "πιτα",
+    "σιμα",
+    "μπας",
     "πια",
+    "πασι",
+    "μπα",
+    "ισα",
+    "ματι",
+    "τσι",
+    "μισα",
     "μια",
+    "πας",
+    "μας",
     "μαστ",
     "ματς",
     "τιμα",
@@ -258,33 +271,26 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     }
   }
 
-  // Generate board based on [words]
-  void _generatedBoard() {
-    // find longest word in [words]
-    List<String> sortedWords = testWords
-        .toSet()
-        .where((element) => element.length <= 10 && element.length >= 3)
-        .map(
-          (e) => e.toGreekUpperCase()!,
-        )
-        .toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+  late List<String> sortedWords = testWords
+      .map(
+        (e) => e.toGreekUpperCase()!,
+      )
+      .toList()
+    ..sort((a, b) => b.length.compareTo(a.length));
 
+  List<String> words = [];
+
+  /// * Convert all words to uppercase and sort them based on their length in descending order.
+  /// * Initialize an empty letterPositions map to store the positions of each letter in the placed words.
+  /// * Place the longest word (first word in the sorted list) horizontally in the middle of the board.
+  /// * For each remaining word in the sorted list, attempt to place it on the board by finding an intersection with already placed words:
+  ///     * Check if any letters of the current word are present in the placed words on the board.
+  ///     * For each found intersection, calculate the available space and determine if the word can be placed horizontally or vertically.
+  ///     * If the word can be placed, update the letterPositions map with the new word's letter positions.
+  void _generatedBoard() {
     letterPositions = {};
 
-    List<String> words = [];
-    // while (words.length < 4) {
-    //   final int random = Random().nextInt(sortedWords.length);
-
-    //   if (words.contains(sortedWords[random])) {
-    //     continue;
-    //   }
-    //   words.add(sortedWords[random]);
-    // }
-
     words.addAll(sortedWords);
-
-    // kLog.wtf(words);
 
     words.sort((a, b) => b.length.compareTo(a.length));
     for (var i = 0; i < words.length; i++) {
@@ -305,8 +311,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
         for (int i = 0; i < wordSplit.length; i++) {
           final foundLocations = letterPositions[wordSplit[i]];
           final letter = wordSplit[i];
-          // if (word == 'ΑΦΕ')
-          //   kLog.wtf('letter $letter\nFound locations $foundLocations');
+
           // If we found an intersection
           if (foundLocations != null) {
             for (final location in foundLocations) {
@@ -349,26 +354,6 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
 
               final actualVerticalAfterEndingLocationIfAvailable =
                   '${rowInt + distanceFromRightOfLetter + 1}.$colInt';
-
-              if (word == 'ΤΡΙΟ' &&
-                  actualVerticalStartingLocationIfAvailable == '8.3') {
-                kLog.wtf('''
-distance from left of letter $distanceFromLeftOfLetter
-distance from right of letter $distanceFromRightOfLetter
-distance from top of letter $dinstanceFromTopOfLetter
-distance from bottom of letter $distanceFromBottomOfLetter
-space from left $spaceFromLeft
-space from right $spaceFromRight
-space from top $spaceFromTop
-space from bottom $spaceFromBottom
-''');
-              }
-
-              // final actualHorizontalBeforeStartingLocationIfAvailable =
-              //     '$rowInt.${colInt - distanceFromLeftOfLetter - 1}';
-
-              // final actualHorizontalAfterEndingLocationIfAvailable =
-              //     '$rowInt.${colInt + distanceFromRightOfLetter + 1}';
 
               // Check if the word can be placed vertically
               final bool canStartVerticallyWithThatLetter = canStartVertically(
@@ -448,7 +433,7 @@ space from bottom $spaceFromBottom
         }
       }
     }
-    // kLog.wtf(placedWords);
+    kLog.wtf(placedWords);
 
     _generateLettersForConnector();
   }
@@ -632,7 +617,7 @@ space from bottom $spaceFromBottom
                 // TextButton(
                 //   onPressed: () {
                 //     //  kLog.wtf('Αγία'.hasUniqueCharacters());
-                //     //   filterWords();
+                //     filterWords();
                 //     // kLog.wtf(words2
                 //     //     .where((element) =>
                 //     //         element.toGreekUpperCase()!.hasUniqueCharacters())
@@ -649,6 +634,13 @@ space from bottom $spaceFromBottom
                 //   },
                 //   child: Text('try'),
                 // ),
+                Text(
+                  'Board Words: ${foundLetterPositions.length}/${placedWords.length}\nTotal Words: ${foundWords.length}/${testWords.length}',
+                  style: kStyle.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 BlurContainer(
                   color: Colors.blue,
                   borderColor: Colors.blue,
@@ -676,61 +668,70 @@ space from bottom $spaceFromBottom
                     opacity: 0.2,
                     child: Stack(
                       children: [
-                        Center(
-                          child: LetterConnector(
-                            letterStyle: LetterStyle.circle,
-                            distanceOfLetters: 70,
-                            letterSize: 23,
-                            borderColor: Colors.white,
-                            selectedColor: Colors.blue,
-                            lineColor: Colors.blue,
-                            textStyle: kStyle.copyWith(
-                              fontSize: 25,
-                            ),
-                            onLetterSelected: (letter) {
-                              setState(() {
-                                createdWord += letter;
-                              });
-                            },
-                            onUnsnap: () {
-                              setState(() {
-                                createdWord = createdWord.removeLast(1)!;
-                              });
-                            },
-                            onCompleted: (word) {
-                              setState(() {
-                                createdWord = '';
-                              });
-                              final joinedWord = word.join();
-                              kLog.wtf('$word joined word: $joinedWord');
-                              // Search for the word in the wordPositions map
-                              final MapEntry<String, List<String>> wordFound =
-                                  wordPositions.entries.firstWhere(
-                                (element) => element.key == joinedWord,
-                                orElse: () => const MapEntry(
-                                  '',
-                                  [],
-                                ),
-                              );
+                        if (lettersForTheBoard.isNotEmpty)
+                          Center(
+                            child: LetterConnector(
+                              letterStyle: LetterStyle.circle,
+                              distanceOfLetters: 70,
+                              letterSize: 23,
+                              borderColor: Colors.white,
+                              selectedColor: Colors.blue,
+                              lineColor: Colors.blue,
+                              textStyle: kStyle.copyWith(
+                                fontSize: 25,
+                              ),
+                              onLetterSelected: (letter) {
+                                setState(() {
+                                  createdWord += letter;
+                                });
+                              },
+                              onUnsnap: () {
+                                setState(() {
+                                  createdWord = createdWord.removeLast(1)!;
+                                });
+                              },
+                              onCompleted: (word) {
+                                setState(() {
+                                  createdWord = '';
+                                });
+                                final joinedWord = word.join();
+                                kLog.wtf('$word joined word: $joinedWord');
 
-                              kLog.wtf('word found ? ${wordFound.key != ''}');
-                              setState(() {
-                                createdWord = '';
-                                if (wordFound.key != '') {
-                                  foundLetterPositions.addAll(
-                                    Map.fromEntries([wordFound]),
-                                  );
-
-                                  kLog.wtf(foundLetterPositions);
+                                if (testWords.any((element) =>
+                                        element.toGreekUpperCase() ==
+                                        joinedWord) &&
+                                    !foundWords.contains(joinedWord)) {
+                                  kLog.wtf('Adding $joinedWord to found words');
+                                  foundWords.add(joinedWord);
                                 }
-                              });
-                            },
-                            letters: lettersForTheBoard,
-                            key: ValueKey(lettersForTheBoard.last +
-                                lettersForTheBoard.first +
-                                lettersForTheBoard[1]),
+                                // Search for the word in the wordPositions map
+                                final MapEntry<String, List<String>> wordFound =
+                                    wordPositions.entries.firstWhere(
+                                  (element) => element.key == joinedWord,
+                                  orElse: () => const MapEntry(
+                                    '',
+                                    [],
+                                  ),
+                                );
+
+                                kLog.wtf('word found ? ${wordFound.key != ''}');
+                                setState(() {
+                                  createdWord = '';
+                                  if (wordFound.key != '') {
+                                    foundLetterPositions.addAll(
+                                      Map.fromEntries([wordFound]),
+                                    );
+
+                                    kLog.wtf(foundLetterPositions);
+                                  }
+                                });
+                              },
+                              letters: lettersForTheBoard,
+                              key: ValueKey(lettersForTheBoard.last +
+                                  lettersForTheBoard.first +
+                                  lettersForTheBoard[1]),
+                            ),
                           ),
-                        ),
                         Center(
                           child: GestureDetector(
                             onTap: () {
