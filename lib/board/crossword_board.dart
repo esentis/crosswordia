@@ -127,112 +127,67 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     return i == a.length;
   }
 
-  void filterWords() {
-    groupedWords = {};
-    final wordsToLook = words1
-      ..addAll(words2)
-      ..addAll(words3)
-      ..addAll(words4)
-      ..addAll(words5)
-      ..addAll(words6)
-      ..addAll(words7)
-      ..addAll(words8)
-      ..addAll(words9)
-      ..addAll(words10)
-      ..addAll(words11)
-      ..addAll(words12)
-      ..addAll(words13)
-      ..addAll(words14)
-      ..addAll(words15)
-      ..addAll(words16)
-      ..addAll(words17)
-      ..addAll(words18)
-      ..addAll(words19)
-      ..addAll(words20)
+  final wordsToLook = words1
+    ..addAll(words2)
+    ..addAll(words3)
+    ..addAll(words4)
+    ..addAll(words5)
+    ..addAll(words6)
+    ..addAll(words7)
+    ..addAll(words8)
+    ..addAll(words9)
+    ..addAll(words10)
+    ..addAll(words11)
+    ..addAll(words12)
+    ..addAll(words13)
+    ..addAll(words14)
+    ..addAll(words15)
+    ..addAll(words16)
+    ..addAll(words17)
+    ..addAll(words18)
+    ..addAll(words19)
+    ..addAll(words20)
 
-      // .where((element) => element.hasUniqueCharacters())
-      // .toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+    // .where((element) => element.hasUniqueCharacters())
+    // .toList()
+    ..sort((a, b) => b.length.compareTo(a.length));
+
+  void filterWords() {
+    Map<String, Set<String>> groupedWords = {};
 
     for (final word in wordsToLook) {
-      if (word.length <= 4 && word.length >= 3) {
-        final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
-        final String wordUpperAndSorted = wordSlicedAndSorted.join();
+      // Skip words with a length less than 3
+      if (word.length < 3) {
+        continue;
+      }
 
+      final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
+      final String wordUpperAndSorted = wordSlicedAndSorted.join();
+
+      if (word.length <= 6) {
         groupedWords.putIfAbsent(wordUpperAndSorted, () => <String>{});
         groupedWords[wordUpperAndSorted]!.add(word);
       }
-    }
 
-    for (final key in groupedWords.keys) {
-      final keyChars = key.split('');
-      for (final wordToCheck in wordsToLook) {
-        if (wordToCheck.length <= 4 && wordToCheck.length >= 3) {
-          final wordToCheckSlicedAndSorted =
-              wordToCheck.toGreekUpperCase()!.split('')..sort();
-          final String wordToCheckUpperAndSorted =
-              wordToCheckSlicedAndSorted.join();
-
-          if (isSubset(wordToCheckUpperAndSorted.split(''), keyChars)) {
-            groupedWords[key]!.add(wordToCheck);
+      if (word.length >= 3) {
+        for (final key in groupedWords.keys) {
+          final keyChars = key.split('');
+          if (isSubset(wordUpperAndSorted.split(''), keyChars)) {
+            groupedWords[key]!.add(word);
           }
         }
       }
     }
-    // for (final word in wordsToLook) {
-    //   if (word.length >= 3 && word.length <= 7) {
-    //     final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
-    //     final String wordUpperAndSorted = wordSlicedAndSorted.join();
 
-    //     groupedWords.putIfAbsent(wordUpperAndSorted, () => <String>{});
-    //     groupedWords[wordUpperAndSorted]!.add(word);
-
-    //     for (final wordToCheck in wordsToLook) {
-    //       if (wordToCheck.length >= 3 && wordToCheck.length <= 6) {
-    //         final wordToCheckSlicedAndSorted =
-    //             wordToCheck.toGreekUpperCase()!.split('')..sort();
-    //         final String wordToCheckUpperAndSorted =
-    //             wordToCheckSlicedAndSorted.join();
-
-    //         if (wordUpperAndSorted
-    //             .containsAll(wordToCheckUpperAndSorted.split(''))) {
-    //           groupedWords[wordUpperAndSorted]!.add(wordToCheck);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
     kLog.wtf(groupedWords);
   }
 
   Set<String> testWords = {
-    "τσαμπί",
-    "πιτσα",
-    "πατσι",
-    "πιστα",
-    "πιτα",
-    "σιμα",
-    "μπας",
-    "πια",
-    "πασι",
-    "μπα",
-    "ισα",
-    "ματι",
-    "τσι",
-    "μισα",
-    "μια",
-    "πας",
-    "μας",
-    "μαστ",
-    "ματς",
-    "τιμα",
-    "τσίπα",
-    "τσίμα",
-    "τσαπί",
-    "ταπί",
-    "τάσι",
-    "τσιπ",
-    "τσάι",
+    "δένω",
+    "δέων",
+    "δεν",
+    "εδώ",
+    "ενώ",
   };
 
   void _placeWord({
