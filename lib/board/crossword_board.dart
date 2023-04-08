@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:crosswordia/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/board/helpers/vertical_check.dart';
 import 'package:crosswordia/board/letter_connector.dart';
@@ -7,87 +5,14 @@ import 'package:crosswordia/board/widgets/blur_container.dart';
 import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:string_extensions/string_extensions.dart';
 
-void saveTextToFile(String text) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final file = File('/storage/emulated/0/Download/greek_words.txt');
-  final res = await file.writeAsString(text);
-  print(res);
-}
-
-extension Misc on String {
-  bool hasUniqueCharacters() {
-    final word = this;
-    final wordSplit = word.toGreekUpperCase()!.split('').toSet();
-    return word.length == wordSplit.length;
-  }
-
-  String findCommonCharacters(String otherString) {
-    final Set<String> commonLettersSet = {};
-    final Set<String> otherStringSet = otherString.split('').toSet();
-
-    for (final letter in split('')) {
-      if (otherStringSet.contains(letter)) {
-        commonLettersSet.add(letter);
-      }
-    }
-
-    final List<String> commonLettersList = commonLettersSet.toList();
-    commonLettersList.sort();
-
-    return commonLettersList.join('');
-  }
-
-  int countUncommonCharacters(String other) {
-    final thisSet = getCharSet(this);
-    final otherSet = getCharSet(other);
-
-    final uncommonSet = thisSet.length > otherSet.length
-        ? (thisSet.difference(otherSet))
-        : (otherSet.difference(thisSet));
-
-    return uncommonSet.length;
-  }
-
-  Set<String> getUncommonCharacters(String other) {
-    final thisSet = getCharSet(this);
-    final otherSet = getCharSet(other);
-
-    final uncommonSet = (thisSet.difference(otherSet));
-
-    return uncommonSet;
-  }
-
-  /// Returns the unique letters of the word
-  Set<String> getCharSet(String str) {
-    final set = <String>{};
-    for (final char in str.split('')..sort()) {
-      set.add(char);
-    }
-    return set;
-  }
-
-  /// Returns true if the String contains all the characters of the wordToCheck
-  bool containsAllCharacters(
-      String wordUpperAndSorted, String wordToCheckUpperAndSortedJoined) {
-    final Map<String, int> letterCounts = {};
-
-    wordUpperAndSorted.split('').forEach((letter) {
-      letterCounts[letter] = (letterCounts[letter] ?? 0) + 1;
-    });
-
-    for (final letter in wordToCheckUpperAndSortedJoined.split('')) {
-      if (letterCounts[letter] == null || letterCounts[letter]! <= 0) {
-        return false;
-      }
-      letterCounts[letter] = letterCounts[letter]! - 1;
-    }
-
-    return true;
-  }
-}
+// void saveTextToFile(String text) async {
+//   final directory = await getApplicationDocumentsDirectory();
+//   final file = File('/storage/emulated/0/Download/greek_words.txt');
+//   final res = await file.writeAsString(text);
+//   print(res);
+// }
 
 class CrossWordBoard extends StatefulWidget {
   const CrossWordBoard({
@@ -182,12 +107,39 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     kLog.wtf(groupedWords);
   }
 
+// ΑΑΙΛΜΣ
   Set<String> testWords = {
-    "δένω",
-    "δέων",
-    "δεν",
-    "εδώ",
-    "ενώ",
+    "σαλάμι",
+    "σάμαλι",
+    "μασάλι",
+    "σαλμί",
+    "μασιά",
+    "λάμια",
+    "λαιμά",
+    "σάλια",
+    "μάλια",
+    "σιμά",
+    "σάλι",
+    "σάλα",
+    "μιλα",
+    "άμια",
+    "μαία",
+    "αίμα",
+    "άλας",
+    "άλμα",
+    "μάσα",
+    "λίμα",
+    "λάμα",
+    "σαλα",
+    "άσμα",
+    "ίσα",
+    "άμα",
+    "μια",
+    "μις",
+    "αλί",
+    "αλά",
+    "μία",
+    "μας",
   };
 
   void _placeWord({

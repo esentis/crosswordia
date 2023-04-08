@@ -7,13 +7,11 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await supa.Supabase.initialize(
     url: 'https://sjfnhxutysrunsyicixl.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqZm5oeHV0eXNydW5zeWljaXhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzk5MzkyOTIsImV4cCI6MTk5NTUxNTI5Mn0.svTYH93Fn_6n7xTGjHxo5GZyk_Vl3DMdTE4dBtQOnBE',
   );
-
   runApp(const MyApp());
 }
 
