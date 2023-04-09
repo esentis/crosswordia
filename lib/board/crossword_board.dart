@@ -187,6 +187,40 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
 
   List<String> words = [];
 
+  _checkCreatedWord(List<String> word) {
+    setState(() {
+      createdWord = '';
+    });
+    final joinedWord = word.join();
+    kLog.wtf('$word joined word: $joinedWord');
+
+    if (testWords.any((element) => element.toGreekUpperCase() == joinedWord) &&
+        !foundWords.contains(joinedWord)) {
+      kLog.wtf('Adding $joinedWord to found words');
+      foundWords.add(joinedWord);
+    }
+    // Search for the word in the wordPositions map
+    final MapEntry<String, List<String>> wordFound =
+        wordPositions.entries.firstWhere(
+      (element) => element.key == joinedWord,
+      orElse: () => const MapEntry(
+        '',
+        [],
+      ),
+    );
+
+    kLog.wtf('word found ? ${wordFound.key != ''}');
+    setState(() {
+      createdWord = '';
+      if (wordFound.key != '') {
+        foundLetterPositions.addAll(
+          Map.fromEntries([wordFound]),
+        );
+        kLog.wtf(foundLetterPositions);
+      }
+    });
+  }
+
   /// * Convert all words to uppercase and sort them based on their length in descending order.
   /// * Initialize an empty letterPositions map to store the positions of each letter in the placed words.
   /// * Place the longest word (first word in the sorted list) horizontally in the middle of the board.
@@ -598,40 +632,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
                                 });
                               },
                               onCompleted: (word) {
-                                setState(() {
-                                  createdWord = '';
-                                });
-                                final joinedWord = word.join();
-                                kLog.wtf('$word joined word: $joinedWord');
-
-                                if (testWords.any((element) =>
-                                        element.toGreekUpperCase() ==
-                                        joinedWord) &&
-                                    !foundWords.contains(joinedWord)) {
-                                  kLog.wtf('Adding $joinedWord to found words');
-                                  foundWords.add(joinedWord);
-                                }
-                                // Search for the word in the wordPositions map
-                                final MapEntry<String, List<String>> wordFound =
-                                    wordPositions.entries.firstWhere(
-                                  (element) => element.key == joinedWord,
-                                  orElse: () => const MapEntry(
-                                    '',
-                                    [],
-                                  ),
-                                );
-
-                                kLog.wtf('word found ? ${wordFound.key != ''}');
-                                setState(() {
-                                  createdWord = '';
-                                  if (wordFound.key != '') {
-                                    foundLetterPositions.addAll(
-                                      Map.fromEntries([wordFound]),
-                                    );
-
-                                    kLog.wtf(foundLetterPositions);
-                                  }
-                                });
+                                _checkCreatedWord(word);
                               },
                               letters: lettersForTheBoard,
                               key: ValueKey(lettersForTheBoard.last +
