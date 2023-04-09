@@ -59,16 +59,20 @@ class HomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      PlayerStatusService.instance
-                          .updateLevelsProgress(status.session!.user.id, [
-                        {
-                          "1": ['hello', 'world', 'test'],
-                          "2": ['hello', 'world', 'test'],
-                          "3": ['hello', 'world', 'test'],
-                        }
-                      ]);
+                      PlayerStatusService.instance.updateLevelProgress(
+                        status.session!.user.id,
+                        1,
+                        ['test', 'hello'],
+                      );
                     },
                     child: const Text('Update levels progress'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      PlayerStatusService.instance.addWordInLevelProgress(
+                          status.session!.user.id, 1, 'esentis!!');
+                    },
+                    child: const Text('Add a word to level'),
                   ),
                   TextButton(
                     onPressed: () {
