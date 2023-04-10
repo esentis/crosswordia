@@ -4,6 +4,7 @@ import 'package:crosswordia/board/letter_connector.dart';
 import 'package:crosswordia/board/widgets/blur_container.dart';
 import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:string_extensions/string_extensions.dart';
 
@@ -187,7 +188,7 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
 
   List<String> words = [];
 
-  _checkCreatedWord(List<String> word) {
+  _checkCreatedWord(List<String> word) async {
     setState(() {
       createdWord = '';
     });
@@ -198,6 +199,12 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
         !foundWords.contains(joinedWord)) {
       kLog.wtf('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
+      final levelId = await PlayerStatusService.instance.getLevelId(1);
+      final userId = PlayerStatusService.instance.getUserId();
+      if (userId != null && levelId != null) {
+        PlayerStatusService.instance.addWordInLevelProgress(
+            PlayerStatusService.instance.getUserId()!, 1, joinedWord);
+      }
     }
     // Search for the word in the wordPositions map
     final MapEntry<String, List<String>> wordFound =
@@ -210,15 +217,19 @@ class _CrossWordBoardState extends State<CrossWordBoard> {
     );
 
     kLog.wtf('word found ? ${wordFound.key != ''}');
-    setState(() {
-      createdWord = '';
-      if (wordFound.key != '') {
+
+    final bool wordExistsOnBoard = wordFound.key != '';
+
+    if (wordExistsOnBoard) {
+      setState(() {
+        createdWord = '';
         foundLetterPositions.addAll(
           Map.fromEntries([wordFound]),
         );
+
         kLog.wtf(foundLetterPositions);
-      }
-    });
+      });
+    }
   }
 
   /// * Convert all words to uppercase and sort them based on their length in descending order.
