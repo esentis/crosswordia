@@ -9,6 +9,10 @@ class PlayerStatusService {
 
   static PlayerStatusService get instance => _instance;
 
+  String? getUserId() {
+    return Supabase.instance.client.auth.currentUser?.id;
+  }
+
   Future<PlayerStatus?> getPlayerStatus(String playerId) async {
     kLog.i('Getting status for $playerId');
     try {
@@ -163,6 +167,41 @@ class PlayerStatusService {
     }
   }
 
+  Future<bool> checkIfWordAlreadyFound(
+      String playerId, int level, String word) async {
+    kLog.i('Checking if word already found for $playerId');
+
+    final levelId = await getLevelId(level);
+
+    if (levelId == null) {
+      kLog.e('Level id is null');
+      return false;
+    }
+    await checkIfLevelProgressExists(playerId, level);
+
+    try {
+      final data = await Supabase.instance.client
+          .from('player_level_status')
+          .select('found_words')
+          .eq('player_id', playerId)
+          .eq('level_id', levelId);
+
+      kLog.wtf(data);
+      if (data.isNotEmpty) {
+        final foundWords = data[0]['found_words'] as List<dynamic>;
+        return foundWords.contains(word);
+      }
+      return false;
+    } on PostgrestException catch (e) {
+      kLog.e(e.message);
+      if (e.message.contains('does not exist')) {
+        await initLevelProgress(playerId, level);
+        return false;
+      }
+      return false;
+    }
+  }
+
   /// Adds a word to the level progress for the player
   Future<void> addWordInLevelProgress(
       String playerId, int level, String word) async {
@@ -172,6 +211,11 @@ class PlayerStatusService {
 
     if (levelId == null) {
       kLog.e('Level id is null');
+      return;
+    }
+
+    if (await checkIfWordAlreadyFound(playerId, level, word)) {
+      kLog.i('Word already found');
       return;
     }
     await checkIfLevelProgressExists(playerId, level);
