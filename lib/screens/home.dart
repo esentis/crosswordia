@@ -1,6 +1,6 @@
-import 'package:crosswordia/board/crossword_board.dart';
 import 'package:crosswordia/levels/level_screen.dart';
 import 'package:crosswordia/providers/auth_provider.dart';
+import 'package:crosswordia/screens/board/crossword_board.dart';
 import 'package:crosswordia/screens/login.dart';
 import 'package:crosswordia/services/grouped_words_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
@@ -86,10 +86,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
+                      PlayerStatusService.instance
+                          .getLevelsFoundWords(status.session!.user.id, 1);
+                    },
+                    child: const Text('Get level found words'),
+                  ),
+                  TextButton(
+                    onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CrossWordBoard(),
+                            builder: (context) => const CrosswordBoard(),
                           ));
                     },
                     child: const Text('Go to board'),

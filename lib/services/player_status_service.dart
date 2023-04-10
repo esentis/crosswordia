@@ -111,7 +111,7 @@ class PlayerStatusService {
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
+      kLog.w('Level id is null');
       return;
     }
     try {
@@ -174,7 +174,7 @@ class PlayerStatusService {
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
+      kLog.w('Level id is null');
       return false;
     }
     await checkIfLevelProgressExists(playerId, level);
@@ -215,20 +215,21 @@ class PlayerStatusService {
     }
 
     if (await checkIfWordAlreadyFound(playerId, level, word)) {
-      kLog.i('Word already found');
+      kLog.w('Word already found');
       return;
     }
     await checkIfLevelProgressExists(playerId, level);
 
     try {
-      final data =
-          await Supabase.instance.client.rpc('updatewordlevel', params: {
+      await Supabase.instance.client.rpc('updatewordlevel', params: {
         'player': playerId,
         'word': word,
         'level': levelId,
       });
 
-      kLog.wtf(data);
+      await incrementTotalWordsFound(playerId, 1);
+
+      kLog.wtf('Successfully added word in level progress');
     } on PostgrestException catch (e) {
       kLog.e(e.message);
       if (e.message.contains('does not exist')) {
@@ -280,6 +281,37 @@ class PlayerStatusService {
     }
     return null;
   }
+
+  Future<Set<String>?> getLevelsFoundWords(String playerId, int level) async {
+    kLog.i('Getting found words for $playerId');
+    final levelId = await getLevelId(level);
+
+    if (levelId == null) {
+      kLog.e('Level id is null');
+      return null;
+    }
+    try {
+      final data = await Supabase.instance.client
+          .from('player_level_status')
+          .select('found_words')
+          .eq('player_id', playerId)
+          .eq('level_id', levelId);
+
+      kLog.wtf(data);
+      if (data.isNotEmpty) {
+        final foundWords = data[0]['found_words'] as List<dynamic>;
+        return foundWords.cast<String>().toSet();
+      }
+      return null;
+    } on PostgrestException catch (e) {
+      kLog.e(e.message);
+      if (e.message.contains('does not exist')) {
+        await initLevelProgress(playerId, level);
+        return null;
+      }
+      return null;
+    }
+  }
 }
 
 class PlayerStatus {
@@ -287,13 +319,11 @@ class PlayerStatus {
   final int totalWordsFound;
   final int coins;
   final int currentLevel;
-  final List<Map<String, dynamic>> levelsProgress;
   PlayerStatus({
     required this.playerId,
     required this.totalWordsFound,
     required this.coins,
     required this.currentLevel,
-    required this.levelsProgress,
   });
 
   factory PlayerStatus.fromJson(Map<String, dynamic> json) {
@@ -302,7 +332,6 @@ class PlayerStatus {
       totalWordsFound: json['total_words_found'],
       coins: json['coins'],
       currentLevel: json['current_level'],
-      levelsProgress: json['levels_progress'] ?? [],
     );
   }
 
@@ -312,7 +341,6 @@ class PlayerStatus {
       totalWordsFound: 0,
       coins: 500,
       currentLevel: 1,
-      levelsProgress: [],
     );
   }
 }
