@@ -1,9 +1,9 @@
-import 'package:crosswordia/board/helpers/horizontal_check.dart';
-import 'package:crosswordia/board/helpers/vertical_check.dart';
-import 'package:crosswordia/board/letter_connector.dart';
-import 'package:crosswordia/board/widgets/blur_container.dart';
 import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
+import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
+import 'package:crosswordia/screens/board/letter_connector.dart';
+import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:string_extensions/string_extensions.dart';
@@ -15,16 +15,16 @@ import 'package:string_extensions/string_extensions.dart';
 //   print(res);
 // }
 
-class CrossWordBoard extends StatefulWidget {
-  const CrossWordBoard({
+class CrosswordBoard extends StatefulWidget {
+  const CrosswordBoard({
     super.key,
   });
 
   @override
-  State<CrossWordBoard> createState() => _CrossWordBoardState();
+  State<CrosswordBoard> createState() => _CrosswordBoardState();
 }
 
-class _CrossWordBoardState extends State<CrossWordBoard> {
+class _CrosswordBoardState extends State<CrosswordBoard> {
   List<List<String>> board = [];
   Set<String> placedWords = {};
 
