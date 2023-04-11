@@ -90,23 +90,12 @@ Checking at $location
     String bottomRightLocationToCheck =
         '${rowInt + 1}.${horizontalColIterator + 1}';
 
-    // if (word == 'ΦΑΒΑ' &&
-    //     actualHorizontalStartingLocationIfAvailable == '9.4')
-    //   kLog.wtf(
-    //     'Letter $letter position ${i + 1}\nActual horizontal start $actualHorizontalStartingLocationIfAvailable\nDistance from left $distanceFromLeftOfLetter\nDistsance from right $distanceFromRightOfLetter\nTop location to check $topLocationToCheck\nTop left location to check $topLeftLocationToCheck\nTop right location to check $topRightLocationToCheck\nBottom location to check $bottomLocationToCheck\nBottom left location to check $bottomLeftLocationToCheck\nBottom right location to check $bottomRightLocationToCheck\n',
-    //   );
-
     String beforeStartWordLetterLocation =
         '$rowInt.${colInt - distanceFromLeftOfLetter - 1}';
 
     String afterEndWordLetterLocation =
         '$rowInt.${colInt - distanceFromLeftOfLetter + word.length}';
-    // if (word == 'ΛΑΒΕ')
-    //   kLog.wtf(
-    //       '$letter  before start loc $beforeStartWordLetterLocation aftet start loc $afterEndWordLetterLocation');
-    // log.wtf(
-    //     '$locationToCheck horizontal col $actualHorizontalCol');
-    // // Checking if there are any conflicts, in the main location, or to the top or bottom
+
     final bool hasConflicts = letterPositions.any(
       (key, value) {
         final letterOfCheckingLocationMap = letterPositions

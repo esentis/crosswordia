@@ -1,10 +1,31 @@
 import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/services/player_status_service.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthProvider extends ChangeNotifier {
+final authStateProvider =
+    StateNotifierProvider<AppAuthStateProvider, AppAuthState>(
+        (ref) => AppAuthStateProvider());
+
+class AppAuthState {
+  final bool isAuthenticated;
+  final Session? session;
+  AppAuthState({
+    required this.isAuthenticated,
+    this.session,
+  });
+}
+
+class AppAuthStateProvider extends StateNotifier<AppAuthState> {
+  AppAuthStateProvider() : super(AppAuthState(isAuthenticated: false)) {
+    _init();
+  }
+
   final supabase = Supabase.instance.client;
+
+  void _init() {
+    state = AppAuthState(isAuthenticated: supabase.auth.currentUser != null);
+  }
 
   bool get isAuthenticated {
     return supabase.auth.currentUser != null;
@@ -19,7 +40,10 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.session != null) {
         kLog.i(response.session?.toJson());
-        notifyListeners();
+        state = AppAuthState(
+          isAuthenticated: true,
+          session: response.session,
+        );
       } else {
         kLog.e(response);
       }
@@ -40,7 +64,10 @@ class AuthProvider extends ChangeNotifier {
         PlayerStatusService.instance.createPlayerStatus(
           PlayerStatus.fromNewUser(response.session!.user),
         );
-        notifyListeners();
+        state = AppAuthState(
+          isAuthenticated: true,
+          session: response.session,
+        );
       } else {
         kLog.e(response);
       }
@@ -58,7 +85,10 @@ class AuthProvider extends ChangeNotifier {
       kLog.e(e);
     }
 
-    notifyListeners();
+    state = AppAuthState(
+      isAuthenticated: false,
+      session: null,
+    );
   }
 
   User? get user {

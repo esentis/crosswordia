@@ -1,14 +1,14 @@
-import 'package:crosswordia/providers/auth_provider.dart';
+import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/signup.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final authStatus = context.read<AuthProvider>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authProvider = ref.read(authStateProvider.notifier);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () {
-                  authStatus.signIn('esentako8@yahoo.gr', '123456');
+                  authProvider.signIn('esentako8@yahoo.gr', '123456');
                 },
                 child: Text('Please login'),
               ),
