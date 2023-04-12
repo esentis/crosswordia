@@ -9,10 +9,8 @@ final authStateProvider =
 
 class AppAuthState {
   final bool isAuthenticated;
-  final Session? session;
   AppAuthState({
     required this.isAuthenticated,
-    this.session,
   });
 }
 
@@ -42,7 +40,6 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         kLog.i(response.session?.toJson());
         state = AppAuthState(
           isAuthenticated: true,
-          session: response.session,
         );
       } else {
         kLog.e(response);
@@ -66,7 +63,6 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         );
         state = AppAuthState(
           isAuthenticated: true,
-          session: response.session,
         );
       } else {
         kLog.e(response);
@@ -87,7 +83,6 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
 
     state = AppAuthState(
       isAuthenticated: false,
-      session: null,
     );
   }
 

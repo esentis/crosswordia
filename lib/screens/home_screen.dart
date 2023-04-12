@@ -25,28 +25,28 @@ class HomeScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       PlayerStatusService.instance
-                          .getPlayerStatus(authState.session!.user.id);
+                          .getPlayerStatus(authProvider.session!.user.id);
                     },
                     child: const Text('Get status'),
                   ),
                   TextButton(
                     onPressed: () {
-                      PlayerStatusService.instance
-                          .incrementTotalCoins(authState.session!.user.id, 100);
+                      PlayerStatusService.instance.incrementTotalCoins(
+                          authProvider.session!.user.id, 100);
                     },
                     child: const Text('Add coins'),
                   ),
                   TextButton(
                     onPressed: () {
                       PlayerStatusService.instance.incrementTotalWordsFound(
-                          authState.session!.user.id, 25);
+                          authProvider.session!.user.id, 25);
                     },
                     child: const Text('Increment total words'),
                   ),
                   TextButton(
                     onPressed: () {
                       PlayerStatusService.instance
-                          .incrementLevel(authState.session!.user.id);
+                          .incrementLevel(authProvider.session!.user.id);
                     },
                     child: const Text('Increment level'),
                   ),
@@ -59,7 +59,7 @@ class HomeScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       PlayerStatusService.instance.updateLevelProgress(
-                        authState.session!.user.id,
+                        authProvider.session!.user.id,
                         1,
                         ['test', 'hello'],
                       );
@@ -69,7 +69,7 @@ class HomeScreen extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       PlayerStatusService.instance.addWordInLevelProgress(
-                          authState.session!.user.id, 1, 'esentis!!');
+                          authProvider.session!.user.id, 1, 'esentis!!');
                     },
                     child: const Text('Add a word to level'),
                   ),
@@ -85,8 +85,8 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      PlayerStatusService.instance
-                          .getLevelsFoundWords(authState.session!.user.id, 1);
+                      PlayerStatusService.instance.getLevelsFoundWords(
+                          authProvider.session!.user.id, 1);
                     },
                     child: const Text('Get level found words'),
                   ),
