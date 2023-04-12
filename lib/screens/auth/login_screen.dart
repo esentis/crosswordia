@@ -1,5 +1,5 @@
 import 'package:crosswordia/providers/auth_state_provider.dart';
-import 'package:crosswordia/screens/signup.dart';
+import 'package:crosswordia/screens/auth/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

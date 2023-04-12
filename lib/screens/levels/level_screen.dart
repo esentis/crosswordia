@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:crosswordia/levels/level_painter.dart';
+import 'package:crosswordia/screens/levels/widgets/level_painter.dart';
 import 'package:flutter/material.dart';
 
 class LevelScreen extends StatefulWidget {

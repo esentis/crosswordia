@@ -1,7 +1,7 @@
-import 'package:crosswordia/levels/level_screen.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
-import 'package:crosswordia/screens/board/crossword_board.dart';
-import 'package:crosswordia/screens/login.dart';
+import 'package:crosswordia/screens/auth/login_screen.dart';
+import 'package:crosswordia/screens/board/crossword_board_screen.dart';
+import 'package:crosswordia/screens/levels/level_screen.dart';
 import 'package:crosswordia/services/grouped_words_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +95,7 @@ class HomeScreen extends ConsumerWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CrosswordBoard(),
+                            builder: (context) => const CrosswordBoardScreen(),
                           ));
                     },
                     child: const Text('Go to board'),
