@@ -1445,14 +1445,14 @@ const Map<String, dynamic> words = {
   ]
 };
 
-class GroupedWordsService {
-  static final GroupedWordsService _instance = GroupedWordsService._();
+class LevelsService {
+  static final LevelsService _instance = LevelsService._();
 
-  GroupedWordsService._();
+  LevelsService._();
 
-  static GroupedWordsService get instance => _instance;
+  static LevelsService get instance => _instance;
 
-  Future<List<GroupedWords>> getGroupedWords() async {
+  Future<List<Level>> getGroupedWords() async {
     try {
       final data = await Supabase.instance.client
           .from('grouped_words')
@@ -1461,7 +1461,7 @@ class GroupedWordsService {
 
       kLog.wtf(data);
       if (data.isNotEmpty) {
-        return data.map((e) => GroupedWords.fromJson(e)).toList();
+        return data.map((e) => Level.fromJson(e)).toList();
       }
       return [];
     } catch (e) {
@@ -1470,9 +1470,9 @@ class GroupedWordsService {
     }
   }
 
-  Future<void> addGroupedWords(GroupedWords groupedWords) async {
+  Future<void> addGroupedWords(Level groupedWords) async {
     try {
-      await Supabase.instance.client.from('grouped_words').insert({
+      await Supabase.instance.client.from('levels').insert({
         'words': groupedWords.words,
         'letters': groupedWords.letters,
         'level': groupedWords.level,
@@ -1491,14 +1491,13 @@ class GroupedWordsService {
           (a, b) => a.length.compareTo(b.length),
         );
 
-      Map<String, dynamic> sortedMap = Map<String, dynamic>.fromIterable(
-          sortedWords,
-          key: (key) => key,
-          value: (key) => words[key]);
+      Map<String, dynamic> sortedMap = {
+        for (var key in sortedWords) key: words[key]
+      };
 
       sortedMap.forEach((key, value) async {
         kLog.wtf('Add $key');
-        await Supabase.instance.client.from('grouped_words').insert({
+        await Supabase.instance.client.from('levels').insert({
           'words': value,
           'letters': key.split(''),
           'level': level++,
@@ -1510,22 +1509,22 @@ class GroupedWordsService {
   }
 }
 
-class GroupedWords {
+class Level {
   final int id;
   final int level;
 
   final List<String> words;
   final List<String> letters;
 
-  GroupedWords({
+  Level({
     required this.id,
     required this.level,
     required this.words,
     required this.letters,
   });
 
-  factory GroupedWords.fromJson(Map<String, dynamic> json) {
-    return GroupedWords(
+  factory Level.fromJson(Map<String, dynamic> json) {
+    return Level(
       id: json['id'] as int,
       level: json['level'] as int,
       words: (json['words'] as List<dynamic>).map((e) => e as String).toList(),

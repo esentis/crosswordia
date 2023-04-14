@@ -2,7 +2,7 @@ import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/login_screen.dart';
 import 'package:crosswordia/screens/board/crossword_board_screen.dart';
 import 'package:crosswordia/screens/levels/level_screen.dart';
-import 'package:crosswordia/services/grouped_words_service.dart';
+import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      GroupedWordsService.instance.addGroupedWordsFromMap();
+                      LevelsService.instance.addGroupedWordsFromMap();
                     },
                     child: const Text('Add grouped words in DB'),
                   ),
