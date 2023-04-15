@@ -14,7 +14,7 @@ class SignupScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signup'),
+        title: const Text('Signup'),
       ),
       body: Center(
         child: Column(
@@ -32,7 +32,7 @@ class SignupScreen extends ConsumerWidget {
                   kLog.e('Rethrown\n$e');
                 }
               },
-              child: Text('Signup'),
+              child: const Text('Signup'),
             ),
           ],
         ),

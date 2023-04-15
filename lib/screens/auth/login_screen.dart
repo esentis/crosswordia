@@ -18,7 +18,7 @@ class LoginScreen extends ConsumerWidget {
                 onPressed: () {
                   authProvider.signIn('esentako8@yahoo.gr', '123456');
                 },
-                child: Text('Please login'),
+                child: const Text('Please login'),
               ),
             ),
             Center(
@@ -30,7 +30,7 @@ class LoginScreen extends ConsumerWidget {
                     ),
                   );
                 },
-                child: Text('Create account'),
+                child: const Text('Create account'),
               ),
             ),
           ],

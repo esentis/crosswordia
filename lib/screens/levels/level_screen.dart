@@ -86,7 +86,7 @@ class _LevelScreenState extends State<LevelScreen>
     final List<LevelNode> nodes = List.generate(
       nodeCount,
       (index) => LevelNode(
-        finishedLineColor: Color(0xffF5C6EC),
+        finishedLineColor: const Color(0xffF5C6EC),
         inProgressLineColor: Colors.grey[300]!,
         shadowColor: Colors.black.withOpacity(0.4),
         isFinished: index + 1 < 4,
