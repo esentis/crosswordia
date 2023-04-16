@@ -17,9 +17,13 @@ import 'package:string_extensions/string_extensions.dart';
 
 class CrosswordBoardScreen extends StatefulWidget {
   const CrosswordBoardScreen({
+    required this.words,
+    required this.foundWords,
     super.key,
   });
 
+  final Set<String> words;
+  final Set<String> foundWords;
   @override
   State<CrosswordBoardScreen> createState() => _CrosswordBoardScreenState();
 }
@@ -109,39 +113,39 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   }
 
 // ΑΑΙΛΜΣ
-  Set<String> testWords = {
-    "σαλάμι",
-    "σάμαλι",
-    "μασάλι",
-    "σαλμί",
-    "μασιά",
-    "λάμια",
-    "λαιμά",
-    "σάλια",
-    "μάλια",
-    "σιμά",
-    "σάλι",
-    "σάλα",
-    "μιλα",
-    "άμια",
-    "μαία",
-    "αίμα",
-    "άλας",
-    "άλμα",
-    "μάσα",
-    "λίμα",
-    "λάμα",
-    "σαλα",
-    "άσμα",
-    "ίσα",
-    "άμα",
-    "μια",
-    "μις",
-    "αλί",
-    "αλά",
-    "μία",
-    "μας",
-  };
+  // Set<String> testWords = {
+  //   "σαλάμι",
+  //   "σάμαλι",
+  //   "μασάλι",
+  //   "σαλμί",
+  //   "μασιά",
+  //   "λάμια",
+  //   "λαιμά",
+  //   "σάλια",
+  //   "μάλια",
+  //   "σιμά",
+  //   "σάλι",
+  //   "σάλα",
+  //   "μιλα",
+  //   "άμια",
+  //   "μαία",
+  //   "αίμα",
+  //   "άλας",
+  //   "άλμα",
+  //   "μάσα",
+  //   "λίμα",
+  //   "λάμα",
+  //   "σαλα",
+  //   "άσμα",
+  //   "ίσα",
+  //   "άμα",
+  //   "μια",
+  //   "μις",
+  //   "αλί",
+  //   "αλά",
+  //   "μία",
+  //   "μας",
+  // };
 
   void _placeWord({
     required String row,
@@ -179,7 +183,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     }
   }
 
-  late List<String> sortedWords = testWords
+  late List<String> sortedWords = widget.words
       .map(
         (e) => e.toGreekUpperCase()!,
       )
@@ -195,7 +199,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     final joinedWord = word.join();
     kLog.wtf('$word joined word: $joinedWord');
 
-    if (testWords.any((element) => element.toGreekUpperCase() == joinedWord) &&
+    if (widget.words
+            .any((element) => element.toGreekUpperCase() == joinedWord) &&
         !foundWords.contains(joinedWord)) {
       kLog.wtf('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
@@ -220,6 +225,11 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
     final bool wordExistsOnBoard = wordFound.key != '';
 
+    // Remove any letter positions from revealedLetters positions that are in the found word
+    revealedLetterPositions.removeWhere((position) {
+      return wordFound.value.contains(position);
+    });
+
     if (wordExistsOnBoard) {
       setState(() {
         createdWord = '';
@@ -232,6 +242,25 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     }
   }
 
+  void _mapFoundWordLetterPositions() {
+    for (final word in foundWords) {
+      final MapEntry<String, List<String>> wordFound =
+          wordPositions.entries.firstWhere(
+        (element) => element.key == word,
+        orElse: () => const MapEntry(
+          '',
+          [],
+        ),
+      );
+
+      if (wordFound.key != '') {
+        foundLetterPositions.addAll(
+          Map.fromEntries([wordFound]),
+        );
+      }
+    }
+  }
+
   /// * Convert all words to uppercase and sort them based on their length in descending order.
   /// * Initialize an empty letterPositions map to store the positions of each letter in the placed words.
   /// * Place the longest word (first word in the sorted list) horizontally in the middle of the board.
@@ -241,6 +270,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   ///     * If the word can be placed, update the letterPositions map with the new word's letter positions.
   void _generatedBoard() {
     letterPositions = {};
+    foundWords = widget.foundWords;
 
     words.addAll(sortedWords);
 
@@ -388,6 +418,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     kLog.wtf(placedWords);
 
     _generateLettersForConnector();
+    _mapFoundWordLetterPositions();
   }
 
   /// Generates the letters for the connector
@@ -433,6 +464,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   void initState() {
     super.initState();
 
+    kLog.i('Found words are $foundWords');
     _generatedBoard();
   }
 
@@ -504,6 +536,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
                         return GestureDetector(
                           onTap: () {
+                            kLog.wtf(
+                                'Revealing ${letterFound.keys.first} at $currentPosition');
                             if (letterFound.isNotEmpty) {
                               setState(() {
                                 revealedLetterPositions.add(currentPosition);
@@ -552,7 +586,10 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                       : "$row|$col\n${index + 1}",
                                   style: kStyle.copyWith(
                                     color: letterFound.isNotEmpty
-                                        ? Colors.black
+                                        ? revealedLetterPositions
+                                                .contains("$row.$col")
+                                            ? Colors.black.withOpacity(0.3)
+                                            : Colors.black
                                         : Colors.transparent,
                                     fontSize: letterFound.isNotEmpty ? 20 : 10,
                                     fontWeight: FontWeight.bold,
@@ -587,7 +624,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 //   child: Text('try'),
                 // ),
                 Text(
-                  'Board Words: ${foundLetterPositions.length}/${placedWords.length}\nTotal Words: ${foundWords.length}/${testWords.length}',
+                  'Board Words: ${foundLetterPositions.length}/${placedWords.length}\nTotal Words: ${foundWords.length}/${widget.words.length}',
                   style: kStyle.copyWith(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
