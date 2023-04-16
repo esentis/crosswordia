@@ -91,12 +91,31 @@ class HomeScreen extends ConsumerWidget {
                     child: const Text('Get level found words'),
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CrosswordBoardScreen(),
-                          ));
+                    onPressed: () async {
+                      Set<String> levelWords = {};
+                      Set<String> foundWords = {};
+
+                      final Level? level =
+                          await LevelsService.instance.getLevel(1);
+                      foundWords = await PlayerStatusService.instance
+                              .getLevelsFoundWords(
+                                  authProvider.session!.user.id, 1) ??
+                          {};
+
+                      if (level != null) {
+                        levelWords = level.words;
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CrosswordBoardScreen(
+                                words: levelWords,
+                                foundWords: foundWords,
+                              ),
+                            ),
+                          );
+                        }
+                      }
                     },
                     child: const Text('Go to board'),
                   ),
