@@ -1452,10 +1452,10 @@ class LevelsService {
 
   static LevelsService get instance => _instance;
 
-  Future<List<Level>> getGroupedWords() async {
+  Future<List<Level>> getAllLevels() async {
     try {
       final data = await Supabase.instance.client
-          .from('grouped_words')
+          .from('levels')
           .select()
           .order('id', ascending: true);
 
@@ -1467,6 +1467,25 @@ class LevelsService {
     } catch (e) {
       kLog.e(e);
       return [];
+    }
+  }
+
+  Future<Level?> getLevel(int level) async {
+    try {
+      final data = await Supabase.instance.client
+          .from('levels')
+          .select()
+          .eq('level', level)
+          .single();
+
+      kLog.wtf(data);
+      if (data != null) {
+        return Level.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      kLog.e(e);
+      return null;
     }
   }
 
@@ -1513,8 +1532,8 @@ class Level {
   final int id;
   final int level;
 
-  final List<String> words;
-  final List<String> letters;
+  final Set<String> words;
+  final Set<String> letters;
 
   Level({
     required this.id,
@@ -1527,9 +1546,8 @@ class Level {
     return Level(
       id: json['id'] as int,
       level: json['level'] as int,
-      words: (json['words'] as List<dynamic>).map((e) => e as String).toList(),
-      letters:
-          (json['letters'] as List<dynamic>).map((e) => e as String).toList(),
+      words: Set<String>.from(json['words'] as List<dynamic>),
+      letters: Set<String>.from(json['letters'] as List<dynamic>),
     );
   }
 
