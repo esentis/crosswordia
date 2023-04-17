@@ -192,6 +192,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   List<String> words = [];
 
+  /// Checks if the word is in the wordPositions map
   _checkCreatedWord(List<String> word) async {
     setState(() {
       createdWord = '';
@@ -242,6 +243,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     }
   }
 
+  /// Maps the positions of each letter in the found words to the foundLetterPositions map.
   void _mapFoundWordLetterPositions() {
     for (final word in foundWords) {
       final MapEntry<String, List<String>> wordFound =
@@ -268,7 +270,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   ///     * Check if any letters of the current word are present in the placed words on the board.
   ///     * For each found intersection, calculate the available space and determine if the word can be placed horizontally or vertically.
   ///     * If the word can be placed, update the letterPositions map with the new word's letter positions.
-  void _generatedBoard() {
+  void _generateBoard() {
     letterPositions = {};
     foundWords = widget.foundWords;
 
@@ -465,7 +467,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     super.initState();
 
     kLog.i('Found words are $foundWords');
-    _generatedBoard();
+    _generateBoard();
   }
 
   @override
