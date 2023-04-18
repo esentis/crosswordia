@@ -111,6 +111,7 @@ class HomeScreen extends ConsumerWidget {
                               builder: (context) => CrosswordBoardScreen(
                                 words: levelWords,
                                 foundWords: foundWords,
+                                level: 1,
                               ),
                             ),
                           );

@@ -19,11 +19,13 @@ class CrosswordBoardScreen extends StatefulWidget {
   const CrosswordBoardScreen({
     required this.words,
     required this.foundWords,
+    required this.level,
     super.key,
   });
 
   final Set<String> words;
   final Set<String> foundWords;
+  final int level;
   @override
   State<CrosswordBoardScreen> createState() => _CrosswordBoardScreenState();
 }
@@ -499,7 +501,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 borderColor: Colors.blue,
                 child: Center(
                   child: Text(
-                    'Level 1',
+                    'Level ${widget.level}',
                     style: kStyle,
                   ),
                 ),
