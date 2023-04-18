@@ -1,7 +1,12 @@
 import 'dart:math' as math;
 
+import 'package:crosswordia/providers/auth_state_provider.dart';
+import 'package:crosswordia/screens/board/crossword_board_screen.dart';
 import 'package:crosswordia/screens/levels/widgets/level_painter.dart';
+import 'package:crosswordia/services/levels_service.dart';
+import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LevelScreen extends StatefulWidget {
   const LevelScreen({super.key});
@@ -137,41 +142,73 @@ class _LevelScreenState extends State<LevelScreen>
           Container(
             color: Colors.white.withOpacity(0.6),
           ),
-          InteractiveViewer(
-            transformationController: _transformationController,
-            scaleEnabled: true,
-            constrained: false,
-            clipBehavior: Clip.none,
-            minScale: 0.3,
-            maxScale: 2.0,
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: customPaintWidth * 1.3,
-                  maxHeight: customPaintHeight * 1.1,
-                ),
-                child: Stack(
-                  // clipBehavior: Clip.none,
-                  children: [
-                    CustomPaint(
-                      painter: LevelScreenPainter(nodes: nodes),
-                      size: Size.infinite,
-                    ),
-                    ...nodes.map((node) {
-                      return Positioned(
-                        left: node.position.dx - 40,
-                        top: node.position.dy - 40,
-                        child: LevelNodeWidget(
-                          node: node,
-                          radius: 40,
-                        ),
-                      );
-                    }).toList(),
-                  ],
+          Consumer(builder: (context, ref, child) {
+            final playerStatus = ref.read(authStateProvider.notifier);
+            return InteractiveViewer(
+              transformationController: _transformationController,
+              scaleEnabled: true,
+              constrained: false,
+              clipBehavior: Clip.none,
+              minScale: 0.3,
+              maxScale: 2.0,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: customPaintWidth * 1.3,
+                    maxHeight: customPaintHeight * 1.1,
+                  ),
+                  child: Stack(
+                    // clipBehavior: Clip.none,
+                    children: [
+                      CustomPaint(
+                        painter: LevelScreenPainter(nodes: nodes),
+                        size: Size.infinite,
+                      ),
+                      ...nodes.map((node) {
+                        return Positioned(
+                          left: node.position.dx - 40,
+                          top: node.position.dy - 40,
+                          child: LevelNodeWidget(
+                            node: node,
+                            radius: 40,
+                            onTap: () async {
+                              Set<String> levelWords = {};
+                              Set<String> foundWords = {};
+
+                              final Level? level = await LevelsService.instance
+                                  .getLevel(node.level);
+                              foundWords = await PlayerStatusService.instance
+                                      .getLevelsFoundWords(
+                                          playerStatus.session!.user.id,
+                                          node.level) ??
+                                  {};
+
+                              if (level != null) {
+                                levelWords = level.words;
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CrosswordBoardScreen(
+                                        words: levelWords,
+                                        foundWords: foundWords,
+                                        level: node.level,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
