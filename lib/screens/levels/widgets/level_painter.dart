@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:crosswordia/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
@@ -121,10 +120,13 @@ class LevelNodeWidget extends StatelessWidget {
   final LevelNode node;
   final double radius;
 
+  final VoidCallback onTap;
+
   const LevelNodeWidget({
     super.key,
     required this.node,
     required this.radius,
+    required this.onTap,
   });
 
   @override
@@ -151,9 +153,7 @@ class LevelNodeWidget extends StatelessWidget {
           ),
         Bounceable(
           scaleFactor: 0.5,
-          onTap: node.userCurrentLevel < node.level
-              ? null
-              : () => kLog.i('Tapped on node ${node.level}'),
+          onTap: node.userCurrentLevel < node.level ? null : onTap,
           child: Container(
             width: 75,
             height: 75,
