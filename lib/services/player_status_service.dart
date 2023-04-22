@@ -65,7 +65,7 @@ class PlayerStatusService {
 
   // Increments the total coins of the player
   Future<void> incrementTotalCoins(String playerId, int coins) async {
-    kLog.i('Incrementing total words found for $playerId');
+    kLog.i('Incrementing total couns for $playerId');
     try {
       final data = await Supabase.instance.client.rpc('incrementplayercoins',
           params: {'coinstoadd': coins, 'playerid': playerId});
@@ -77,12 +77,12 @@ class PlayerStatusService {
   }
 
   // Increments the total coins of the player
-  Future<void> incrementTotalWordsFound(String playerId, int wordscount) async {
+  Future<void> incrementTotalWordsFound(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
     try {
       final data = await Supabase.instance.client.rpc(
           'incrementtotalwordsfound',
-          params: {'wordscount': wordscount, 'playerid': playerId});
+          params: {'wordscount': 1, 'playerid': playerId});
 
       kLog.wtf(data);
     } catch (e) {
@@ -90,7 +90,7 @@ class PlayerStatusService {
     }
   }
 
-  // Increments the level of the player
+  /// Increments the level of the player.
   Future<void> incrementLevel(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
     try {
@@ -227,7 +227,7 @@ class PlayerStatusService {
         'level': levelId,
       });
 
-      await incrementTotalWordsFound(playerId, 1);
+      await incrementTotalWordsFound(playerId);
 
       kLog.wtf('Successfully added word in level progress');
     } on PostgrestException catch (e) {
