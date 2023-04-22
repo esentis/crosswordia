@@ -1,9 +1,12 @@
+import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/login_screen.dart';
 import 'package:crosswordia/screens/board/crossword_board_screen.dart';
+import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/screens/levels/level_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
+import 'package:crosswordia/widgets/menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,122 +17,164 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final authProvider = ref.read(authStateProvider.notifier);
-    return Scaffold(
-      body: authState.isAuthenticated
-          ? SafeArea(
-              child: Column(
-                children: [
-                  const Center(
-                    child: Text('Welcome you are logged in'),
+    return Stack(
+      children: [
+        Positioned.fill(
+            child: Image.asset(
+          'assets/bg.webp',
+          fit: BoxFit.cover,
+        )),
+        Container(
+          color: Colors.white.withOpacity(0.7),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: authState.isAuthenticated
+              ? AppBar(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  toolbarHeight: 100,
+                  title: BlurContainer(
+                    height: 80,
+                    width: 230,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Welcome you are logged in as \n${authProvider.user?.email}',
+                          textAlign: TextAlign.center,
+                          style: kStyle.copyWith(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance
-                          .getPlayerStatus(authProvider.session!.user.id);
-                    },
-                    child: const Text('Get status'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance.incrementTotalCoins(
-                          authProvider.session!.user.id, 100);
-                    },
-                    child: const Text('Add coins'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance.incrementTotalWordsFound(
-                          authProvider.session!.user.id, 25);
-                    },
-                    child: const Text('Increment total words'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance
-                          .incrementLevel(authProvider.session!.user.id);
-                    },
-                    child: const Text('Increment level'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      LevelsService.instance.addGroupedWordsFromMap();
-                    },
-                    child: const Text('Add grouped words in DB'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance.updateLevelProgress(
-                        authProvider.session!.user.id,
-                        1,
-                        ['test', 'hello'],
-                      );
-                    },
-                    child: const Text('Update levels progress'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance.addWordInLevelProgress(
-                          authProvider.session!.user.id, 1, 'esentis!!');
-                    },
-                    child: const Text('Add a word to level'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LevelScreen(),
-                          ));
-                    },
-                    child: const Text('Go to levels screen'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      PlayerStatusService.instance.getLevelsFoundWords(
-                          authProvider.session!.user.id, 1);
-                    },
-                    child: const Text('Get level found words'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      Set<String> levelWords = {};
-                      Set<String> foundWords = {};
+                )
+              : null,
+          body: authState.isAuthenticated
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(),
+                      Column(
+                        children: [
+                          MenuButton(
+                            onTap: () {
+                              PlayerStatusService.instance.getPlayerStatus(
+                                  authProvider.session!.user.id);
+                            },
+                            title: 'Get status',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () {
+                              PlayerStatusService.instance.incrementTotalCoins(
+                                  authProvider.session!.user.id, 100);
+                            },
+                            title: 'Add coins',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () {
+                              PlayerStatusService.instance
+                                  .incrementTotalWordsFound(
+                                      authProvider.session!.user.id);
+                            },
+                            title: "Increment plauer's total words found",
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () {
+                              PlayerStatusService.instance.incrementLevel(
+                                  authProvider.session!.user.id);
+                            },
+                            title: "Increment player's current level",
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () {
+                              PlayerStatusService.instance.getLevelsFoundWords(
+                                  authProvider.session!.user.id, 1);
+                            },
+                            title: "Get player's found words for level 1",
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LevelScreen(),
+                                  ));
+                            },
+                            title: 'Go to levels screen',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MenuButton(
+                            onTap: () async {
+                              Set<String> levelWords = {};
+                              Set<String> foundWords = {};
 
-                      final Level? level =
-                          await LevelsService.instance.getLevel(1);
-                      foundWords = await PlayerStatusService.instance
-                              .getLevelsFoundWords(
-                                  authProvider.session!.user.id, 1) ??
-                          {};
+                              final Level? level =
+                                  await LevelsService.instance.getLevel(1);
+                              foundWords = await PlayerStatusService.instance
+                                      .getLevelsFoundWords(
+                                          authProvider.session!.user.id, 1) ??
+                                  {};
 
-                      if (level != null) {
-                        levelWords = level.words;
-                        if (context.mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CrosswordBoardScreen(
-                                words: levelWords,
-                                foundWords: foundWords,
-                                level: 1,
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    child: const Text('Go to board'),
+                              if (level != null) {
+                                levelWords = level.words;
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CrosswordBoardScreen(
+                                        words: levelWords,
+                                        foundWords: foundWords,
+                                        level: 1,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            title: 'Go to board',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15.0),
+                        child: TextButton(
+                          onPressed: () {
+                            authProvider.signOut();
+                          },
+                          child: const Text('Logout'),
+                        ),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      authProvider.signOut();
-                    },
-                    child: const Text('Logout'),
-                  ),
-                ],
-              ),
-            )
-          : const LoginScreen(),
+                )
+              : const LoginScreen(),
+        ),
+      ],
     );
   }
 }
