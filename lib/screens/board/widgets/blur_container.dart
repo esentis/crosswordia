@@ -28,24 +28,66 @@ class BlurContainer extends StatelessWidget {
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius ?? 12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: sigmaX ?? 5, sigmaY: sigmaY ?? 5),
-        child: Container(
+    return Stack(
+      children: [
+        Container(
           height: height ?? 200,
           width: width ?? 200,
           decoration: BoxDecoration(
-            color: (color ?? Colors.pink).withOpacity(opacity ?? 0.05),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xffFFF9DE).withOpacity(0.1),
+                Color(0xffFFD3B0).withOpacity(0.3),
+              ],
+            ),
             borderRadius: BorderRadius.circular(borderRadius ?? 12),
             border: Border.all(
               color: borderColor ?? Colors.pink.withOpacity(0.1),
               width: borderWidth ?? 2,
             ),
           ),
-          child: child,
         ),
-      ),
+        Container(
+          height: height ?? 200,
+          width: width ?? 200,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xffA6D0DD).withOpacity(0.1),
+                Color(0xffFF6969).withOpacity(0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(borderRadius ?? 12),
+            // border: Border.all(
+            //   color: borderColor ?? Colors.pink.withOpacity(0.1),
+            //   width: borderWidth ?? 2,
+            // ),
+          ),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: sigmaX ?? 4, sigmaY: sigmaY ?? 3),
+            child: Container(
+              height: height ?? 200,
+              width: width ?? 200,
+              decoration: BoxDecoration(
+                color: (color ?? Colors.pink).withOpacity(opacity ?? 0.05),
+                borderRadius: BorderRadius.circular(borderRadius ?? 12),
+                // border: Border.all(
+                //   color: borderColor ?? Colors.pink.withOpacity(0.1),
+                //   width: borderWidth ?? 2,
+                // ),
+              ),
+              child: child,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
