@@ -28,7 +28,7 @@ bool canStartVertically({
   if (spaceFromTop < distanceFromTopOfLetter ||
       spaceFromBottom < distanceFromBottomtOfLetter ||
       actualVerticalRow < 1) {
-    if ((word == 'ΑΤΙ') && actualVerticalStartingLocationIfAvailable == '2.9') {
+    if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
       kLog.e('Breaking due to dinstance issues');
     }
 
@@ -37,6 +37,9 @@ bool canStartVertically({
 
   int verticalRowIterator = actualVerticalRow;
 
+  int actualStartingRowInt =
+      actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+
   bool hasActualConflicts = false;
 
   // if (word == 'ΦΑΕ') {
@@ -44,10 +47,18 @@ bool canStartVertically({
   // }
   // Iterating through the word to check if there are any conflicts
   for (var k = 0; k < word.length; k++) {
+    if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
+      kLog.wtf('Location checking is ${verticalRowIterator + k}.$col');
+    }
     // If we are at the end of the board, we break
-    if (rowInt + k > 10 ||
-        verticalRowIterator + k >
+    if (actualStartingRowInt + k > 10 ||
+        verticalRowIterator + k - 1 >
             actualVerticalEndingLocationIfAvailable.before('.').toInt()!) {
+      if (word == 'ΑΜΑ' &&
+          actualVerticalStartingLocationIfAvailable == '8.10') {
+        kLog.e(
+            'row int is $actualStartingRowInt\nverticalRowIterator is $verticalRowIterator\nk is $k\nactualVerticalEndingLocationIfAvailable is $actualVerticalEndingLocationIfAvailable');
+      }
       break;
     }
     // Main location to check
@@ -80,10 +91,10 @@ bool canStartVertically({
 
     final hasConflicts = letterPositions.any(
       (key, value) {
-        final letterOfCheckingLocationMap = letterPositions
-            .whereValue((value) => value.contains(locationToCheck), orElse: () {
-          return {};
-        });
+        final letterOfCheckingLocationMap = letterPositions.whereKey(
+          (key_) => key_ == word.charAt(k),
+          () => {},
+        );
 
         final String? checkingLocationLetter =
             letterOfCheckingLocationMap.isNotEmpty
@@ -93,28 +104,57 @@ bool canStartVertically({
         final bool isCurrentLetterPartOfTheWord =
             word.charAt(k) == checkingLocationLetter;
 
+        final bool currentLocationHasAlreadyDifferentLetter = () {
+          final lettersOfThePosition = letterPositions
+              .whereValue(
+                (value) => value.contains(locationToCheck),
+                orElse: () => {},
+              )
+              .entries;
+
+          if (lettersOfThePosition.isNotEmpty) {
+            return lettersOfThePosition.first.key != checkingLocationLetter;
+          }
+
+          return false;
+        }.call();
+
+        if (word == 'ΠΑΝΕ' &&
+            actualVerticalStartingLocationIfAvailable == '5.8') {
+          kLog.d(
+            'Letter of the position $locationToCheck ${letterPositions.whereValue(
+                  (value) => value.contains(locationToCheck),
+                ).entries.first.key}',
+          );
+          kLog.d(
+              'Has different current letter $currentLocationHasAlreadyDifferentLetter');
+        }
+
         final bool currentLocationHasConflict =
             (value.contains(locationToCheck) &&
-                locationToCheck != location &&
-                !isCurrentLetterPartOfTheWord &&
-                (locationToCheck == actualVerticalEndingLocationIfAvailable
-                    ? key != word.charAt(word.length - 1)
-                    : key != word.charAt(letterIndex)));
+                    locationToCheck != location &&
+                    !isCurrentLetterPartOfTheWord &&
+                    (locationToCheck == actualVerticalEndingLocationIfAvailable
+                        ? key != word.charAt(word.length - 1)
+                        : key != word.charAt(letterIndex))) ||
+                currentLocationHasAlreadyDifferentLetter;
 
         final bool afterEndHasConflicts =
-            value.contains(afterEndWordLetterLocation);
+            value.contains(actualVerticalAfterEndingLocationIfAvailable);
+
         final bool beforeStartHasConflicts =
             value.contains(beforeStartWordLetterLocation);
 
-        final bool leftLocationHasConflict =
-            (value.contains(leftLocationToCheck) &&
-                locationToCheck != location);
-
         final bool leftTopLocationHasConflict = (letterPositions.anyValue(
-              (v) => v.contains(leftTopLocationToCheck),
-            ) &&
-            actualVerticalStartingLocationIfAvailable.before('.')!.toInt()! <=
-                leftTopLocationToCheck.before('.')!.toInt()!);
+                  (v) => v.contains(leftTopLocationToCheck),
+                ) &&
+                actualVerticalStartingLocationIfAvailable
+                        .before('.')!
+                        .toInt()! <=
+                    leftTopLocationToCheck.before('.')!.toInt()!) &&
+            letterPositions.anyValue(
+              (v) => v.contains(leftLocationToCheck),
+            );
 
         final bool rightBottomLocationHasConflict = (letterPositions.anyValue(
               (v) => v.contains(rightBottomLocationToCheck),
@@ -125,64 +165,91 @@ bool canStartVertically({
         final bool leftBottomLocationHasConflict = (letterPositions.anyValue(
               (v) => v.contains(leftBottomLocationToCheck),
             ) &&
+            (letterPositions.anyValue(
+              (v) => v.contains(leftLocationToCheck),
+            )) &&
             letterIndex != word.length &&
             letterIndex != word.length - 1);
 
-        final bool rightLocationHasConflict =
-            (value.contains(rightLocationToCheck) &&
+        final bool leftLocationHasConflict =
+            (value.contains(leftLocationToCheck) &&
                 locationToCheck != location);
-//         if (word == 'ΑΤΙ' &&
-//             actualVerticalStartingLocationIfAvailable == '2.9') {
-//           kLog.wtf('''
-// Actual vertical row $actualVerticalRow
 
-// Letter $letter letterIndex $letterIndex
-// Current k $k
-// Iterating over letter ${word.charAt(k)}
-// word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
-// Possible start $actualVerticalStartingLocationIfAvailable
-// Possible end $actualVerticalEndingLocationIfAvailable
-// Before start $beforeStartWordLetterLocation actual $actualVerticalBeforeStartingLocationIfAvailable
-// After end $afterEndWordLetterLocation actual $actualVerticalAfterEndingLocationIfAvailable
+        final bool rightLocationHasConflict = (letterPositions.anyValue(
+                  (v) => v.contains(rightLocationToCheck),
+                ) &&
+                letterPositions.anyValue(
+                  (v) => v.contains(rightTopLocationToCheck),
+                )) ||
+            (letterPositions.anyValue(
+                  (v) => v.contains(rightLocationToCheck),
+                ) &&
+                letterPositions.anyValue(
+                  (v) => v.contains(rightBottomLocationToCheck),
+                )) ||
+            (letterPositions.anyValue(
+                      (v) => !v.contains(locationToCheck),
+                    ) &&
+                    locationToCheck ==
+                        actualVerticalEndingLocationIfAvailable) &&
+                letterPositions.anyValue(
+                  (v) => v.contains(rightLocationToCheck),
+                );
 
-// locationToCheck $locationToCheck
-// locationToCheck letter $checkingLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
-// location $location
-// Intersection location $location
-// letter positions $value
+        if (word == 'ΠΑΝΕ' &&
+            actualVerticalStartingLocationIfAvailable == '5.8') {
+          kLog.wtf('''
+Actual vertical row $actualVerticalRow
 
-// --- Conflicts ---
-// Top location $topLocationToCheck conflict
-// Bottom location $bottomLocationToCheck conflict
+Letter $letter letterIndex $letterIndex
+The letter map is $letterOfCheckingLocationMap
+Current k $k
+Current key is $letter
+Iterating over letter ${word.charAt(k)}
+word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
+Possible start $actualVerticalStartingLocationIfAvailable
+Possible end $actualVerticalEndingLocationIfAvailable
+Before start $beforeStartWordLetterLocation actual $actualVerticalBeforeStartingLocationIfAvailable
+After end $afterEndWordLetterLocation actual $actualVerticalAfterEndingLocationIfAvailable
 
-// Left location $leftLocationToCheck conflict $leftLocationHasConflict
-// Left top location $leftTopLocationToCheck conflict $leftTopLocationHasConflict
-// Left bottom location $leftBottomLocationToCheck conflict $leftBottomLocationHasConflict
+locationToCheck $locationToCheck
+locationToCheck letter $checkingLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
+location $location
+Intersection location $location
+letter positions $value
 
-// Right location $rightLocationToCheck conflict $rightLocationHasConflict
-// Right top location $rightTopLocationToCheck conflict topLeftLocationHasConflict
-// Right bottom location $rightBottomLocationToCheck conflict $rightBottomLocationHasConflict
+--- Conflicts ---
+Top location $topLocationToCheck conflict
+Bottom location $bottomLocationToCheck conflict
 
-// First condition (${((value.contains(locationToCheck) && locationToCheck != location && !isCurrentLetterPartOfTheWord))})
-// letterIndex$letterIndex != word.length${word.length} ${letterIndex != word.length}
+Left location $leftLocationToCheck conflict $leftLocationHasConflict
+Left top location $leftTopLocationToCheck conflict $leftTopLocationHasConflict
+Left bottom location $leftBottomLocationToCheck conflict $leftBottomLocationHasConflict
 
-// Before start conflict $beforeStartHasConflicts
-// After end conflict $afterEndHasConflicts
-// Current location conflict $currentLocationHasConflict
+Right location $rightLocationToCheck conflict $rightLocationHasConflict
+Right top location $rightTopLocationToCheck conflict - 
+Right bottom location $rightBottomLocationToCheck conflict $rightBottomLocationHasConflict
 
-// --- Conflicts ---
-// Space from top $spaceFromTop
-// Space from bottom $spaceFromBottom
-// Distance from top of intersection $distanceFromTopOfLetter
-// Distance from bottom $distanceFromBottomtOfLetter
+First condition (${((value.contains(locationToCheck) && locationToCheck != location && !isCurrentLetterPartOfTheWord))})
+letterIndex$letterIndex != word.length${word.length} ${letterIndex != word.length}
 
-// All letter positions:
-// $letterPositions
+Before start conflict $beforeStartHasConflicts
+After end conflict $afterEndHasConflicts
+Current location conflict $currentLocationHasConflict
 
-// Found locations
-// $foundLocations
-// ''');
-//         }
+--- Conflicts ---
+Space from top $spaceFromTop
+Space from bottom $spaceFromBottom
+Distance from top of intersection $distanceFromTopOfLetter
+Distance from bottom $distanceFromBottomtOfLetter
+
+All letter positions:
+$letterPositions
+
+Found locations
+$foundLocations
+''');
+        }
         return ((value.contains(locationToCheck) &&
                 locationToCheck != location &&
                 !isCurrentLetterPartOfTheWord) ||
@@ -201,10 +268,13 @@ bool canStartVertically({
     // log.wtf(locationToCheck);
     hasActualConflicts = hasConflicts;
     if (hasActualConflicts) {
-      if (word == 'ΤΥΡΙ') kLog.wtf('Breaking at $locationToCheck with k $k');
+      //  if (word == 'ΤΥΡΙ') kLog.wtf('Breaking at $locationToCheck with k $k');
       break;
     }
-    verticalRowIterator++;
+
+    // if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
+    //   kLog.i('ITERATOR is $verticalRowIterator');
+    // }
   }
   return !hasActualConflicts;
 }

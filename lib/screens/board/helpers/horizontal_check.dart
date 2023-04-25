@@ -123,7 +123,6 @@ Checking at $location
         final bool currentLocationHasConflict =
             (value.contains(locationToCheck) &&
                 locationToCheck != location &&
-                !isCurrentLetterPartOfTheWord &&
                 (locationToCheck == actualHorizontalEndingLocationIfAvailable
                     ? key != word.charAt(word.length - 1)
                     : key != word.charAt(letterIndex)));
@@ -133,10 +132,10 @@ Checking at $location
             ) &&
             locationToCheck != location &&
             beforeStartHasConflicts);
+
         final bool topRightLocationHasConflict = (letterPositions.anyValue(
               (v) => v.contains(topRightLocationToCheck),
             ) &&
-            locationToCheck != location &&
             (letterPositions.anyValue(
               (v) => v.contains(topLocationToCheck),
             )));
@@ -191,7 +190,7 @@ Checking at $location
                     : bottomLeftLocationHasConflict &&
                         bottomRightLocationHasConflict);
 
-        if (false && actualHorizontalStartingLocationIfAvailable == '9.5') {
+        if (false && actualHorizontalStartingLocationIfAvailable == '8.7') {
           kLog.wtf('''
 Letter $letter letterIndex $letterIndex
 Iterating over letter ${word.charAt(k)}
