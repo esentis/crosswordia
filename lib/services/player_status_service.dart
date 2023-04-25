@@ -26,8 +26,12 @@ class PlayerStatusService {
         return PlayerStatus.fromJson(data[0]);
       }
       return null;
-    } catch (e) {
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return await getPlayerStatus(playerId);
+      }
       return null;
     }
   }
@@ -42,11 +46,16 @@ class PlayerStatusService {
       }).eq('player_id', status.playerId);
 
       kLog.wtf(data);
-    } catch (e) {
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await updatePlayerStatus(status);
+      }
     }
   }
 
+  /// Creates a new player status.
   Future<void> createPlayerStatus(PlayerStatus status) async {
     kLog.i('Creating status for ${status.playerId}');
     try {
@@ -58,12 +67,16 @@ class PlayerStatusService {
       });
 
       kLog.i('Created player status for ${status.playerId}');
-    } catch (e) {
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await createPlayerStatus(status);
+      }
     }
   }
 
-  // Increments the total coins of the player
+  /// Increments the total coins of the player
   Future<void> incrementTotalCoins(String playerId, int coins) async {
     kLog.i('Incrementing total couns for $playerId');
     try {
@@ -71,8 +84,12 @@ class PlayerStatusService {
           params: {'coinstoadd': coins, 'playerid': playerId});
 
       kLog.wtf(data);
-    } catch (e) {
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await incrementTotalCoins(playerId, coins);
+      }
     }
   }
 
@@ -80,26 +97,33 @@ class PlayerStatusService {
   Future<void> incrementTotalWordsFound(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
     try {
-      final data = await Supabase.instance.client.rpc(
-          'incrementtotalwordsfound',
+      await Supabase.instance.client.rpc('incrementtotalwordsfound',
           params: {'wordscount': 1, 'playerid': playerId});
 
-      kLog.wtf(data);
-    } catch (e) {
+      kLog.wtf('Incremented total words found for $playerId');
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await incrementTotalWordsFound(playerId);
+      }
     }
   }
 
   /// Increments the level of the player.
   Future<void> incrementLevel(String playerId) async {
-    kLog.i('Incrementing total words found for $playerId');
+    kLog.i('Incrementing level for $playerId');
     try {
       final data = await Supabase.instance.client
           .rpc('incrementplayerlevel', params: {'playerid': playerId});
 
-      kLog.wtf(data);
-    } catch (e) {
+      kLog.wtf('Incremeted level for $playerId');
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await incrementLevel(playerId);
+      }
     }
   }
 
@@ -129,6 +153,10 @@ class PlayerStatusService {
       kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await checkIfLevelProgressExists(playerId, level);
       }
     }
   }
@@ -164,6 +192,10 @@ class PlayerStatusService {
         await initLevelProgress(playerId, level);
         await updateLevelProgress(playerId, level, words);
       }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await updateLevelProgress(playerId, level, words);
+      }
     }
   }
 
@@ -197,6 +229,10 @@ class PlayerStatusService {
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
         return false;
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return await checkIfWordAlreadyFound(playerId, level, word);
       }
       return false;
     }
@@ -236,6 +272,10 @@ class PlayerStatusService {
         await initLevelProgress(playerId, level);
         await updateLevelProgress(playerId, level, [word]);
       }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await addWordInLevelProgress(playerId, level, word);
+      }
     }
   }
 
@@ -259,6 +299,10 @@ class PlayerStatusService {
       kLog.wtf(data);
     } on PostgrestException catch (e) {
       kLog.e(e.message);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        await initLevelProgress(playerId, level);
+      }
     }
   }
 
@@ -275,8 +319,12 @@ class PlayerStatusService {
       if (data.isNotEmpty) {
         return data[0]['id'];
       }
-    } catch (e) {
+    } on PostgrestException catch (e) {
       kLog.e(e);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return await getLevelId(level);
+      }
       return null;
     }
     return null;
@@ -309,7 +357,29 @@ class PlayerStatusService {
         await initLevelProgress(playerId, level);
         return null;
       }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return getLevelsFoundWords(playerId, level);
+      }
       return null;
+    }
+  }
+
+  /// Gets the total number of levels
+  Future<int> getTotalLevelCounts() async {
+    kLog.i('Getting total level counts');
+    try {
+      final data = await Supabase.instance.client.from('levels').select();
+
+      kLog.wtf('Total levels are ${data.length}');
+      return data.length;
+    } on PostgrestException catch (e) {
+      kLog.e(e.message);
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return getTotalLevelCounts();
+      }
+      return 0;
     }
   }
 }
