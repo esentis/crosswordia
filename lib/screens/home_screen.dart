@@ -63,7 +63,8 @@ class HomeScreen extends ConsumerWidget {
                           MenuButton(
                             onTap: () {
                               PlayerStatusService.instance.getPlayerStatus(
-                                  authProvider.session!.user.id);
+                                authProvider.session!.user.id,
+                              );
                             },
                             title: 'Get status',
                           ),
@@ -112,12 +113,31 @@ class HomeScreen extends ConsumerWidget {
                             height: 10,
                           ),
                           MenuButton(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LevelScreen(),
-                                  ));
+                            onTap: () async {
+                              final res = await Future.wait(
+                                [
+                                  PlayerStatusService.instance
+                                      .getTotalLevelCounts(),
+                                  PlayerStatusService.instance.getPlayerStatus(
+                                    authProvider.session!.user.id,
+                                  )
+                                ],
+                              );
+                              final totalLevelCounts = res[0] as int;
+                              final status = res[1] as PlayerStatus?;
+                              if (status != null) {
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LevelScreen(
+                                        levelCount: totalLevelCounts,
+                                        playerStatus: status,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
                             },
                             title: 'Go to levels screen',
                           ),
