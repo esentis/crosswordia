@@ -9,8 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LevelScreen extends StatefulWidget {
-  const LevelScreen({super.key});
-
+  const LevelScreen({
+    required this.levelCount,
+    required this.playerStatus,
+    super.key,
+  });
+  final int levelCount;
+  final PlayerStatus playerStatus;
   @override
   State<LevelScreen> createState() => _LevelScreenState();
 }
@@ -30,8 +35,8 @@ class _LevelScreenState extends State<LevelScreen>
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    double targetX = (screenWidth / 2) - targetNode.position.dx;
-    double targetY = (screenHeight / 2) - targetNode.position.dy;
+    double targetX = (screenWidth / 6) - targetNode.position.dx;
+    double targetY = (screenHeight / 1.5) - targetNode.position.dy;
 
     // Calculate the target transformation matrix
     Matrix4 targetMatrix = Matrix4.identity()..translate(targetX, targetY);
@@ -43,7 +48,7 @@ class _LevelScreenState extends State<LevelScreen>
     ).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.fastLinearToSlowEaseIn,
+        curve: Curves.easeInOutCubicEmphasized,
       ),
     );
 
@@ -57,7 +62,7 @@ class _LevelScreenState extends State<LevelScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(milliseconds: 2000),
     );
     _animationController.addListener(() {
       _transformationController.value = _animation.value;
@@ -75,7 +80,7 @@ class _LevelScreenState extends State<LevelScreen>
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    int nodeCount = 40;
+    int nodeCount = widget.levelCount;
     double horizontalSpacingFactor =
         0.4; // Adjust this to control the horizontal spacing
     double verticalSpacingFactor =
@@ -94,9 +99,9 @@ class _LevelScreenState extends State<LevelScreen>
         finishedLineColor: const Color(0xffF5C6EC),
         inProgressLineColor: Colors.grey[300]!,
         shadowColor: Colors.black.withOpacity(0.4),
-        isFinished: index + 1 < 4,
+        isFinished: index + 1 < widget.playerStatus.currentLevel,
         level: index + 1,
-        userCurrentLevel: 4,
+        userCurrentLevel: widget.playerStatus.currentLevel,
         position: Offset(
           screenWidth / 2 +
               screenWidth *
@@ -109,7 +114,7 @@ class _LevelScreenState extends State<LevelScreen>
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      //panToNode(nodes[37]);
+      panToNode(nodes[widget.playerStatus.currentLevel]);
     });
 
     double minX = double.infinity;
