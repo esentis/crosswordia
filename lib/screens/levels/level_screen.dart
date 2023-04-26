@@ -35,7 +35,7 @@ class _LevelScreenState extends State<LevelScreen>
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    double targetX = (screenWidth / 6) - targetNode.position.dx;
+    double targetX = (screenWidth / 1.2) - targetNode.position.dx;
     double targetY = (screenHeight / 1.5) - targetNode.position.dy;
 
     // Calculate the target transformation matrix
