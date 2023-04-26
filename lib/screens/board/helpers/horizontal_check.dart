@@ -62,13 +62,21 @@ bool canStartHorizontally({
 // $distanceFromLeftOfLetter + $distanceFromLeftOfLetter > ${distanceFromLeftOfLetter + distanceFromLeftOfLetter} ${distanceFromLeftOfLetter + distanceFromLeftOfLetter > word.length}
 // $actualHorizontalCol - 1 < 0 ${actualHorizontalCol - 1 < 0}''');
 
-    if (colInt + k > 10 ||
-        distanceFromLeftOfLetter - rowInt == 0 ||
+// colInt + k > 10 || (removed from check)
+    if (distanceFromLeftOfLetter - colInt == 0 ||
         distanceFromLeftOfLetter + distanceFromRightOfLetter > word.length ||
         horizontalColIterator - 1 < 0) {
-      if (word == 'ΛΑΕ') {
-        kLog.wtf('''Current letter $letter
+      if (word == 'ΒΟΡΑ') {
+        kLog.e('''
+Current letter $letter
 Checking at $location
+Current k $k
+Horizontal col iterator $horizontalColIterator
+Row int $rowInt
+Col int $colInt
+Distance from left of letter $distanceFromLeftOfLetter
+Distance from right of letter $distanceFromRightOfLetter
+Word length ${word.length}
 ''');
       }
       hasActualConflicts = true;
@@ -170,12 +178,16 @@ Checking at $location
         final bool bottomLeftLocationHasConflict = (letterPositions.anyValue(
           (v) => v.contains(bottomLeftLocationToCheck),
         ));
-        final bool bottomRightLocationHasConflict = letterPositions.anyValue(
-          (v) => v.contains(bottomRightLocationToCheck),
-        );
 
         final bool isBottomRightOutOfReach = actualHorizontalRow <
             bottomRightLocationToCheck.after('.').toInt()!;
+
+        final bool bottomRightLocationHasConflict = letterPositions.anyValue(
+          (v) =>
+              v.contains(bottomRightLocationToCheck) &&
+              !isBottomRightOutOfReach,
+        );
+
         final bool isBottomLeftOutOfReach =
             actualHorizontalRow > bottomLeftLocationToCheck.after('.').toInt()!;
 
@@ -190,7 +202,8 @@ Checking at $location
                     : bottomLeftLocationHasConflict &&
                         bottomRightLocationHasConflict);
 
-        if (false && actualHorizontalStartingLocationIfAvailable == '8.7') {
+        if (word == 'ΒΟΡΑ' &&
+            actualHorizontalStartingLocationIfAvailable == '4.6') {
           kLog.wtf('''
 Letter $letter letterIndex $letterIndex
 Iterating over letter ${word.charAt(k)}
@@ -225,6 +238,9 @@ Before start conflict $beforeStartHasConflicts
 After end conflict $afterEndHasConflicts
 
 Current location conflict $currentLocationHasConflict
+
+Has actual conflicts ${currentLocationHasConflict || topLocationHasConflict || bottomLocationHasConflict || beforeStartHasConflicts || afterEndHasConflicts}
+
 --- Conflicts ---
 Space from left $spaceFromLeft
 Space from right $spaceFromRight

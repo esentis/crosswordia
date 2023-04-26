@@ -187,17 +187,15 @@ bool canStartVertically({
                 letterPositions.anyValue(
                   (v) => v.contains(rightBottomLocationToCheck),
                 )) ||
-            (letterPositions.anyValue(
-                      (v) => !v.contains(locationToCheck),
-                    ) &&
+            (!isCurrentLetterPartOfTheWord &&
                     locationToCheck ==
                         actualVerticalEndingLocationIfAvailable) &&
                 letterPositions.anyValue(
                   (v) => v.contains(rightLocationToCheck),
                 );
 
-        if (word == 'ΠΑΝΕ' &&
-            actualVerticalStartingLocationIfAvailable == '5.8') {
+        if (word == 'ΒΑΤ' &&
+            actualVerticalStartingLocationIfAvailable == '4.6') {
           kLog.wtf('''
 Actual vertical row $actualVerticalRow
 
@@ -271,10 +269,6 @@ $foundLocations
       //  if (word == 'ΤΥΡΙ') kLog.wtf('Breaking at $locationToCheck with k $k');
       break;
     }
-
-    // if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
-    //   kLog.i('ITERATOR is $verticalRowIterator');
-    // }
   }
   return !hasActualConflicts;
 }
