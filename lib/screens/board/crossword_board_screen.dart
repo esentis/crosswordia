@@ -424,6 +424,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                       .toInt()!,
                 );
                 break letterLoop;
+              } else {
+                // kLog.e('Cannot place word $word at $row.$col');
               }
             }
           }
