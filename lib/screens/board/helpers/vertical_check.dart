@@ -64,10 +64,6 @@ bool canStartVertically({
     // Main location to check
     String locationToCheck = '${verticalRowIterator + k}.$col';
 
-    // if (word == 'ΑΤΙ') {
-    //   kLog.wtf(
-    //       'row ${verticalRowIterator + k} checking location of tyri $locationToCheck');
-    // }
     // Locations to check to the left and right
     String beforeStartWordLetterLocation =
         '${actualVerticalRow - distanceFromTopOfLetter}.$colInt';
@@ -89,132 +85,127 @@ bool canStartVertically({
     String topLocationToCheck = '${verticalRowIterator + k - 1}.$colInt';
     String bottomLocationToCheck = '${verticalRowIterator + k + 1}.$colInt';
 
-    final hasConflicts = letterPositions.any(
-      (key, value) {
-        final letterOfCheckingLocationMap = letterPositions.whereKey(
-          (key_) => key_ == word.charAt(k),
-          () => {},
-        );
+    final hasConflicts = () {
+      // This is the letter of the location we are checking
+      // If it is empty, it means that there is no letter in the location
+      final String? checkingLetter = word.charAt(k);
 
-        final String? checkingLocationLetter =
-            letterOfCheckingLocationMap.isNotEmpty
-                ? letterOfCheckingLocationMap.keys.first
-                : null;
+      final String currentLocationLetter = letterPositions
+          .whereValue(
+            (value) => value.contains(locationToCheck),
+            orElse: () => {"": []},
+          )
+          .entries
+          .first
+          .key;
 
-        final bool isCurrentLetterPartOfTheWord =
-            word.charAt(k) == checkingLocationLetter;
+      // If there is a letter in the location and it is
+      // included in the word, we return true
+      final bool isCurrentLetterPartOfTheWord =
+          word.charAt(k) == currentLocationLetter;
 
-        final bool currentLocationHasAlreadyDifferentLetter = () {
-          final lettersOfThePosition = letterPositions
-              .whereValue(
+      if (word == 'ΠΑΝΕ' &&
+          actualVerticalStartingLocationIfAvailable == '5.8') {
+        kLog.d(
+          'Letter of the position $locationToCheck ${letterPositions.whereValue(
                 (value) => value.contains(locationToCheck),
-                orElse: () => {},
-              )
-              .entries;
+              ).entries.first.key}',
+        );
+        kLog.d('Has different current letter ${!isCurrentLetterPartOfTheWord}');
+      }
 
-          if (lettersOfThePosition.isNotEmpty) {
-            return lettersOfThePosition.first.key != checkingLocationLetter;
-          }
+      final bool currentLocationHasConflict =
+          (letterPositions.anyValue((v) => v.contains(locationToCheck)) &&
+                  locationToCheck != location) ||
+              (currentLocationLetter.isEmpty &&
+                      letterPositions.anyValue(
+                        (value) => value.contains(rightLocationToCheck),
+                      ) ||
+                  currentLocationLetter.isEmpty &&
+                      letterPositions.anyValue(
+                        (value) => value.contains(leftLocationToCheck),
+                      ));
 
-          return false;
-        }.call();
+      final bool afterEndHasConflicts = letterPositions.anyValue(
+          (v) => v.contains(actualVerticalAfterEndingLocationIfAvailable));
 
-        if (word == 'ΠΑΝΕ' &&
-            actualVerticalStartingLocationIfAvailable == '5.8') {
-          kLog.d(
-            'Letter of the position $locationToCheck ${letterPositions.whereValue(
-                  (value) => value.contains(locationToCheck),
-                ).entries.first.key}',
+      final bool beforeStartHasConflicts = letterPositions.anyValue(
+          (v) => v.contains(actualVerticalBeforeStartingLocationIfAvailable));
+
+      final bool leftTopLocationHasConflict = (letterPositions.anyValue(
+                (v) => v.contains(leftTopLocationToCheck),
+              ) &&
+              actualVerticalStartingLocationIfAvailable.before('.')!.toInt()! <=
+                  leftTopLocationToCheck.before('.')!.toInt()!) &&
+          letterPositions.anyValue(
+            (v) => v.contains(leftLocationToCheck),
           );
-          kLog.d(
-              'Has different current letter $currentLocationHasAlreadyDifferentLetter');
-        }
 
-        final bool currentLocationHasConflict =
-            (value.contains(locationToCheck) &&
-                    locationToCheck != location &&
-                    !isCurrentLetterPartOfTheWord &&
-                    (locationToCheck == actualVerticalEndingLocationIfAvailable
-                        ? key != word.charAt(word.length - 1)
-                        : key != word.charAt(letterIndex))) ||
-                currentLocationHasAlreadyDifferentLetter;
+      final bool rightLocationHasConflict = (letterPositions.anyValue(
+                (v) => v.contains(rightLocationToCheck),
+              ) &&
+              letterPositions.anyValue(
+                (v) => v.contains(rightTopLocationToCheck),
+              )) ||
+          (letterPositions.anyValue(
+                (v) => v.contains(rightLocationToCheck),
+              ) &&
+              letterPositions.anyValue(
+                (v) => v.contains(rightBottomLocationToCheck),
+              )) ||
+          (!isCurrentLetterPartOfTheWord &&
+                  locationToCheck == actualVerticalEndingLocationIfAvailable) &&
+              letterPositions.anyValue(
+                (v) => v.contains(rightLocationToCheck),
+              ) ||
+          checkingLetter == null &&
+              letterPositions.anyValue(
+                (v) => v.contains(rightLocationToCheck),
+              );
 
-        final bool afterEndHasConflicts =
-            value.contains(actualVerticalAfterEndingLocationIfAvailable);
+      final bool leftLocationHasConflict = (letterPositions.anyValue(
+                (v) => v.contains(leftLocationToCheck),
+              ) &&
+              letterPositions.anyValue(
+                (v) => v.contains(leftTopLocationToCheck),
+              )) ||
+          (letterPositions.anyValue(
+                (v) => v.contains(leftLocationToCheck),
+              ) &&
+              letterPositions.anyValue(
+                (v) => v.contains(leftBottomLocationToCheck),
+              )) ||
+          (!isCurrentLetterPartOfTheWord &&
+                  locationToCheck ==
+                      actualVerticalStartingLocationIfAvailable) &&
+              letterPositions.anyValue(
+                (v) => v.contains(leftLocationToCheck),
+              ) ||
+          checkingLetter == null &&
+              letterPositions.anyValue(
+                (v) => v.contains(leftLocationToCheck),
+              );
 
-        final bool beforeStartHasConflicts =
-            value.contains(beforeStartWordLetterLocation);
-
-        final bool leftTopLocationHasConflict = (letterPositions.anyValue(
-                  (v) => v.contains(leftTopLocationToCheck),
-                ) &&
-                actualVerticalStartingLocationIfAvailable
-                        .before('.')!
-                        .toInt()! <=
-                    leftTopLocationToCheck.before('.')!.toInt()!) &&
-            letterPositions.anyValue(
-              (v) => v.contains(leftLocationToCheck),
-            );
-
-        final bool rightBottomLocationHasConflict = (letterPositions.anyValue(
-              (v) => v.contains(rightBottomLocationToCheck),
-            ) &&
-            letterIndex != word.length &&
-            letterIndex != word.length - 1);
-
-        final bool leftBottomLocationHasConflict = (letterPositions.anyValue(
-              (v) => v.contains(leftBottomLocationToCheck),
-            ) &&
-            (letterPositions.anyValue(
-              (v) => v.contains(leftLocationToCheck),
-            )) &&
-            letterIndex != word.length &&
-            letterIndex != word.length - 1);
-
-        final bool leftLocationHasConflict =
-            (value.contains(leftLocationToCheck) &&
-                locationToCheck != location);
-
-        final bool rightLocationHasConflict = (letterPositions.anyValue(
-                  (v) => v.contains(rightLocationToCheck),
-                ) &&
-                letterPositions.anyValue(
-                  (v) => v.contains(rightTopLocationToCheck),
-                )) ||
-            (letterPositions.anyValue(
-                  (v) => v.contains(rightLocationToCheck),
-                ) &&
-                letterPositions.anyValue(
-                  (v) => v.contains(rightBottomLocationToCheck),
-                )) ||
-            (!isCurrentLetterPartOfTheWord &&
-                    locationToCheck ==
-                        actualVerticalEndingLocationIfAvailable) &&
-                letterPositions.anyValue(
-                  (v) => v.contains(rightLocationToCheck),
-                );
-
-        if (word == 'ΒΑΤ' &&
-            actualVerticalStartingLocationIfAvailable == '4.6') {
-          kLog.wtf('''
+      if (word == 'ΒΙΑ' && actualVerticalStartingLocationIfAvailable == '5.6') {
+        kLog.wtf('''
 Actual vertical row $actualVerticalRow
 
 Letter $letter letterIndex $letterIndex
-The letter map is $letterOfCheckingLocationMap
-Current k $k
-Current key is $letter
+
+k is $k
+Letter is $letter
 Iterating over letter ${word.charAt(k)}
-word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
+word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLetter}
 Possible start $actualVerticalStartingLocationIfAvailable
 Possible end $actualVerticalEndingLocationIfAvailable
 Before start $beforeStartWordLetterLocation actual $actualVerticalBeforeStartingLocationIfAvailable
 After end $afterEndWordLetterLocation actual $actualVerticalAfterEndingLocationIfAvailable
 
 locationToCheck $locationToCheck
-locationToCheck letter $checkingLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
+locationToCheck letter $currentLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
 location $location
 Intersection location $location
-letter positions $value
+
 
 --- Conflicts ---
 Top location $topLocationToCheck conflict
@@ -222,13 +213,12 @@ Bottom location $bottomLocationToCheck conflict
 
 Left location $leftLocationToCheck conflict $leftLocationHasConflict
 Left top location $leftTopLocationToCheck conflict $leftTopLocationHasConflict
-Left bottom location $leftBottomLocationToCheck conflict $leftBottomLocationHasConflict
+Left bottom location $leftBottomLocationToCheck conflict leftBottomLocationHasConflict
 
 Right location $rightLocationToCheck conflict $rightLocationHasConflict
 Right top location $rightTopLocationToCheck conflict - 
-Right bottom location $rightBottomLocationToCheck conflict $rightBottomLocationHasConflict
+Right bottom location $rightBottomLocationToCheck conflict rightBottomLocationHasConflict
 
-First condition (${((value.contains(locationToCheck) && locationToCheck != location && !isCurrentLetterPartOfTheWord))})
 letterIndex$letterIndex != word.length${word.length} ${letterIndex != word.length}
 
 Before start conflict $beforeStartHasConflicts
@@ -247,22 +237,17 @@ $letterPositions
 Found locations
 $foundLocations
 ''');
-        }
-        return ((value.contains(locationToCheck) &&
-                locationToCheck != location &&
-                !isCurrentLetterPartOfTheWord) ||
-            currentLocationHasConflict ||
-            afterEndHasConflicts ||
-            beforeStartHasConflicts ||
-            leftLocationHasConflict ||
-            leftTopLocationHasConflict ||
-            rightLocationHasConflict ||
-            rightBottomLocationHasConflict ||
-            leftBottomLocationHasConflict ||
-            (value.contains(actualVerticalBeforeStartingLocationIfAvailable) ||
-                value.contains(actualVerticalAfterEndingLocationIfAvailable)));
-      },
-    );
+      }
+      return (currentLocationHasConflict ||
+          afterEndHasConflicts ||
+          beforeStartHasConflicts ||
+          leftLocationHasConflict ||
+          leftTopLocationHasConflict ||
+          rightLocationHasConflict ||
+          beforeStartHasConflicts ||
+          afterEndHasConflicts);
+    }.call();
+
     // log.wtf(locationToCheck);
     hasActualConflicts = hasConflicts;
     if (hasActualConflicts) {
