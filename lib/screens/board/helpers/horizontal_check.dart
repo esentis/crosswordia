@@ -144,7 +144,7 @@ Word length ${word.length}
           );
 
       final bool isTopRightOutOfReach =
-          actualHorizontalRow < topRightLocationToCheck.after('.').toInt()!;
+          actualHorizontalCol < topRightLocationToCheck.after('.').toInt()!;
 
       final bool isTopLeftOutOfReach =
           actualHorizontalRow > topLeftLocationToCheck.after('.').toInt()!;
@@ -180,17 +180,12 @@ Word length ${word.length}
           actualHorizontalRow > bottomLeftLocationToCheck.after('.').toInt()!;
 
       final bool bottomLocationHasConflict = letterPositions.anyValue(
-            (v) => v.contains(bottomLeftLocationToCheck),
+            (v) => v.contains(bottomLocationToCheck),
           ) &&
-          // If the bottom right letter cant conflict with the word since it's right of the end. Thus we only check if it conflicts from bottom left
-          (isBottomRightOutOfReach
-              ? bottomLeftLocationHasConflict
-              : isBottomLeftOutOfReach
-                  ? bottomRightLocationHasConflict
-                  : bottomLeftLocationHasConflict &&
-                      bottomRightLocationHasConflict);
+          checkingLocationLetter == null;
 
-      if (false && actualHorizontalStartingLocationIfAvailable == '3.8') {
+      if (word == 'ΚΑΙ' &&
+          actualHorizontalStartingLocationIfAvailable == '7.1') {
         kLog.wtf('''
 Letter $letter letterIndex $letterIndex
 Iterating over letter ${word.charAt(k)}
