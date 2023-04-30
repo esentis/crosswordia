@@ -288,151 +288,165 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
     words.sort((a, b) => b.length.compareTo(a.length));
 
-    kLog.wtf('Aoo words sorted are $words');
+    void arrangeWords(List<String> wordsForArrangement) {
+      for (var i = 0; i < wordsForArrangement.length; i++) {
+        if (i == 0 && placedWords.isEmpty) {
+          // We calculate the approxiate middle of the board to put the first word
+          int startAfter =
+              (((10 - wordsForArrangement[i].length) / 2) + 1).ceil();
+          _placeWord(
+            row: '6',
+            col: '$startAfter',
+            word: wordsForArrangement[i],
+            isHorizontal: true,
+            startingPoint: startAfter,
+          );
+        } else {
+          final wordSplit = wordsForArrangement[i].split('');
+          final word = wordsForArrangement[i];
+          letterLoop:
+          for (int i = 0; i < wordSplit.length; i++) {
+            final foundLocations = letterPositions[wordSplit[i]];
+            final letter = wordSplit[i];
 
-    for (var i = 0; i < words.length; i++) {
-      if (i == 0) {
-        // We calculate the approxiate middle of the board to put the first word
-        int startAfter = (((10 - words[i].length) / 2) + 1).ceil();
-        _placeWord(
-          row: '6',
-          col: '$startAfter',
-          word: words[i],
-          isHorizontal: true,
-          startingPoint: startAfter,
-        );
-      } else {
-        final wordSplit = words[i].split('');
-        final word = words[i];
-        letterLoop:
-        for (int i = 0; i < wordSplit.length; i++) {
-          final foundLocations = letterPositions[wordSplit[i]];
-          final letter = wordSplit[i];
+            // If we found an intersection
+            if (foundLocations != null) {
+              for (final location in foundLocations) {
+                // The row and column of the found letter
+                final String row = location.before('.')!;
+                final String col = location.after('.')!;
 
-          // If we found an intersection
-          if (foundLocations != null) {
-            for (final location in foundLocations) {
-              // The row and column of the found letter
-              final String row = location.before('.')!;
-              final String col = location.after('.')!;
+                final int rowInt = int.parse(row);
+                final int colInt = int.parse(col);
 
-              final int rowInt = int.parse(row);
-              final int colInt = int.parse(col);
+                // Those are the spaces from the found letter to the edge of the board
+                // We use them to check if the word can be placed, ignoring if there are other words
+                final spaceFromLeft = colInt;
+                final spaceFromRight = 10 - colInt;
+                final spaceFromTop = rowInt;
+                final spaceFromBottom = 10 - rowInt;
 
-              // Those are the spaces from the found letter to the edge of the board
-              // We use them to check if the word can be placed, ignoring if there are other words
-              final spaceFromLeft = colInt;
-              final spaceFromRight = 10 - colInt;
-              final spaceFromTop = rowInt;
-              final spaceFromBottom = 10 - rowInt;
+                // Those are the distances from the found letter to the edge of the word
+                // We will use them to check if the word can be placed
+                final distanceFromLeftOfLetter = i;
+                final distanceFromRightOfLetter = wordSplit.length - i - 1;
 
-              // Those are the distances from the found letter to the edge of the word
-              // We will use them to check if the word can be placed
-              final distanceFromLeftOfLetter = i;
-              final distanceFromRightOfLetter = wordSplit.length - i - 1;
+                final dinstanceFromTopOfLetter = rowInt - i;
+                final distanceFromBottomOfLetter = wordSplit.length - i - 1;
 
-              final dinstanceFromTopOfLetter = rowInt - i;
-              final distanceFromBottomOfLetter = wordSplit.length - i - 1;
+                // This is the starting point of the word IF it can be placed
+                // horizontally, takes into consideration the distance from the found letter
+                final actualHorizontalStartingLocationIfAvailable =
+                    '$rowInt.${colInt - distanceFromLeftOfLetter}';
+                final actualHorizontalEndingLocationIfAvailable =
+                    '$rowInt.${colInt + distanceFromRightOfLetter}';
 
-              // This is the starting point of the word IF it can be placed
-              // horizontally, takes into consideration the distance from the found letter
-              final actualHorizontalStartingLocationIfAvailable =
-                  '$rowInt.${colInt - distanceFromLeftOfLetter}';
-              final actualHorizontalEndingLocationIfAvailable =
-                  '$rowInt.${colInt + distanceFromRightOfLetter}';
+                final actualVerticalStartingLocationIfAvailable =
+                    '${rowInt - distanceFromLeftOfLetter}.$colInt';
+                final actualVerticalEndingLocationIfAvailable =
+                    '${rowInt + distanceFromRightOfLetter}.$colInt';
 
-              final actualVerticalStartingLocationIfAvailable =
-                  '${rowInt - distanceFromLeftOfLetter}.$colInt';
-              final actualVerticalEndingLocationIfAvailable =
-                  '${rowInt + distanceFromRightOfLetter}.$colInt';
+                final actualVerticalBeforeStartingLocationIfAvailable =
+                    '${rowInt - distanceFromLeftOfLetter - 1}.$colInt';
 
-              final actualVerticalBeforeStartingLocationIfAvailable =
-                  '${rowInt - distanceFromLeftOfLetter - 1}.$colInt';
+                final actualVerticalAfterEndingLocationIfAvailable =
+                    '${rowInt + distanceFromRightOfLetter + 1}.$colInt';
 
-              final actualVerticalAfterEndingLocationIfAvailable =
-                  '${rowInt + distanceFromRightOfLetter + 1}.$colInt';
-
-              // Check if the word can be placed vertically
-              final bool canStartVerticallyWithThatLetter = canStartVertically(
-                actualVerticalStartingLocationIfAvailable:
-                    actualVerticalStartingLocationIfAvailable,
-                actualVerticalEndingLocationIfAvailable:
-                    actualVerticalEndingLocationIfAvailable,
-                distanceFromTopOfLetter: dinstanceFromTopOfLetter,
-                distanceFromBottomtOfLetter: distanceFromBottomOfLetter,
-                rowInt: rowInt,
-                colInt: colInt,
-                col: col,
-                actualVerticalAfterEndingLocationIfAvailable:
-                    actualVerticalAfterEndingLocationIfAvailable,
-                actualVerticalBeforeStartingLocationIfAvailable:
-                    actualVerticalBeforeStartingLocationIfAvailable,
-                location: location,
-                spaceFromBottom: spaceFromBottom,
-                spaceFromTop: spaceFromTop,
-                word: word,
-                letterPositions: letterPositions,
-                letter: letter,
-                letterIndex: i,
-                foundLocations: foundLocations,
-              );
-
-              final bool canStartHorizontallyWithThatLetter =
-                  canStartHorizontally(
-                distanceFromRightOfLetter: distanceFromRightOfLetter,
-                distanceFromLeftOfLetter: distanceFromLeftOfLetter,
-                spaceFromLeft: spaceFromLeft,
-                spaceFromRight: spaceFromRight,
-                word: word,
-                col: col,
-                location: location,
-                actualHorizontalStartingLocationIfAvailable:
-                    actualHorizontalStartingLocationIfAvailable,
-                actualHorizontalEndingLocationIfAvailable:
-                    actualHorizontalEndingLocationIfAvailable,
-                actualVerticalBeforeStartingLocationIfAvailable:
-                    actualVerticalBeforeStartingLocationIfAvailable,
-                actualVerticalAfterEndingLocationIfAvailable:
-                    actualVerticalAfterEndingLocationIfAvailable,
-                rowInt: rowInt,
-                colInt: colInt,
-                letterIndex: i,
-                letterPositions: letterPositions,
-                letter: letter,
-                foundLocations: foundLocations,
-              );
-
-              if (canStartVerticallyWithThatLetter) {
-                _placeWord(
-                  row: row,
+                // Check if the word can be placed vertically
+                final bool canStartVerticallyWithThatLetter =
+                    canStartVertically(
+                  actualVerticalStartingLocationIfAvailable:
+                      actualVerticalStartingLocationIfAvailable,
+                  actualVerticalEndingLocationIfAvailable:
+                      actualVerticalEndingLocationIfAvailable,
+                  distanceFromTopOfLetter: dinstanceFromTopOfLetter,
+                  distanceFromBottomtOfLetter: distanceFromBottomOfLetter,
+                  rowInt: rowInt,
+                  colInt: colInt,
                   col: col,
+                  actualVerticalAfterEndingLocationIfAvailable:
+                      actualVerticalAfterEndingLocationIfAvailable,
+                  actualVerticalBeforeStartingLocationIfAvailable:
+                      actualVerticalBeforeStartingLocationIfAvailable,
+                  location: location,
+                  spaceFromBottom: spaceFromBottom,
+                  spaceFromTop: spaceFromTop,
                   word: word,
-                  isHorizontal: false,
-                  startingPoint: actualVerticalStartingLocationIfAvailable
-                      .before('.')!
-                      .toInt()!,
+                  letterPositions: letterPositions,
+                  letter: letter,
+                  letterIndex: i,
+                  foundLocations: foundLocations,
                 );
-                break letterLoop;
-              } else if (canStartHorizontallyWithThatLetter) {
-                _placeWord(
-                  row: row,
+
+                final bool canStartHorizontallyWithThatLetter =
+                    canStartHorizontally(
+                  distanceFromRightOfLetter: distanceFromRightOfLetter,
+                  distanceFromLeftOfLetter: distanceFromLeftOfLetter,
+                  spaceFromLeft: spaceFromLeft,
+                  spaceFromRight: spaceFromRight,
+                  word: word,
                   col: col,
-                  word: word,
-                  isHorizontal: true,
-                  startingPoint: actualHorizontalStartingLocationIfAvailable
-                      .after('.')!
-                      .toInt()!,
+                  location: location,
+                  actualHorizontalStartingLocationIfAvailable:
+                      actualHorizontalStartingLocationIfAvailable,
+                  actualHorizontalEndingLocationIfAvailable:
+                      actualHorizontalEndingLocationIfAvailable,
+                  actualVerticalBeforeStartingLocationIfAvailable:
+                      actualVerticalBeforeStartingLocationIfAvailable,
+                  actualVerticalAfterEndingLocationIfAvailable:
+                      actualVerticalAfterEndingLocationIfAvailable,
+                  rowInt: rowInt,
+                  colInt: colInt,
+                  letterIndex: i,
+                  letterPositions: letterPositions,
+                  letter: letter,
+                  foundLocations: foundLocations,
                 );
-                break letterLoop;
-              } else {
-                // kLog.e('Cannot place word $word at $row.$col');
+
+                if (canStartVerticallyWithThatLetter) {
+                  _placeWord(
+                    row: row,
+                    col: col,
+                    word: word,
+                    isHorizontal: false,
+                    startingPoint: actualVerticalStartingLocationIfAvailable
+                        .before('.')!
+                        .toInt()!,
+                  );
+                  break letterLoop;
+                } else if (canStartHorizontallyWithThatLetter) {
+                  _placeWord(
+                    row: row,
+                    col: col,
+                    word: word,
+                    isHorizontal: true,
+                    startingPoint: actualHorizontalStartingLocationIfAvailable
+                        .after('.')!
+                        .toInt()!,
+                  );
+                  break letterLoop;
+                } else {
+                  // kLog.e('Cannot place word $word at $row.$col');
+                }
               }
             }
           }
         }
       }
     }
-    kLog.wtf('placed words $placedWords\nall words $words');
+
+    // Initial placement of the words
+    arrangeWords(words);
+
+    List<String> notPlacedWords =
+        words.where((w) => !placedWords.contains(w)).toList();
+
+    if (notPlacedWords.isNotEmpty) {
+      kLog.d('Trying to add not placed words $notPlacedWords');
+      arrangeWords(notPlacedWords);
+    }
+    kLog.wtf(
+        'all words $words\nplaced words $placedWords\nnot placed words $notPlacedWords');
 
     _generateLettersForConnector();
     _mapFoundWordLetterPositions();
