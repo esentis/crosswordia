@@ -85,6 +85,19 @@ bool canStartVertically({
     String topLocationToCheck = '${verticalRowIterator + k - 1}.$colInt';
     String bottomLocationToCheck = '${verticalRowIterator + k + 1}.$colInt';
 
+    bool isRightBottomOutOfReach =
+        rightBottomLocationToCheck.before('.')!.toInt()! >
+            actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
+    bool isLeftBottomOutOfReach =
+        leftBottomLocationToCheck.before('.')!.toInt()! >
+            actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
+
+    bool isRightTopOutOfReach = rightTopLocationToCheck.before('.')!.toInt()! <
+        actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+
+    bool isLeftTopOutOfReach = leftTopLocationToCheck.before('.')!.toInt()! <
+        actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+
     final hasConflicts = () {
       // This is the letter of the location we are checking
       // If it is empty, it means that there is no letter in the location
@@ -103,16 +116,6 @@ bool canStartVertically({
       // included in the word, we return true
       final bool isCurrentLetterPartOfTheWord =
           word.charAt(k) == currentLocationLetter;
-
-      if (word == 'ΠΑΝΕ' &&
-          actualVerticalStartingLocationIfAvailable == '5.8') {
-        kLog.d(
-          'Letter of the position $locationToCheck ${letterPositions.whereValue(
-                (value) => value.contains(locationToCheck),
-              ).entries.first.key}',
-        );
-        kLog.d('Has different current letter ${!isCurrentLetterPartOfTheWord}');
-      }
 
       final bool currentLocationHasConflict =
           (letterPositions.anyValue((v) => v.contains(locationToCheck)) &&
@@ -146,13 +149,15 @@ bool canStartVertically({
               ) &&
               letterPositions.anyValue(
                 (v) => v.contains(rightTopLocationToCheck),
-              )) ||
+              ) &&
+              !isRightTopOutOfReach) ||
           (letterPositions.anyValue(
                 (v) => v.contains(rightLocationToCheck),
               ) &&
               letterPositions.anyValue(
                 (v) => v.contains(rightBottomLocationToCheck),
-              )) ||
+              ) &&
+              !isRightBottomOutOfReach) ||
           (!isCurrentLetterPartOfTheWord &&
                   locationToCheck == actualVerticalEndingLocationIfAvailable) &&
               letterPositions.anyValue(
@@ -168,13 +173,15 @@ bool canStartVertically({
               ) &&
               letterPositions.anyValue(
                 (v) => v.contains(leftTopLocationToCheck),
-              )) ||
+              ) &&
+              !isLeftTopOutOfReach) ||
           (letterPositions.anyValue(
                 (v) => v.contains(leftLocationToCheck),
               ) &&
               letterPositions.anyValue(
                 (v) => v.contains(leftBottomLocationToCheck),
-              )) ||
+              ) &&
+              !isLeftBottomOutOfReach) ||
           (!isCurrentLetterPartOfTheWord &&
                   locationToCheck ==
                       actualVerticalStartingLocationIfAvailable) &&
@@ -186,11 +193,42 @@ bool canStartVertically({
                 (v) => v.contains(leftLocationToCheck),
               );
 
-      if (word == 'ΒΙΑ' && actualVerticalStartingLocationIfAvailable == '5.6') {
+      if (word == 'ΖΕΑ' && actualVerticalStartingLocationIfAvailable == '1.8') {
         kLog.wtf('''
 Actual vertical row $actualVerticalRow
 
 Letter $letter letterIndex $letterIndex
+
+First check ${(letterPositions.anyValue(
+                  (v) => v.contains(leftLocationToCheck),
+                ) && letterPositions.anyValue(
+                  (v) => v.contains(leftTopLocationToCheck),
+                ))}
+
+Second check ${(letterPositions.anyValue(
+                  (v) => v.contains(leftLocationToCheck),
+                ) && letterPositions.anyValue(
+                  (v) => v.contains(leftBottomLocationToCheck),
+                ))}
+              
+What is this ${(!isCurrentLetterPartOfTheWord && locationToCheck == actualVerticalStartingLocationIfAvailable) && letterPositions.anyValue(
+                  (v) => v.contains(leftLocationToCheck),
+                )}
+
+Or this ${checkingLetter == null && letterPositions.anyValue(
+                  (v) => v.contains(leftLocationToCheck),
+                )}
+              
+Current letter part of the word $isCurrentLetterPartOfTheWord
+Checking letter is null ${checkingLetter == null}
+
+Left location has character ${letterPositions.anyValue((v) => v.contains(leftLocationToCheck))}
+Left top location has character ${letterPositions.anyValue((v) => v.contains(leftTopLocationToCheck))}
+Left bottom location has character ${letterPositions.anyValue((v) => v.contains(leftBottomLocationToCheck))}
+
+Right location has character ${letterPositions.anyValue((v) => v.contains(rightLocationToCheck))}
+Right top location has character ${letterPositions.anyValue((v) => v.contains(rightTopLocationToCheck))}
+Right bottom location has character ${letterPositions.anyValue((v) => v.contains(rightBottomLocationToCheck))}
 
 k is $k
 Letter is $letter
@@ -208,6 +246,11 @@ Intersection location $location
 
 
 --- Conflicts ---
+Is right bottom ($rightBottomLocationToCheck) out of reach $isRightBottomOutOfReach
+Is left bottom ($leftBottomLocationToCheck) out of reach $isLeftBottomOutOfReach
+Is right top ($rightTopLocationToCheck) out of reach $isRightTopOutOfReach
+Is left top ($leftTopLocationToCheck) out of reach $isLeftTopOutOfReach
+
 Top location $topLocationToCheck conflict
 Bottom location $bottomLocationToCheck conflict
 

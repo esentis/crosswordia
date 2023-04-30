@@ -143,10 +143,10 @@ Word length ${word.length}
                 v.contains(topLocationToCheck) && locationToCheck != location,
           );
 
-      final bool isTopRightOutOfReach =
+      final bool isRightTopOutOfReach =
           actualHorizontalCol < topRightLocationToCheck.after('.').toInt()!;
 
-      final bool isTopLeftOutOfReach =
+      final bool isLeftTopOutOfReach =
           actualHorizontalRow > topLeftLocationToCheck.after('.').toInt()!;
 
       final bool topLocationHasConflict = ((letterPositions
@@ -155,9 +155,9 @@ Word length ${word.length}
                   !isCurrentLetterPartOfTheWord) ||
               topLocationConflictExtraCheck && locationToCheck != location) ||
           // If the top right letter cant conflict with the word since it's right of the end. Thus we only check if it conflicts from top left
-          (isTopRightOutOfReach
+          (isRightTopOutOfReach
               ? topLeftLocationHasConflict
-              : isTopLeftOutOfReach
+              : isLeftTopOutOfReach
                   ? topRightLocationHasConflict
                   : topLeftLocationHasConflict && topRightLocationHasConflict);
 
@@ -168,15 +168,15 @@ Word length ${word.length}
             (v) => v.contains(bottomLocationToCheck),
           ));
 
-      final bool isBottomRightOutOfReach =
+      final bool isRightBottomOutOfReach =
           actualHorizontalRow < bottomRightLocationToCheck.after('.').toInt()!;
 
       final bool bottomRightLocationHasConflict = letterPositions.anyValue(
         (v) =>
-            v.contains(bottomRightLocationToCheck) && !isBottomRightOutOfReach,
+            v.contains(bottomRightLocationToCheck) && !isRightBottomOutOfReach,
       );
 
-      final bool isBottomLeftOutOfReach =
+      final bool isLeftBottomOutOfReach =
           actualHorizontalRow > bottomLeftLocationToCheck.after('.').toInt()!;
 
       final bool bottomLocationHasConflict = letterPositions.anyValue(
@@ -202,10 +202,10 @@ Intersection location $location
 
 
 --- Conflicts ---
-Is bottom right out of reach $isBottomRightOutOfReach
-Is bottom left out of reach $isBottomLeftOutOfReach
-Is top right out of reach $isTopRightOutOfReach
-Is top left out of reach $isTopLeftOutOfReach
+Is bottom right out of reach $isRightBottomOutOfReach
+Is bottom left out of reach $isLeftBottomOutOfReach
+Is top right out of reach $isRightTopOutOfReach
+Is top left out of reach $isLeftTopOutOfReach
 
 Bottom location $bottomLocationToCheck conflict $bottomLocationHasConflict
 Bottom left location $bottomLeftLocationToCheck conflict $bottomLeftLocationHasConflict
