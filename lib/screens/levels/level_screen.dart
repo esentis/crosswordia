@@ -32,14 +32,15 @@ class _LevelScreenState extends State<LevelScreen>
   void panToNode(LevelNode node) async {
     LevelNode targetNode = node;
 
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    double targetX = (screenWidth / 1.2) - targetNode.position.dx;
+    // Keep the current X position
+    double currentX = _transformationController.value.getTranslation().x;
+
     double targetY = (screenHeight / 1.5) - targetNode.position.dy;
 
     // Calculate the target transformation matrix
-    Matrix4 targetMatrix = Matrix4.identity()..translate(targetX, targetY);
+    Matrix4 targetMatrix = Matrix4.identity()..translate(currentX, targetY);
 
     // Set up the animation
     _animation = Matrix4Tween(
@@ -114,7 +115,7 @@ class _LevelScreenState extends State<LevelScreen>
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      panToNode(nodes[widget.playerStatus.currentLevel]);
+      panToNode(nodes[widget.playerStatus.currentLevel - 1]);
     });
 
     double minX = double.infinity;
