@@ -31,6 +31,7 @@ class CrosswordBoardScreen extends StatefulWidget {
 }
 
 class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
+  final int boardRows = 6;
   List<List<String>> board = [];
   Set<String> placedWords = {};
 
@@ -44,20 +45,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   Map<String, Set<String>> groupedWords = {};
 
   Set<String> foundWords = {};
-
-  /// Checks if the List a is a subset of List b
-  bool isSubset(List<String> a, List<String> b) {
-    int i = 0, j = 0;
-
-    while (i < a.length && j < b.length) {
-      if (a[i] == b[j]) {
-        i++;
-      }
-      j++;
-    }
-
-    return i == a.length;
-  }
 
   final wordsToLook = words1
     ..addAll(words2)
@@ -84,7 +71,22 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     // .toList()
     ..sort((a, b) => b.length.compareTo(a.length));
 
+  /// Checks if the List a is a subset of List b
+  bool isSubset(List<String> a, List<String> b) {
+    int i = 0, j = 0;
+
+    while (i < a.length && j < b.length) {
+      if (a[i] == b[j]) {
+        i++;
+      }
+      j++;
+    }
+
+    return i == a.length;
+  }
+
   void filterWords() {
+    kLog.wtf('Started filtering words');
     Map<String, Set<String>> groupedWords = {};
 
     for (final word in wordsToLook) {
@@ -96,13 +98,14 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
       final String wordUpperAndSorted = wordSlicedAndSorted.join();
 
-      if (word.length <= 6) {
+      if (word.length <= 5) {
         groupedWords.putIfAbsent(wordUpperAndSorted, () => <String>{});
         groupedWords[wordUpperAndSorted]!.add(word);
       }
 
       if (word.length >= 3) {
-        for (final key in groupedWords.keys) {
+        for (final key in groupedWords.keys
+            .where((k) => k.length >= wordUpperAndSorted.length)) {
           final keyChars = key.split('');
           if (isSubset(wordUpperAndSorted.split(''), keyChars)) {
             groupedWords[key]!.add(word);
@@ -293,7 +296,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         if (i == 0 && placedWords.isEmpty) {
           // We calculate the approxiate middle of the board to put the first word
           int startAfter =
-              (((10 - wordsForArrangement[i].length) / 2) + 1).ceil();
+              (((boardRows - wordsForArrangement[i].length) / 2) + 1).ceil();
           _placeWord(
             row: '6',
             col: '$startAfter',
@@ -322,9 +325,9 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 // Those are the spaces from the found letter to the edge of the board
                 // We use them to check if the word can be placed, ignoring if there are other words
                 final spaceFromLeft = colInt;
-                final spaceFromRight = 10 - colInt;
+                final spaceFromRight = boardRows - colInt;
                 final spaceFromTop = rowInt;
-                final spaceFromBottom = 10 - rowInt;
+                final spaceFromBottom = boardRows - rowInt;
 
                 // Those are the distances from the found letter to the edge of the word
                 // We will use them to check if the word can be placed
@@ -550,14 +553,13 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       key: ValueKey(foundLetterPositions.hashCode),
                       padding: const EdgeInsets.all(10),
-                      itemCount: 10 * 10,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 10,
+                      itemCount: boardRows * boardRows,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: boardRows,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        int row = (index ~/ 10) + 1;
-                        int col = (index % 10) + 1;
+                        int row = (index ~/ boardRows) + 1;
+                        int col = (index % boardRows) + 1;
 
                         final currentPosition = '$row.$col';
 
