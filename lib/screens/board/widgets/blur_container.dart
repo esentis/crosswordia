@@ -38,8 +38,8 @@ class BlurContainer extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xffFFF9DE).withOpacity(0.1),
-                Color(0xffFFD3B0).withOpacity(0.3),
+                const Color(0xffFFF9DE).withOpacity(0.1),
+                const Color(0xffFFD3B0).withOpacity(0.3),
               ],
             ),
             borderRadius: BorderRadius.circular(borderRadius ?? 12),
@@ -57,8 +57,8 @@ class BlurContainer extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Color(0xffA6D0DD).withOpacity(0.1),
-                Color(0xffFF6969).withOpacity(0.1),
+                const Color(0xffA6D0DD).withOpacity(0.1),
+                const Color(0xffFF6969).withOpacity(0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(borderRadius ?? 12),
