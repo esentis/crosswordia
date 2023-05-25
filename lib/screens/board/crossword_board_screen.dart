@@ -31,7 +31,7 @@ class CrosswordBoardScreen extends StatefulWidget {
 }
 
 class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
-  final int boardRows = 6;
+  final int boardRows = 12;
   List<List<String>> board = [];
   Set<String> placedWords = {};
 
@@ -656,13 +656,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 //   },
                 //   child: Text('try'),
                 // ),
-                Text(
-                  'Board Words: ${foundLetterPositions.length}/${placedWords.length}\nTotal Words: ${foundWords.length}/${widget.words.length}',
-                  style: kStyle.copyWith(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+
                 BlurContainer(
                   color: Colors.blue,
                   borderColor: Colors.blue,
@@ -685,8 +679,9 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                     top: 10,
                   ),
                   child: BlurContainer(
-                    color: Colors.blue,
-                    borderColor: Colors.blue,
+                    color: Colors.white,
+                    borderColor: Colors.white,
+                    width: 230,
                     opacity: 0.2,
                     child: Stack(
                       children: [
@@ -694,13 +689,13 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                           Center(
                             child: LetterConnector(
                               letterStyle: LetterStyle.circle,
-                              distanceOfLetters: 70,
-                              letterSize: 23,
+                              distanceOfLetters: 73,
+                              letterSize: 20,
                               borderColor: Colors.white,
                               selectedColor: Colors.blue,
                               lineColor: Colors.blue,
                               textStyle: kStyle.copyWith(
-                                fontSize: 25,
+                                fontSize: 23,
                               ),
                               onLetterSelected: (letter) {
                                 setState(() {

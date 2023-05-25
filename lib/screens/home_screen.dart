@@ -1,4 +1,5 @@
 import 'package:crosswordia/constants.dart';
+import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/login_screen.dart';
 import 'package:crosswordia/screens/board/crossword_board_screen.dart';
@@ -178,6 +179,12 @@ class HomeScreen extends ConsumerWidget {
                           const SizedBox(
                             height: 10,
                           ),
+                          MenuButton(
+                            onTap: () {
+                              scrape();
+                            },
+                            title: 'Scrape words',
+                          )
                         ],
                       ),
                       Padding(
