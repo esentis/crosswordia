@@ -113,9 +113,9 @@ void scrape() async {
     page += 10;
   } while (true);
 
-  allWords.forEach((element) {
-    kLog.i(element.toStringShort());
-  });
+  // allWords.forEach((element) {
+  //   kLog.i(element.toStringShort());
+  // });
 }
 
 List<List<String>> findAnagrams(List<String> words) {

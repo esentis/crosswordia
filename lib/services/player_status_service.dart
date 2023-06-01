@@ -114,7 +114,7 @@ class PlayerStatusService {
   Future<void> incrementLevel(String playerId) async {
     kLog.i('Incrementing level for $playerId');
     try {
-      final data = await Supabase.instance.client
+      await Supabase.instance.client
           .rpc('incrementplayerlevel', params: {'playerid': playerId});
 
       kLog.wtf('Incremeted level for $playerId');
