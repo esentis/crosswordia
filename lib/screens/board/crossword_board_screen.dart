@@ -592,43 +592,43 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                       )
                                     : Border.all(color: Colors.transparent),
                               ),
-                              child: Center(
-                                child: Text(
-                                  letterFound.isNotEmpty
-                                      ? letterFound.keys.first.toUpperCase()
-                                      : "$row|$col\n${index + 1}",
-                                  style: TextStyle(
-                                    color: letterFound.isNotEmpty
-                                        ? Colors.black
-                                        : Colors.black,
-                                    fontSize: letterFound.isNotEmpty ? 20 : 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
                               // child: Center(
                               //   child: Text(
                               //     letterFound.isNotEmpty
-                              //         ? foundLetterPositions.values.any(
-                              //                     (element) => element
-                              //                         .contains("$row.$col")) ||
-                              //                 revealedLetterPositions
-                              //                     .contains("$row.$col")
-                              //             ? letterFound.keys.first.toUpperCase()
-                              //             : ""
+                              //         ? letterFound.keys.first.toUpperCase()
                               //         : "$row|$col\n${index + 1}",
-                              //     style: kStyle.copyWith(
+                              //     style: TextStyle(
                               //       color: letterFound.isNotEmpty
-                              //           ? revealedLetterPositions
-                              //                   .contains("$row.$col")
-                              //               ? Colors.black.withOpacity(0.3)
-                              //               : Colors.black
-                              //           : Colors.transparent,
+                              //           ? Colors.black
+                              //           : Colors.black,
                               //       fontSize: letterFound.isNotEmpty ? 20 : 10,
                               //       fontWeight: FontWeight.bold,
                               //     ),
                               //   ),
                               // ),
+                              child: Center(
+                                child: Text(
+                                  letterFound.isNotEmpty
+                                      ? foundLetterPositions.values.any(
+                                                  (element) => element
+                                                      .contains("$row.$col")) ||
+                                              revealedLetterPositions
+                                                  .contains("$row.$col")
+                                          ? letterFound.keys.first.toUpperCase()
+                                          : ""
+                                      : "$row|$col\n${index + 1}",
+                                  style: kStyle.copyWith(
+                                    color: letterFound.isNotEmpty
+                                        ? revealedLetterPositions
+                                                .contains("$row.$col")
+                                            ? Colors.black.withOpacity(0.3)
+                                            : Colors.black
+                                        : Colors.transparent,
+                                    fontSize: letterFound.isNotEmpty ? 20 : 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         );
