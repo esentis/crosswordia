@@ -43,7 +43,7 @@ void scrape() async {
           ));
         }
       });
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       kLog.e(e);
       break;
     }
