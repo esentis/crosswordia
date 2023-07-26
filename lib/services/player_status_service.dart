@@ -37,7 +37,10 @@ class PlayerStatusService {
   }
 
   Future<void> updatePlayerStatus(PlayerStatus status) async {
-    kLog.i('Updating status for ${status.playerId}');
+    kLog.i('''
+Updating status:
+${status.toJson()}
+''');
     try {
       final data = await Supabase.instance.client.from('player_status').update({
         'total_words_found': status.totalWordsFound,
@@ -412,5 +415,28 @@ class PlayerStatus {
       coins: 500,
       currentLevel: 1,
     );
+  }
+
+  PlayerStatus copyWith({
+    String? playerId,
+    int? totalWordsFound,
+    int? coins,
+    int? currentLevel,
+  }) {
+    return PlayerStatus(
+      playerId: playerId ?? this.playerId,
+      totalWordsFound: totalWordsFound ?? this.totalWordsFound,
+      coins: coins ?? this.coins,
+      currentLevel: currentLevel ?? this.currentLevel,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'player_id': playerId,
+      'total_words_found': totalWordsFound,
+      'coins': coins,
+      'current_level': currentLevel,
+    };
   }
 }
