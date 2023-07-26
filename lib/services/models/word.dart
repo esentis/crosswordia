@@ -48,7 +48,7 @@ class Word {
 extension WordExtensions on String {
   int calculateWordScore() {
     int score = 0;
-    num calculateLetterScore(String letter) {
+    num getLetterFrequency(String letter) {
       if (letter.onlyLetters!.length != 1) {
         return 0.0;
       }
@@ -56,8 +56,8 @@ extension WordExtensions on String {
     }
 
     for (var letter in split('')) {
-      num letterScore = calculateLetterScore(letter);
-      score += letterScore == 0 ? 0 : (1 / letterScore).round();
+      num letterFreq = getLetterFrequency(letter);
+      score += letterFreq == 0 ? 0 : (1 / letterFreq).round();
     }
 
     score += (length * 10);
