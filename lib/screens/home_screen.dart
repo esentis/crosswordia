@@ -2,10 +2,8 @@ import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/login_screen.dart';
-import 'package:crosswordia/screens/board/crossword_board_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/screens/levels/level_screen.dart';
-import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:crosswordia/widgets/menu_button.dart';
 import 'package:flutter/material.dart';
@@ -141,40 +139,6 @@ class HomeScreen extends ConsumerWidget {
                               }
                             },
                             title: 'Go to levels screen',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () async {
-                              Set<String> levelWords = {};
-                              Set<String> foundWords = {};
-
-                              final Level? level =
-                                  await LevelsService.instance.getLevel(1);
-                              foundWords = await PlayerStatusService.instance
-                                      .getLevelsFoundWords(
-                                          authProvider.session!.user.id, 1) ??
-                                  {};
-
-                              if (level != null) {
-                                levelWords = level.words;
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CrosswordBoardScreen(
-                                        words: levelWords,
-                                        foundWords: foundWords,
-                                        level: 1,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            title: 'Go to board',
                           ),
                           const SizedBox(
                             height: 10,
