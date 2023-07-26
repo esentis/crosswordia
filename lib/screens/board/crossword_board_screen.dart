@@ -4,6 +4,7 @@ import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/screens/board/widgets/letter_connector.dart';
+import 'package:crosswordia/services/models/word.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:string_extensions/string_extensions.dart';
@@ -20,12 +21,16 @@ class CrosswordBoardScreen extends StatefulWidget {
     required this.words,
     required this.foundWords,
     required this.level,
+    required this.playerStatus,
+    required this.userId,
     super.key,
   });
 
   final Set<String> words;
   final Set<String> foundWords;
   final int level;
+  final PlayerStatus playerStatus;
+  final String userId;
   @override
   State<CrosswordBoardScreen> createState() => _CrosswordBoardScreenState();
 }
@@ -45,6 +50,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   Map<String, Set<String>> groupedWords = {};
 
   Set<String> foundWords = {};
+
+  PlayerStatus? playerStatus;
 
   final wordsToLook = words1
     ..addAll(words2)
@@ -216,13 +223,12 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         !foundWords.contains(joinedWord)) {
       kLog.wtf('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
-      final levelId = await PlayerStatusService.instance.getLevelId(1);
+      final levelId =
+          await PlayerStatusService.instance.getLevelId(widget.level);
       final userId = PlayerStatusService.instance.getUserId();
       if (userId != null && levelId != null) {
-        PlayerStatusService.instance.addWordInLevelProgress(
-            PlayerStatusService.instance.getUserId()!,
-            widget.level,
-            joinedWord);
+        PlayerStatusService.instance
+            .addWordInLevelProgress(userId, widget.level, joinedWord);
       }
     }
     // Search for the word in the wordPositions map
@@ -497,7 +503,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   @override
   void initState() {
     super.initState();
-
+    playerStatus = widget.playerStatus;
     kLog.i('Found words are $foundWords');
     _generateBoard();
   }
@@ -531,7 +537,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 borderColor: Colors.blue,
                 child: Center(
                   child: Text(
-                    'Level ${widget.level}',
+                    'Level ${widget.level}\nScore ${playerStatus?.coins}',
                     style: kStyle,
                   ),
                 ),
@@ -568,10 +574,29 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                 (letters) => letters.contains(currentPosition));
 
                         return GestureDetector(
-                          onTap: () {
-                            kLog.wtf(
-                                'Revealing ${letterFound.keys.first} at $currentPosition');
-                            if (letterFound.isNotEmpty) {
+                          onTap: () async {
+                            num letterFreq = letterFrequencies[letterFound
+                                    .keys.first
+                                    .toGreekUpperCase()] ??
+                                0.0;
+                            final letterScore =
+                                letterFreq == 0 ? 0 : (1 / letterFreq).round();
+                            kLog.wtf('''
+
+Letter ${letterFound.keys.first}
+Position $currentPosition
+Letter frequency $letterFreq
+Letter score $letterScore
+
+''');
+                            if (letterFound.isNotEmpty &&
+                                playerStatus != null) {
+                              await PlayerStatusService.instance
+                                  .updatePlayerStatus(playerStatus!.copyWith(
+                                coins: playerStatus!.coins - letterScore,
+                              ));
+                              playerStatus = await PlayerStatusService.instance
+                                  .getPlayerStatus(widget.userId);
                               setState(() {
                                 revealedLetterPositions.add(currentPosition);
                               });

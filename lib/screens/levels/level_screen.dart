@@ -149,7 +149,7 @@ class _LevelScreenState extends State<LevelScreen>
             color: Colors.white.withOpacity(0.6),
           ),
           Consumer(builder: (context, ref, child) {
-            final playerStatus = ref.read(authStateProvider.notifier);
+            final authState = ref.read(authStateProvider.notifier);
             return InteractiveViewer(
               transformationController: _transformationController,
               scaleEnabled: true,
@@ -181,15 +181,19 @@ class _LevelScreenState extends State<LevelScreen>
                               Set<String> levelWords = {};
                               Set<String> foundWords = {};
 
-                              final Level? level = await LevelsService.instance
-                                  .getLevel(node.level);
-                              foundWords = await PlayerStatusService.instance
-                                      .getLevelsFoundWords(
-                                          playerStatus.session!.user.id,
-                                          node.level) ??
-                                  {};
-
-                              if (level != null) {
+                              final results = await Future.wait([
+                                LevelsService.instance.getLevel(node.level),
+                                PlayerStatusService.instance
+                                    .getLevelsFoundWords(
+                                        authState.session!.user.id, node.level),
+                                PlayerStatusService.instance
+                                    .getPlayerStatus(authState.session!.user.id)
+                              ]);
+                              final Level? level = results[0] as Level?;
+                              foundWords = results[1] as Set<String>? ?? {};
+                              final PlayerStatus? playerStatus =
+                                  results[2] as PlayerStatus?;
+                              if (level != null && playerStatus != null) {
                                 levelWords = level.words;
                                 if (context.mounted) {
                                   Navigator.push(
@@ -200,6 +204,8 @@ class _LevelScreenState extends State<LevelScreen>
                                         words: levelWords,
                                         foundWords: foundWords,
                                         level: node.level,
+                                        playerStatus: playerStatus,
+                                        userId: authState.session!.user.id,
                                       ),
                                     ),
                                   );
