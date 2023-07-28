@@ -574,14 +574,16 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                 (letters) => letters.contains(currentPosition));
 
                         return GestureDetector(
-                          onTap: () async {
-                            num letterFreq = letterFrequencies[letterFound
-                                    .keys.first
-                                    .toGreekUpperCase()] ??
-                                0.0;
-                            final letterScore =
-                                letterFreq == 0 ? 0 : (1 / letterFreq).round();
-                            kLog.wtf('''
+                          onTap: letterFound.keys.isNotEmpty
+                              ? () async {
+                                  num letterFreq = letterFrequencies[letterFound
+                                          .keys.first
+                                          .toGreekUpperCase()] ??
+                                      0.0;
+                                  final letterScore = letterFreq == 0
+                                      ? 0
+                                      : (1 / letterFreq).round();
+                                  kLog.wtf('''
 
 Letter ${letterFound.keys.first}
 Position $currentPosition
@@ -589,19 +591,23 @@ Letter frequency $letterFreq
 Letter score $letterScore
 
 ''');
-                            if (letterFound.isNotEmpty &&
-                                playerStatus != null) {
-                              await PlayerStatusService.instance
-                                  .updatePlayerStatus(playerStatus!.copyWith(
-                                coins: playerStatus!.coins - letterScore,
-                              ));
-                              playerStatus = await PlayerStatusService.instance
-                                  .getPlayerStatus(widget.userId);
-                              setState(() {
-                                revealedLetterPositions.add(currentPosition);
-                              });
-                            }
-                          },
+                                  if (letterFound.isNotEmpty &&
+                                      playerStatus != null) {
+                                    await PlayerStatusService.instance
+                                        .updatePlayerStatus(
+                                            playerStatus!.copyWith(
+                                      coins: playerStatus!.coins - letterScore,
+                                    ));
+                                    playerStatus = await PlayerStatusService
+                                        .instance
+                                        .getPlayerStatus(widget.userId);
+                                    setState(() {
+                                      revealedLetterPositions
+                                          .add(currentPosition);
+                                    });
+                                  }
+                                }
+                              : null,
                           child: Padding(
                             padding: const EdgeInsets.all(2),
                             child: Container(
