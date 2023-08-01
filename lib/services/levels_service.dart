@@ -616,6 +616,7 @@ const Map<String, dynamic> words = {
     "ουρά",
     "αυγό",
     "γύρα",
+    "αργό",
     "γαρ",
     "γου",
     "άου",
@@ -1428,7 +1429,7 @@ class LevelsService {
           .select()
           .order('id', ascending: true);
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data.isNotEmpty) {
         return data.map((e) => Level.fromJson(e)).toList();
       }
@@ -1447,7 +1448,7 @@ class LevelsService {
           .eq('level', level)
           .single();
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data != null) {
         return Level.fromJson(data);
       }
@@ -1484,7 +1485,7 @@ class LevelsService {
       };
 
       sortedMap.forEach((key, value) async {
-        kLog.wtf('Add $key');
+        kLog.f('Add $key');
         await Supabase.instance.client.from('levels').insert({
           'words': value,
           'letters': key.split(''),
