@@ -93,7 +93,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   }
 
   void filterWords() {
-    kLog.wtf('Started filtering words');
+    kLog.f('Started filtering words');
     Map<String, Set<String>> groupedWords = {};
 
     for (final word in wordsToLook) {
@@ -121,7 +121,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       }
     }
 
-    kLog.wtf(groupedWords);
+    kLog.f(groupedWords);
   }
 
 // ΑΑΙΛΜΣ
@@ -216,12 +216,12 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     }
 
     final joinedWord = word.join();
-    kLog.wtf('$word joined word: $joinedWord');
+    kLog.f('$word joined word: $joinedWord');
 
     if (widget.words
             .any((element) => element.toGreekUpperCase() == joinedWord) &&
         !foundWords.contains(joinedWord)) {
-      kLog.wtf('Adding $joinedWord to found words');
+      kLog.f('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
       final levelId =
           await PlayerStatusService.instance.getLevelId(widget.level);
@@ -241,7 +241,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       ),
     );
 
-    kLog.wtf('word found ? ${wordFound.key != ''}');
+    kLog.f('word found ? ${wordFound.key != ''}');
 
     final bool wordExistsOnBoard = wordFound.key != '';
 
@@ -257,7 +257,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
           Map.fromEntries([wordFound]),
         );
 
-        kLog.wtf(foundLetterPositions);
+        kLog.f(foundLetterPositions);
       });
     }
   }
@@ -454,7 +454,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       kLog.d('Trying to add not placed words $notPlacedWords');
       arrangeWords(notPlacedWords);
     }
-    kLog.wtf(
+    kLog.f(
         'all words $words\nplaced words $placedWords\nnot placed words $notPlacedWords');
 
     _generateLettersForConnector();
@@ -583,7 +583,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                   final letterScore = letterFreq == 0
                                       ? 0
                                       : (1 / letterFreq).round();
-                                  kLog.wtf('''
+                                  kLog.f('''
 
 Letter ${letterFound.keys.first}
 Position $currentPosition
@@ -669,16 +669,16 @@ Letter score $letterScore
                 ),
                 // TextButton(
                 //   onPressed: () {
-                //     //  kLog.wtf('Αγία'.hasUniqueCharacters());
+                //     //  kLog.f('Αγία'.hasUniqueCharacters());
                 //     filterWords();
-                //     // kLog.wtf(words2
+                //     // kLog.f(words2
                 //     //     .where((element) =>
                 //     //         element.toGreekUpperCase()!.hasUniqueCharacters())
                 //     //     .toList());
-                //     // kLog.wtf(groupedWords);
-                //     // kLog.wtf(mergeMap(groupedWords));
-                //     // kLog.wtf('abcd'.countUncommonLetters('abcdeef'));
-                //     // kLog.wtf(
+                //     // kLog.f(groupedWords);
+                //     // kLog.f(mergeMap(groupedWords));
+                //     // kLog.f('abcd'.countUncommonLetters('abcdeef'));
+                //     // kLog.f(
                 //     //   filterWords(
                 //     //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
                 //     //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],

@@ -21,7 +21,7 @@ class PlayerStatusService {
           .select()
           .eq('player_id', playerId);
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data.isNotEmpty) {
         return PlayerStatus.fromJson(data[0]);
       }
@@ -48,7 +48,7 @@ ${status.toJson()}
         'current_level': status.currentLevel,
       }).eq('player_id', status.playerId);
 
-      kLog.wtf(data);
+      kLog.f(data);
     } on PostgrestException catch (e) {
       kLog.e(e);
       if (e.message.contains('JWT expired')) {
@@ -86,7 +86,7 @@ ${status.toJson()}
       final data = await Supabase.instance.client.rpc('incrementplayercoins',
           params: {'coinstoadd': coins, 'playerid': playerId});
 
-      kLog.wtf(data);
+      kLog.f(data);
     } on PostgrestException catch (e) {
       kLog.e(e);
       if (e.message.contains('JWT expired')) {
@@ -103,7 +103,7 @@ ${status.toJson()}
       await Supabase.instance.client.rpc('incrementtotalwordsfound',
           params: {'wordscount': 1, 'playerid': playerId});
 
-      kLog.wtf('Incremented total words found for $playerId');
+      kLog.f('Incremented total words found for $playerId');
     } on PostgrestException catch (e) {
       kLog.e(e);
       if (e.message.contains('JWT expired')) {
@@ -120,7 +120,7 @@ ${status.toJson()}
       await Supabase.instance.client
           .rpc('incrementplayerlevel', params: {'playerid': playerId});
 
-      kLog.wtf('Incremeted level for $playerId');
+      kLog.f('Incremeted level for $playerId');
     } on PostgrestException catch (e) {
       kLog.e(e);
       if (e.message.contains('JWT expired')) {
@@ -148,7 +148,7 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data.isEmpty) {
         await initLevelProgress(playerId, level);
       }
@@ -188,7 +188,7 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.wtf(data);
+      kLog.f(data);
     } on PostgrestException catch (e) {
       kLog.e(e.message);
       if (e.message.contains('does not exist')) {
@@ -221,7 +221,7 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data.isNotEmpty) {
         final foundWords = data[0]['found_words'] as List<dynamic>;
         return foundWords.contains(word);
@@ -268,7 +268,7 @@ ${status.toJson()}
 
       await incrementTotalWordsFound(playerId);
 
-      kLog.wtf('Successfully added word in level progress');
+      kLog.f('Successfully added word in level progress');
     } on PostgrestException catch (e) {
       kLog.e(e.message);
       if (e.message.contains('does not exist')) {
@@ -299,7 +299,7 @@ ${status.toJson()}
         'found_words': [],
       });
 
-      kLog.wtf(data);
+      kLog.f(data);
     } on PostgrestException catch (e) {
       kLog.e(e.message);
       if (e.message.contains('JWT expired')) {
@@ -318,7 +318,7 @@ ${status.toJson()}
           .select()
           .eq('level', level);
 
-      kLog.wtf('Level id is ${data[0]['id']}');
+      kLog.f('Level id is ${data[0]['id']}');
       if (data.isNotEmpty) {
         return data[0]['id'];
       }
@@ -348,7 +348,7 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.wtf(data);
+      kLog.f(data);
       if (data.isNotEmpty) {
         final foundWords = data[0]['found_words'] as List<dynamic>;
         return foundWords.cast<String>().toSet();
@@ -374,7 +374,7 @@ ${status.toJson()}
     try {
       final data = await Supabase.instance.client.from('levels').select();
 
-      kLog.wtf('Total levels are ${data.length}');
+      kLog.f('Total levels are ${data.length}');
       return data.length;
     } on PostgrestException catch (e) {
       kLog.e(e.message);

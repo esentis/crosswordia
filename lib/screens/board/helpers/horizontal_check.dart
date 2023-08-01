@@ -186,7 +186,7 @@ bool canStartHorizontally({
 
       if (word == 'ΚΑΙ' &&
           actualHorizontalStartingLocationIfAvailable == '7.1') {
-        kLog.wtf('''
+        kLog.f('''
 Letter $letter letterIndex $letterIndex
 Iterating over letter ${word.charAt(k)}
 word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
@@ -248,7 +248,7 @@ $foundLocations
     horizontalColIterator++;
   }
   // if (word == 'ΛΑΒΕ' && row == '8' && col == '7') {
-  //   kLog.wtf('hasActualConflicts $hasActualConflicts');
+  //   kLog.f('hasActualConflicts $hasActualConflicts');
   // }
   return !hasActualConflicts;
 }

@@ -48,7 +48,7 @@ bool canStartVertically({
   // Iterating through the word to check if there are any conflicts
   for (var k = 0; k < word.length; k++) {
     if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
-      kLog.wtf('Location checking is ${verticalRowIterator + k}.$col');
+      kLog.f('Location checking is ${verticalRowIterator + k}.$col');
     }
     // If we are at the end of the board, we break
     if (actualStartingRowInt + k > 10 ||
@@ -194,7 +194,7 @@ bool canStartVertically({
               );
 
       if (word == 'ΖΕΑ' && actualVerticalStartingLocationIfAvailable == '1.8') {
-        kLog.wtf('''
+        kLog.f('''
 Actual vertical row $actualVerticalRow
 
 Letter $letter letterIndex $letterIndex
@@ -291,10 +291,10 @@ $foundLocations
           afterEndHasConflicts);
     }.call();
 
-    // log.wtf(locationToCheck);
+    // log.f(locationToCheck);
     hasActualConflicts = hasConflicts;
     if (hasActualConflicts) {
-      //  if (word == 'ΤΥΡΙ') kLog.wtf('Breaking at $locationToCheck with k $k');
+      //  if (word == 'ΤΥΡΙ') kLog.f('Breaking at $locationToCheck with k $k');
       break;
     }
   }
