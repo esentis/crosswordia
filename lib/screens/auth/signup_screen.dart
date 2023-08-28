@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignupScreen extends ConsumerWidget {
-  const SignupScreen({super.key});
-
+  SignupScreen({super.key});
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authProvider = ref.read(authStateProvider.notifier);
@@ -20,12 +21,28 @@ class SignupScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+              ),
+              keyboardType: TextInputType.emailAddress,
+              onChanged: (value) {},
+            ),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+              ),
+              obscureText: true,
+              onChanged: (value) {},
+            ),
             TextButton(
               onPressed: () async {
                 try {
                   await authProvider.signUp(
-                    'esentako8@yahoo.gr',
-                    '123456',
+                    emailController.text,
+                    passwordController.text,
                   );
                   Navigator.pop(context);
                 } catch (e) {

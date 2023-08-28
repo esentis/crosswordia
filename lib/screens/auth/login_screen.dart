@@ -57,7 +57,7 @@ class LoginScreen extends ConsumerWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const SignupScreen(),
+                        builder: (context) => SignupScreen(),
                       ),
                     );
                   },
