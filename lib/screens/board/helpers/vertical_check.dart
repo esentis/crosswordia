@@ -28,10 +28,6 @@ bool canStartVertically({
   if (spaceFromTop < distanceFromTopOfLetter ||
       spaceFromBottom < distanceFromBottomtOfLetter ||
       actualVerticalRow < 1) {
-    if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
-      kLog.e('Breaking due to dinstance issues');
-    }
-
     return false;
   }
 
@@ -47,18 +43,10 @@ bool canStartVertically({
   // }
   // Iterating through the word to check if there are any conflicts
   for (var k = 0; k < word.length; k++) {
-    if (word == 'ΑΜΑ' && actualVerticalStartingLocationIfAvailable == '8.10') {
-      kLog.f('Location checking is ${verticalRowIterator + k}.$col');
-    }
     // If we are at the end of the board, we break
     if (actualStartingRowInt + k > 10 ||
         verticalRowIterator + k - 1 >
             actualVerticalEndingLocationIfAvailable.before('.').toInt()!) {
-      if (word == 'ΑΜΑ' &&
-          actualVerticalStartingLocationIfAvailable == '8.10') {
-        kLog.e(
-            'row int is $actualStartingRowInt\nverticalRowIterator is $verticalRowIterator\nk is $k\nactualVerticalEndingLocationIfAvailable is $actualVerticalEndingLocationIfAvailable');
-      }
       break;
     }
     // Main location to check

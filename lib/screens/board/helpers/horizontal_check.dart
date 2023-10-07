@@ -20,14 +20,6 @@ bool canStartHorizontally({
   required List<String> foundLocations,
   required String letter,
 }) {
-//   if (word == 'ΑΒΕ') {
-//     kLog.i('''
-// Looking for $letter in $location for horizontal availability
-// Space from left $spaceFromLeft & distance from right $distanceFromLeftOfLetter
-// Space from right $spaceFromRight & distance from left $distanceFromRightOfLetter
-// ''');
-//   }
-
   // Checking if there is enough space to the left & right
   if (spaceFromLeft < distanceFromLeftOfLetter ||
       spaceFromRight < distanceFromRightOfLetter) {
@@ -247,8 +239,6 @@ $foundLocations
     if (hasActualConflicts) break;
     horizontalColIterator++;
   }
-  // if (word == 'ΛΑΒΕ' && row == '8' && col == '7') {
-  //   kLog.f('hasActualConflicts $hasActualConflicts');
-  // }
+
   return !hasActualConflicts;
 }
