@@ -45,19 +45,6 @@ bool canStartHorizontally({
     if (distanceFromLeftOfLetter - colInt == 0 ||
         distanceFromLeftOfLetter + distanceFromRightOfLetter > word.length ||
         horizontalColIterator - 1 < 0) {
-//       if (false) {
-//         kLog.e('''
-// Current letter $letter
-// Checking at $location
-// Current k $k
-// Horizontal col iterator $horizontalColIterator
-// Row int $rowInt
-// Col int $colInt
-// Distance from left of letter $distanceFromLeftOfLetter
-// Distance from right of letter $distanceFromRightOfLetter
-// Word length ${word.length}
-// ''');
-//       }
       hasActualConflicts = true;
       break;
     }
