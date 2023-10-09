@@ -1,5 +1,6 @@
 import 'package:crosswordia/services/models/word.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:string_extensions/string_extensions.dart';
 
@@ -91,4 +92,28 @@ extension MapExpressions<K, V> on Map<K, V> {
       entries.any((entry) => f(entry.key, entry.value));
   bool anyValue(bool Function(V value) f) => values.any(f);
   bool anyKey(bool Function(K key) f) => keys.any(f);
+}
+
+const int mobileMaxWidth = 576;
+const int tabletMaxWidth = 820;
+const int desktopMaxWidth = 992;
+
+extension ContextExtensions on BuildContext {
+  bool get isMobile {
+    return MediaQuery.sizeOf(this).width <= mobileMaxWidth;
+  }
+
+  bool get isTablet {
+    return mobileMaxWidth < MediaQuery.sizeOf(this).width &&
+        MediaQuery.sizeOf(this).width <= tabletMaxWidth;
+  }
+
+  bool get isDesktop {
+    return tabletMaxWidth < MediaQuery.sizeOf(this).width &&
+        MediaQuery.sizeOf(this).width <= desktopMaxWidth;
+  }
+
+  bool get isDesktopLarge {
+    return desktopMaxWidth < MediaQuery.sizeOf(this).width;
+  }
 }
