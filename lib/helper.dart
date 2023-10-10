@@ -7,6 +7,8 @@ import 'package:string_extensions/string_extensions.dart';
 Logger kLog = Logger();
 Dio dio = Dio();
 
+/// Simple function to scrape the words from the website
+/// https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/search.html?start=0&lq=&dq=
 void scrape() async {
   List<Word> allWords = [];
   int page = 0;
