@@ -1,6 +1,17 @@
 import 'package:crosswordia/helper.dart';
 import 'package:string_extensions/string_extensions.dart';
 
+/// Determines if a word can start horizontally from a given letter position.
+///
+/// Returns a boolean value indicating whether the word can start horizontally
+/// from the given letter position, taking into account the distances from the
+/// left and right of the letter, the available space from the left and right,
+/// the word itself, the column it is in, the location of the letter, the actual
+/// horizontal starting and ending locations if available, the actual vertical
+/// before starting location if available, the actual vertical after ending
+/// location if available, the row and column indices, the index of the letter
+/// in the word, the positions of the letters in the board, the locations where
+/// words have already been found, and the letter itself.
 bool canStartHorizontally({
   required int distanceFromRightOfLetter,
   required int distanceFromLeftOfLetter,

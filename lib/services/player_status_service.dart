@@ -13,6 +13,9 @@ class PlayerStatusService {
     return Supabase.instance.client.auth.currentUser?.id;
   }
 
+  /// Retrieves the status of a player with the specified ID.
+  /// Returns a [PlayerStatus] object representing the current status of the player.
+  /// If the player ID is invalid or the player does not exist, returns null.
   Future<PlayerStatus?> getPlayerStatus(String playerId) async {
     kLog.i('Getting status for $playerId');
     try {
@@ -36,6 +39,11 @@ class PlayerStatusService {
     }
   }
 
+  /// Updates the player status.
+  ///
+  /// [status] The new player status to be updated.
+  ///
+  /// Throws a [Exception] if the update fails.
   Future<void> updatePlayerStatus(PlayerStatus status) async {
     kLog.i('''
 Updating status:
@@ -59,6 +67,10 @@ ${status.toJson()}
   }
 
   /// Creates a new player status.
+  ///
+  /// [status] The player status to be created.
+  ///
+  /// Throws a [FirebaseException] if the operation fails.
   Future<void> createPlayerStatus(PlayerStatus status) async {
     kLog.i('Creating status for ${status.playerId}');
     try {
@@ -79,7 +91,16 @@ ${status.toJson()}
     }
   }
 
-  /// Increments the total coins of the player
+  /// Increments the total coins of a player.
+  ///
+  /// [playerId] is the ID of the player whose coins will be incremented.
+  /// [coins] is the amount of coins to increment.
+  /// Returns a [Future] that completes when the operation is done.
+  ///
+  /// Example:
+  /// ```dart
+  /// await incrementTotalCoins('player123', 10);
+  /// ```
   Future<void> incrementTotalCoins(String playerId, int coins) async {
     kLog.i('Incrementing total couns for $playerId');
     try {
@@ -96,7 +117,8 @@ ${status.toJson()}
     }
   }
 
-  // Increments the total coins of the player
+  /// Increments the total number of words found by the player with the given [playerId].
+  /// Returns a Future that completes when the operation is done.
   Future<void> incrementTotalWordsFound(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
     try {
@@ -113,7 +135,9 @@ ${status.toJson()}
     }
   }
 
-  /// Increments the level of the player.
+  /// Increments the level of the player with the given [playerId].
+  ///
+  /// Returns a Future that completes when the operation is done.
   Future<void> incrementLevel(String playerId) async {
     kLog.i('Incrementing level for $playerId');
     try {
@@ -241,7 +265,11 @@ ${status.toJson()}
     }
   }
 
-  /// Adds a word to the level progress for the player
+  /// Adds a word in the level progress of a player.
+  ///
+  /// [playerId] is the ID of the player.
+  /// [level] is the level number.
+  /// [word] is the word to be added in the level progress.
   Future<void> addWordInLevelProgress(
       String playerId, int level, String word) async {
     kLog.i('Adding word in level progress for $playerId');
@@ -282,7 +310,12 @@ ${status.toJson()}
     }
   }
 
-  /// Initializes the level progress for the player
+  /// Initializes the progress of a player for a specific level.
+  ///
+  /// [playerId] is the ID of the player.
+  /// [level] is the level number.
+  ///
+  /// Returns a Future that completes when the progress is initialized.
   Future<void> initLevelProgress(String playerId, int level) async {
     kLog.i('Initializing level progress for $playerId');
     final int? levelId = await getLevelId(level);
@@ -309,7 +342,8 @@ ${status.toJson()}
     }
   }
 
-  /// Gets the level id from the level table
+  /// Returns the level ID for a given level.
+  /// If the level does not exist, returns null.
   Future<int?> getLevelId(int level) async {
     kLog.i('Getting level id for $level');
     try {
@@ -333,6 +367,13 @@ ${status.toJson()}
     return null;
   }
 
+  /// Retrieves the set of words found by the player for a given level.
+  /// Returns null if the player has not found any words for the given level.
+  ///
+  /// [playerId] is the unique identifier of the player.
+  /// [level] is the level for which to retrieve the found words.
+  ///
+  /// Throws a [StateError] if the player ID is null or empty.
   Future<Set<String>?> getLevelsFoundWords(String playerId, int level) async {
     kLog.i('Getting found words for $playerId');
     final levelId = await getLevelId(level);
@@ -368,7 +409,15 @@ ${status.toJson()}
     }
   }
 
-  /// Gets the total number of levels
+  /// Returns the total level counts as an integer.
+  ///
+  /// The count includes all levels, regardless of their status (completed or not).
+  ///
+  /// Example usage:
+  /// ```
+  /// final totalLevels = await getTotalLevelCounts();
+  /// print(totalLevels); // prints the total number of levels
+  /// ```
   Future<int> getTotalLevelCounts() async {
     kLog.i('Getting total level counts');
     try {
