@@ -214,7 +214,7 @@ class _LevelScreenState extends State<LevelScreen>
                             },
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),
