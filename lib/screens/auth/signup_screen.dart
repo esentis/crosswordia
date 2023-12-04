@@ -18,40 +18,72 @@ class SignupScreen extends ConsumerWidget {
         title: const Text('Signup'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {},
               ),
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {},
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
+              const SizedBox(height: 8.0),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                obscureText: true,
+                onChanged: (value) {},
               ),
-              obscureText: true,
-              onChanged: (value) {},
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await authProvider.signUp(
-                    emailController.text,
-                    passwordController.text,
-                  );
-                  Navigator.pop(context);
-                } catch (e) {
-                  kLog.e('Rethrown\n$e');
-                }
-              },
-              child: const Text('Signup'),
-            ),
-          ],
+              TextButton(
+                onPressed: () async {
+                  try {
+                    await authProvider.signUp(
+                        emailController.text, passwordController.text, context);
+                    Navigator.pop(context);
+                  } catch (e) {
+                    kLog.e('Rethrown\n$e');
+                  }
+                },
+                child: const Text('Signup'),
+              ),
+            ],
+          ),
         ),
       ),
     );
