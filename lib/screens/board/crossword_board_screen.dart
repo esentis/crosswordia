@@ -53,6 +53,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   PlayerStatus? playerStatus;
 
+  final LettersController _controller = LettersController();
+
   final wordsToLook = words1
     ..addAll(words2)
     ..addAll(words3)
@@ -207,20 +209,36 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   /// Checks if the word is in the wordPositions map
   _checkCreatedWord(List<String> word) async {
-    setState(() {
-      createdWord = '';
-    });
+    void resetCreatedWord() {
+      setState(() {
+        currentlyCreatedWord = '';
+      });
+    }
 
     if (word.isEmpty || word.length < 3) {
+      _controller.triggerErrorShake();
+      resetCreatedWord();
       return;
     }
 
     final joinedWord = word.join();
-    kLog.f('$word joined word: $joinedWord');
 
-    if (widget.words
-            .any((element) => element.toGreekUpperCase() == joinedWord) &&
-        !foundWords.contains(joinedWord)) {
+    final bool createdWordExists =
+        widget.words.any((word) => word.toGreekUpperCase() == joinedWord);
+
+    kLog.f(
+        '$word joined word: $joinedWord created word exists: $createdWordExists');
+
+    // If the word exists and is not in the found words list save it
+    if (createdWordExists && !foundWords.contains(joinedWord)) {
+      _controller.triggerSuccessAnimation();
+      resetCreatedWord();
+
+      // We add a delay so the animation finished playing
+      Future.delayed(const Duration(milliseconds: 300), (() {
+        lettersForTheBoard.shuffle();
+      }));
+
       kLog.f('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
       final levelId =
@@ -230,11 +248,15 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         PlayerStatusService.instance
             .addWordInLevelProgress(userId, widget.level, joinedWord);
       }
+    } else {
+      _controller.triggerErrorShake();
+      resetCreatedWord();
+      return;
     }
     // Search for the word in the wordPositions map
     final MapEntry<String, List<String>> wordFound =
         wordPositions.entries.firstWhere(
-      (element) => element.key == joinedWord,
+      (wordPosition) => wordPosition.key == joinedWord,
       orElse: () => const MapEntry(
         '',
         [],
@@ -252,7 +274,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
     if (wordExistsOnBoard) {
       setState(() {
-        createdWord = '';
+        currentlyCreatedWord = '';
         foundLetterPositions.addAll(
           Map.fromEntries([wordFound]),
         );
@@ -499,7 +521,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     ]..shuffle();
   }
 
-  String createdWord = '';
+  String currentlyCreatedWord = '';
   @override
   void initState() {
     super.initState();
@@ -572,9 +594,18 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                         final Map<String, dynamic> letterFound =
                             letterPositions.whereValue(
                                 (letters) => letters.contains(currentPosition));
+                        final bool letterFoundIsNotAlreadyRevealed =
+                            !revealedLetterPositions.contains(currentPosition);
+
+                        final letterIsAlreadyFound =
+                            foundLetterPositions.anyValue(
+                          (value) => value.contains(currentPosition),
+                        );
 
                         return GestureDetector(
-                          onTap: letterFound.keys.isNotEmpty
+                          onTap: letterFound.keys.isNotEmpty &&
+                                  letterFoundIsNotAlreadyRevealed &&
+                                  letterIsAlreadyFound == false
                               ? () async {
                                   num letterFreq = letterFrequencies[letterFound
                                           .keys.first
@@ -695,7 +726,7 @@ Letter score $letterScore
                   height: 60,
                   child: Center(
                     child: Text(
-                      createdWord,
+                      currentlyCreatedWord,
                       style: kStyle.copyWith(
                         fontSize: 35,
                         fontWeight: FontWeight.w700,
@@ -704,38 +735,37 @@ Letter score $letterScore
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 30 + MediaQuery.of(context).padding.bottom,
-                    top: 10,
-                  ),
-                  child: BlurContainer(
-                    color: Colors.white,
-                    borderColor: Colors.white,
-                    width: 230,
-                    opacity: 0.2,
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 30 + MediaQuery.of(context).padding.bottom,
+                      top: 10,
+                    ),
                     child: Stack(
                       children: [
                         if (lettersForTheBoard.isNotEmpty)
                           Center(
                             child: LetterConnector(
+                              controller: _controller,
                               letterStyle: LetterStyle.circle,
-                              distanceOfLetters: 73,
-                              letterSize: 20,
+                              distanceOfLetters: 94,
+                              letterSize: 23,
                               borderColor: Colors.white,
                               selectedColor: Colors.blue,
                               lineColor: Colors.blue,
                               textStyle: kStyle.copyWith(
                                 fontSize: 23,
                               ),
-                              onLetterSelected: (letter) {
+                              onSnap: (letterPosition) {
+                                // kLog.f(letterPosition.toString());
                                 setState(() {
-                                  createdWord += letter;
+                                  currentlyCreatedWord += letterPosition.letter;
                                 });
                               },
-                              onUnsnap: () {
+                              onUnsnap: (letterPosition) {
                                 setState(() {
-                                  createdWord = createdWord.removeLast(1)!;
+                                  currentlyCreatedWord =
+                                      currentlyCreatedWord.removeLast(1)!;
                                 });
                               },
                               onCompleted: (word) {
