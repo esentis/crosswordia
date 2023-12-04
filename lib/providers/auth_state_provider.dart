@@ -1,5 +1,6 @@
 import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/services/player_status_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -49,7 +50,8 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
     }
   }
 
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp(
+      String email, String password, BuildContext context) async {
     try {
       final response = await supabase.auth.signUp(
         email: email,
@@ -65,10 +67,24 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
           isAuthenticated: true,
         );
       } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.toString()),
+            ),
+          );
+        }
         kLog.e(response);
       }
-    } catch (e) {
+    } on AuthException catch (e) {
       kLog.e(e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+          ),
+        );
+      }
       rethrow;
     }
   }
