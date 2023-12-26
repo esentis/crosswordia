@@ -30,7 +30,16 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
     return supabase.auth.currentUser != null;
   }
 
-  Future<void> signIn(String email, String password) async {
+  bool get isAdmin {
+    return supabase.auth.currentUser?.userMetadata?['role'] == 'admin';
+  }
+
+  User? get currentUser {
+    return supabase.auth.currentUser;
+  }
+
+  Future<void> signIn(
+      String email, String password, BuildContext context) async {
     try {
       final response = await supabase.auth.signInWithPassword(
         email: email,
@@ -42,20 +51,39 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         state = AppAuthState(
           isAuthenticated: true,
         );
+        if (mounted) {
+          Navigator.pop(context);
+        }
       } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.toString()),
+            ),
+          );
+        }
         kLog.e(response);
       }
-    } catch (e) {
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+          ),
+        );
+      }
       kLog.e(e);
     }
   }
 
-  Future<void> signUp(
-      String email, String password, BuildContext context) async {
+  Future<void> signUp(String email, String password, BuildContext context,
+      {bool isAdmin = false}) async {
+    final options = {'role': isAdmin ? 'admin' : 'user'};
     try {
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
+        data: options,
       );
 
       if (response.session != null) {
@@ -66,6 +94,9 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         state = AppAuthState(
           isAuthenticated: true,
         );
+        if (mounted) {
+          Navigator.pop(context);
+        }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -100,10 +131,6 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
     state = AppAuthState(
       isAuthenticated: false,
     );
-  }
-
-  User? get user {
-    return supabase.auth.currentUser;
   }
 
   Session? get session {
