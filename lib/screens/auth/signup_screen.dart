@@ -2,20 +2,26 @@
 
 import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
+import 'package:crosswordia/providers/is_admin_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignupScreen extends ConsumerWidget {
-  SignupScreen({super.key});
+  SignupScreen({required this.isLogin, super.key});
+  final bool isLogin;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authProvider = ref.read(authStateProvider.notifier);
 
+    final isAdminProviderRead = ref.read(isAdmingRegistrationProvider.notifier);
+    final isAdminProvider = ref.watch(isAdmingRegistrationProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Signup'),
+        title: Text(isLogin ? 'Login' : 'Signup'),
       ),
       body: Center(
         child: Padding(
@@ -70,17 +76,27 @@ class SignupScreen extends ConsumerWidget {
                 obscureText: true,
                 onChanged: (value) {},
               ),
+              if (!isLogin)
+                Checkbox(
+                    value: isAdminProvider.registeringAsAdmin,
+                    onChanged: (isAdmin) {
+                      kLog.i(isAdmin);
+                      isAdminProviderRead.toggleRegisteringAsAdmin();
+                    }),
               TextButton(
                 onPressed: () async {
                   try {
-                    await authProvider.signUp(
-                        emailController.text, passwordController.text, context);
-                    Navigator.pop(context);
+                    isLogin
+                        ? await authProvider.signIn(emailController.text,
+                            passwordController.text, context)
+                        : await authProvider.signUp(emailController.text,
+                            passwordController.text, context,
+                            isAdmin: isAdminProvider.registeringAsAdmin);
                   } catch (e) {
                     kLog.e('Rethrown\n$e');
                   }
                 },
-                child: const Text('Signup'),
+                child: Text(isLogin ? 'Login' : 'Signup'),
               ),
             ],
           ),
