@@ -1,17 +1,15 @@
 import 'package:crosswordia/constants.dart';
-import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/signup_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/widgets/menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends ConsumerWidget {
-  const LoginScreen({super.key});
+class LandingScreen extends ConsumerWidget {
+  const LandingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProvider = ref.read(authStateProvider.notifier);
     return Stack(
       children: [
         Positioned.fill(
@@ -49,7 +47,13 @@ class LoginScreen extends ConsumerWidget {
                 MenuButton(
                   title: 'Login',
                   onTap: () {
-                    authProvider.signIn('esentako8@yahoo.gr', '123456');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => SignupScreen(
+                          isLogin: true,
+                        ),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 5),
@@ -57,7 +61,9 @@ class LoginScreen extends ConsumerWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => SignupScreen(),
+                        builder: (context) => SignupScreen(
+                          isLogin: false,
+                        ),
                       ),
                     );
                   },
