@@ -1,11 +1,10 @@
 import 'package:crosswordia/constants.dart';
 import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
-import 'package:crosswordia/screens/auth/login_screen.dart';
+import 'package:crosswordia/screens/admin_screen.dart';
+import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
-import 'package:crosswordia/screens/levels/level_screen.dart';
-import 'package:crosswordia/services/player_status_service.dart';
-import 'package:crosswordia/widgets/menu_button.dart';
+import 'package:crosswordia/screens/player_status_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +15,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final authProvider = ref.read(authStateProvider.notifier);
+    kLog.i(authProvider.isAdmin);
     return Stack(
       children: [
         Positioned.fill(
@@ -33,6 +33,29 @@ class HomeScreen extends ConsumerWidget {
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   toolbarHeight: 100,
+                  actions: [
+                    authProvider.isAdmin
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => AdminScreen(
+                                    authProvider: authProvider,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.admin_panel_settings,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
                   title: BlurContainer(
                     height: 80,
                     width: 230,
@@ -40,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Welcome you are logged in as \n${authProvider.user?.email}',
+                          'Welcome you are logged in as \n${authProvider.currentUser?.email}',
                           textAlign: TextAlign.center,
                           style: kStyle.copyWith(
                             fontSize: 14,
@@ -52,118 +75,8 @@ class HomeScreen extends ConsumerWidget {
                 )
               : null,
           body: authState.isAuthenticated
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(),
-                      Column(
-                        children: [
-                          MenuButton(
-                            onTap: () {
-                              PlayerStatusService.instance.getPlayerStatus(
-                                authProvider.session!.user.id,
-                              );
-                            },
-                            title: 'Get status',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () {
-                              PlayerStatusService.instance.incrementTotalCoins(
-                                  authProvider.session!.user.id, 100);
-                            },
-                            title: 'Add coins',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () {
-                              PlayerStatusService.instance
-                                  .incrementTotalWordsFound(
-                                      authProvider.session!.user.id);
-                            },
-                            title: "Increment plauer's total words found",
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () {
-                              PlayerStatusService.instance.incrementLevel(
-                                  authProvider.session!.user.id);
-                            },
-                            title: "Increment player's current level",
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () {
-                              PlayerStatusService.instance.getLevelsFoundWords(
-                                  authProvider.session!.user.id, 1);
-                            },
-                            title: "Get player's found words for level 1",
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () async {
-                              final res = await Future.wait(
-                                [
-                                  PlayerStatusService.instance
-                                      .getTotalLevelCounts(),
-                                  PlayerStatusService.instance.getPlayerStatus(
-                                    authProvider.session!.user.id,
-                                  )
-                                ],
-                              );
-                              final totalLevelCounts = res[0] as int;
-                              final status = res[1] as PlayerStatus?;
-                              if (status != null) {
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LevelScreen(
-                                        levelCount: totalLevelCounts,
-                                        playerStatus: status,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            title: 'Go to levels screen',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MenuButton(
-                            onTap: () {
-                              scrape();
-                            },
-                            title: 'Scrape words',
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15.0),
-                        child: TextButton(
-                          onPressed: () {
-                            authProvider.signOut();
-                          },
-                          child: const Text('Logout'),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : const LoginScreen(),
+              ? const PlayerStatusScreen()
+              : const LandingScreen(),
         ),
       ],
     );
