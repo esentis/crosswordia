@@ -354,7 +354,7 @@ ${status.toJson()}
 
       kLog.f('Level id is ${data[0]['id']}');
       if (data.isNotEmpty) {
-        return data[0]['id'];
+        return data[0]['id'] as int;
       }
     } on PostgrestException catch (e) {
       kLog.e(e);
@@ -450,10 +450,10 @@ class PlayerStatus {
 
   factory PlayerStatus.fromJson(Map<String, dynamic> json) {
     return PlayerStatus(
-      playerId: json['player_id'],
-      totalWordsFound: json['total_words_found'],
-      coins: json['coins'],
-      currentLevel: json['current_level'],
+      playerId: json['player_id'] as String,
+      totalWordsFound: json['total_words_found'] as int,
+      coins: json['coins'] as int,
+      currentLevel: json['current_level'] as int,
     );
   }
 
