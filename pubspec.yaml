@@ -38,6 +38,7 @@ dependencies:
   string_extensions: ^0.6.9
   flutter_riverpod: ^2.4.9
   dio: ^5.4.0
+  lint: ^2.3.0
 
 dev_dependencies:
   flutter_test:
