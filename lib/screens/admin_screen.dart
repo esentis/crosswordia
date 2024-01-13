@@ -23,10 +23,11 @@ class AdminScreen extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-              child: Image.asset(
-            'assets/bg.webp',
-            fit: BoxFit.cover,
-          )),
+            child: Image.asset(
+              'assets/bg.webp',
+              fit: BoxFit.cover,
+            ),
+          ),
           Container(
             color: Colors.white.withOpacity(0.7),
           ),
@@ -74,7 +75,9 @@ class AdminScreen extends StatelessWidget {
                       MenuButton(
                         onTap: () {
                           PlayerStatusService.instance.incrementTotalCoins(
-                              authProvider.session!.user.id, 100);
+                            authProvider.session!.user.id,
+                            100,
+                          );
                         },
                         title: 'Add coins',
                       ),
@@ -84,7 +87,8 @@ class AdminScreen extends StatelessWidget {
                       MenuButton(
                         onTap: () {
                           PlayerStatusService.instance.incrementTotalWordsFound(
-                              authProvider.session!.user.id);
+                            authProvider.session!.user.id,
+                          );
                         },
                         title: "Increment plauer's total words found",
                       ),
@@ -104,7 +108,9 @@ class AdminScreen extends StatelessWidget {
                       MenuButton(
                         onTap: () {
                           PlayerStatusService.instance.getLevelsFoundWords(
-                              authProvider.session!.user.id, 1);
+                            authProvider.session!.user.id,
+                            1,
+                          );
                         },
                         title: "Get player's found words for level 1",
                       ),
@@ -119,7 +125,7 @@ class AdminScreen extends StatelessWidget {
                                   .getTotalLevelCounts(),
                               PlayerStatusService.instance.getPlayerStatus(
                                 authProvider.session!.user.id,
-                              )
+                              ),
                             ],
                           );
                           final totalLevelCounts = res[0] as int;
@@ -148,7 +154,7 @@ class AdminScreen extends StatelessWidget {
                           scrape();
                         },
                         title: 'Scrape words',
-                      )
+                      ),
                     ],
                   ),
                   Padding(

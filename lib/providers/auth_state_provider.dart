@@ -6,7 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authStateProvider =
     StateNotifierProvider<AppAuthStateProvider, AppAuthState>(
-        (ref) => AppAuthStateProvider());
+  (ref) => AppAuthStateProvider(),
+);
 
 class AppAuthState {
   final bool isAuthenticated;
@@ -39,7 +40,10 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
   }
 
   Future<void> signIn(
-      String email, String password, BuildContext context) async {
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
       final response = await supabase.auth.signInWithPassword(
         email: email,
@@ -76,8 +80,12 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
     }
   }
 
-  Future<void> signUp(String email, String password, BuildContext context,
-      {bool isAdmin = false}) async {
+  Future<void> signUp(
+    String email,
+    String password,
+    BuildContext context, {
+    bool isAdmin = false,
+  }) async {
     final options = {'role': isAdmin ? 'admin' : 'user'};
     try {
       final response = await supabase.auth.signUp(

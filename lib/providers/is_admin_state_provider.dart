@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final isAdmingRegistrationProvider =
     StateNotifierProvider<IsAdminRegisteringProvider, IsAdminState>(
-        (ref) => IsAdminRegisteringProvider());
+  (ref) => IsAdminRegisteringProvider(),
+);
 
 class IsAdminState {
   final bool registeringAsAdmin;

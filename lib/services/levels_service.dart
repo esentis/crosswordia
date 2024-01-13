@@ -22,7 +22,7 @@ const Map<String, dynamic> words = {
     "τιμ",
     "άτι",
     "ματ",
-    "μία"
+    "μία",
   ],
   "ΑΙΚΣ": [
     "σκιά",
@@ -100,7 +100,7 @@ const Map<String, dynamic> words = {
     "νου",
     "ναι",
     "νικά",
-    "κοινά"
+    "κοινά",
   ],
   "ΑΝΤΥΧΩ": [
     "τυχών",
@@ -140,7 +140,7 @@ const Map<String, dynamic> words = {
     "φιλί",
     "ίδιο",
     "λαδι",
-    "φολα"
+    "φολα",
   ],
   "ΑΑΠΡΦ": [
     "φράπα",
@@ -167,7 +167,7 @@ const Map<String, dynamic> words = {
     "ρου",
     "σου",
     "ρογα",
-    "ουρα"
+    "ουρα",
   ],
   "ΟΠΡΣΥ": [
     "υπο",
@@ -179,7 +179,7 @@ const Map<String, dynamic> words = {
     "σπορ",
     "ρου",
     "σου",
-    "που"
+    "που",
   ],
   "ΑΙΡΣΤΧ": [
     "τρίχα",
@@ -193,7 +193,7 @@ const Map<String, dynamic> words = {
     "τρις",
     "σταρ",
     "σιτα",
-    "σταρι"
+    "σταρι",
   ],
   "ΑΓΕΙΚΝ": [
     "και",
@@ -205,7 +205,7 @@ const Map<String, dynamic> words = {
     "ίνα",
     "γκι",
     "νεα",
-    "κενα"
+    "κενα",
   ],
   "ΑΔΙΚΝΟ": [
     "και",
@@ -378,7 +378,7 @@ const Map<String, dynamic> words = {
     "άτι",
     "ματ",
     "μια",
-    "ζια"
+    "ζια",
   ],
   "ΑΒΛΑΦΕ": [
     "άβλαβα",
@@ -393,7 +393,7 @@ const Map<String, dynamic> words = {
     "εβαφα",
     "αβε",
     "φαε",
-    "λαε"
+    "λαε",
   ],
   "ΑΕΜΡΤ": [
     "τέρμα",
@@ -408,7 +408,7 @@ const Map<String, dynamic> words = {
     "ματ",
     "αμέ",
     "μέα",
-    "μερα"
+    "μερα",
   ],
   "ΑΕΡΣΤ": [
     "τέρας",
@@ -422,7 +422,7 @@ const Map<String, dynamic> words = {
     "ασε",
     "σερ",
     "σέα",
-    "στα"
+    "στα",
   ],
   "ΑΗΜΡΧ": [
     "χρήμα",
@@ -435,7 +435,7 @@ const Map<String, dynamic> words = {
     "άρμη",
     "αρχή",
     "αρμ",
-    "χρη"
+    "χρη",
   ],
   "ΑΚΟΣΤ": [
     "τάκος",
@@ -452,7 +452,7 @@ const Map<String, dynamic> words = {
     "ατός",
     "σοκ",
     "οκά",
-    "στα"
+    "στα",
   ],
   "ΑΜΟΣΤ": [
     "στόμα",
@@ -465,7 +465,7 @@ const Map<String, dynamic> words = {
     "ματ",
     "στα",
     "μας",
-    "τοσα"
+    "τοσα",
   ],
   "ΑΟΠΡΣ": [
     "σπορά",
@@ -480,7 +480,7 @@ const Map<String, dynamic> words = {
     "από",
     "προ",
     "όπα",
-    "πόα"
+    "πόα",
   ],
   "ΑΑΛΠΣ": [
     "σπάλα",
@@ -509,7 +509,7 @@ const Map<String, dynamic> words = {
     "ιόν",
     "ιός",
     "ντο",
-    "ότι"
+    "ότι",
   ],
   "ΑΙΜΡΣ": [
     "σμάρι",
@@ -523,7 +523,7 @@ const Map<String, dynamic> words = {
     "μια",
     "μις",
     "μία",
-    "μας"
+    "μας",
   ],
   "ΕΟΣΤΥ": [
     "σουέτ",
@@ -538,7 +538,7 @@ const Map<String, dynamic> words = {
     "εσύ",
     "σου",
     "σετ",
-    "ους"
+    "ους",
   ],
   "ΚΟΡΣΥ": [
     "σκύρο",
@@ -554,7 +554,7 @@ const Map<String, dynamic> words = {
     "ρου",
     "ροκ",
     "ουκ",
-    "ους"
+    "ους",
   ],
   "ΑΙΚΡΣ": [
     "σκαρί",
@@ -570,7 +570,7 @@ const Map<String, dynamic> words = {
     "ίσα",
     "σικ",
     "και",
-    "κρα"
+    "κρα",
   ],
   "ΑΙΚΛΣ": [
     "σκαλί",
@@ -585,7 +585,7 @@ const Map<String, dynamic> words = {
     "σικ",
     "και",
     "λακ",
-    "αλί"
+    "αλί",
   ],
   "ΑΑΜΠΣ": [
     "σάμπα",
@@ -602,7 +602,7 @@ const Map<String, dynamic> words = {
     "σπα",
     "άμα",
     "μπα",
-    "μας"
+    "μας",
   ],
   "ΑΙΛΟΣ": [
     "σάλιο",
@@ -616,7 +616,7 @@ const Map<String, dynamic> words = {
     "σόι",
     "ιός",
     "ίσα",
-    "αλί"
+    "αλί",
   ],
   "ΑΓΟΡΥ": [
     "ρούγα",
@@ -631,7 +631,7 @@ const Map<String, dynamic> words = {
     "γου",
     "άου",
     "ρου",
-    "ουά"
+    "ουά",
   ],
   "ΑΙΚΟΡ": [
     "ροκιά",
@@ -664,7 +664,7 @@ const Map<String, dynamic> words = {
     "σοκ",
     "κρα",
     "ροκ",
-    "οκά"
+    "οκά",
   ],
   "ΑΑΓΙΡ": [
     "αργία",
@@ -680,7 +680,7 @@ const Map<String, dynamic> words = {
     "γαρ",
     "γρι",
     "αρά",
-    "για"
+    "για",
   ],
   "ΑΟΤΥΦ": [
     "τούφα",
@@ -698,7 +698,7 @@ const Map<String, dynamic> words = {
     "ουφ",
     "τυφο",
     "αυτό",
-    "φατο"
+    "φατο",
   ],
   "ΑΙΚΟΠΡ": [
     "προικα",
@@ -739,7 +739,7 @@ const Map<String, dynamic> words = {
     "μια",
     "μπα",
     "μία",
-    "πια"
+    "πια",
   ],
   "ΑΚΟΡΤ": [
     "τράκο",
@@ -754,7 +754,7 @@ const Map<String, dynamic> words = {
     "κάρο",
     "κρα",
     "ροκ",
-    "οκά"
+    "οκά",
   ],
   "ΑΙΠΣΤ": [
     "πίτσα",
@@ -771,7 +771,7 @@ const Map<String, dynamic> words = {
     "ίσα",
     "σία",
     "πια",
-    "στα"
+    "στα",
   ],
   "ΑΕΙΝΠ": [
     "πιένα",
@@ -789,7 +789,7 @@ const Map<String, dynamic> words = {
     "πια",
     "παν",
     "νια",
-    "νέα"
+    "νέα",
   ],
   "ΑΙΝΟΠ": [
     "πιάνο",
@@ -806,7 +806,7 @@ const Map<String, dynamic> words = {
     "πιο",
     "πια",
     "παν",
-    "νια"
+    "νια",
   ],
   "ΑΕΛΜΠ": [
     "πέλμα",
@@ -822,7 +822,7 @@ const Map<String, dynamic> words = {
     "άμε",
     "μπα",
     "μπε",
-    "παλ"
+    "παλ",
   ],
   "ΑΑΛΠΡ": [
     "πάρλα",
@@ -848,7 +848,7 @@ const Map<String, dynamic> words = {
     "δύο",
     "άου",
     "ρου",
-    "ουά"
+    "ουά",
   ],
   "ΑΑΜΝΤ": [
     "ντάμα",
@@ -862,7 +862,7 @@ const Map<String, dynamic> words = {
     "ματ",
     "άμα",
     "μνα",
-    "ντα"
+    "ντα",
   ],
   "ΑΑΛΜΠ": [
     "μπάλα",
@@ -876,7 +876,7 @@ const Map<String, dynamic> words = {
     "άμα",
     "μπα",
     "αλά",
-    "παλ"
+    "παλ",
   ],
   "ΑΕΙΜΡ": [
     "μεριά",
@@ -896,7 +896,7 @@ const Map<String, dynamic> words = {
     "άμε",
     "μια",
     "αεί",
-    "μία"
+    "μία",
   ],
   "ΑΑΙΜΤ": [
     "ματιά",
@@ -910,7 +910,7 @@ const Map<String, dynamic> words = {
     "άτα",
     "ματ",
     "άμα",
-    "μια"
+    "μια",
   ],
   "ΑΑΚΜΡ": [
     "μάρκα",
@@ -924,7 +924,7 @@ const Map<String, dynamic> words = {
     "αρμ",
     "αρά",
     "κρα",
-    "άμα"
+    "άμα",
   ],
   "ΑΕΜΡΣ": [
     "μασέρ",
@@ -941,7 +941,7 @@ const Map<String, dynamic> words = {
     "αμέ",
     "μέα",
     "μες",
-    "μας"
+    "μας",
   ],
   "ΑΙΜΣΤ": [
     "τσίμα",
@@ -958,7 +958,7 @@ const Map<String, dynamic> words = {
     "μις",
     "μία",
     "στα",
-    "μας"
+    "μας",
   ],
   "ΑΕΚΜΡ": [
     "κρέμα",
@@ -973,7 +973,7 @@ const Map<String, dynamic> words = {
     "αρμ",
     "κρα",
     "αμέ",
-    "μέα"
+    "μέα",
   ],
   "ΑΚΟΠΥ": [
     "κούπα",
@@ -991,7 +991,7 @@ const Map<String, dynamic> words = {
     "όπα",
     "πόα",
     "ουά",
-    "ουκ"
+    "ουκ",
   ],
   "ΑΙΚΟΠ": [
     "κόπια",
@@ -1007,7 +1007,7 @@ const Map<String, dynamic> words = {
     "όπα",
     "πόα",
     "πιο",
-    "πια"
+    "πια",
   ],
   "ΑΔΙΜΡΙΩ": [
     "ίδρωμα",
@@ -1022,7 +1022,7 @@ const Map<String, dynamic> words = {
     "δρω",
     "μαδω",
     "ωμα",
-    "ριμα"
+    "ριμα",
   ],
   "ΑΓΖΑΙΚ": [
     "γκαζιά",
@@ -1033,7 +1033,7 @@ const Map<String, dynamic> words = {
     "γαζί",
     "γάζα",
     "γκι",
-    "για"
+    "για",
   ],
   "ΑΔΑΕΙΜΡ": [
     "ραμα",
@@ -1048,7 +1048,7 @@ const Map<String, dynamic> words = {
     "ιδέα",
     "άδεια",
     "αερα",
-    "δια"
+    "δια",
   ],
   "ΑΕΖΙΜΡ": [
     "μαζι",
@@ -1063,7 +1063,7 @@ const Map<String, dynamic> words = {
     "ρέζα",
     "ζαρι",
     "ζέα",
-    "μερα"
+    "μερα",
   ],
   "ΑΕΗΙΜΡ": [
     "μερη",
@@ -1074,7 +1074,7 @@ const Map<String, dynamic> words = {
     "ημερα",
     "ηρεμία",
     "ερημία",
-    "μία"
+    "μία",
   ],
   "ΑΕΝΟΣΤ": [
     "ενας",
@@ -1109,7 +1109,7 @@ const Map<String, dynamic> words = {
     "άτι",
     "βάι",
     "βατ",
-    "βια"
+    "βια",
   ],
   "ΑΛΟΠΣΥ": [
     "ποσα",
@@ -1121,7 +1121,7 @@ const Map<String, dynamic> words = {
     "άσυλο",
     "απλός",
     "άου",
-    "από"
+    "από",
   ],
   "ΕΙΣΤΦΩ": [
     "σεφ",
@@ -1134,7 +1134,7 @@ const Map<String, dynamic> words = {
     "έτσι",
     "έστω",
     "έως",
-    "εις"
+    "εις",
   ],
   "ΑΓΙΚΟΣ": [
     "και",
@@ -1183,7 +1183,7 @@ const Map<String, dynamic> words = {
     "φιμέ",
     "φελί",
     "φιλμ",
-    "φιλέ"
+    "φιλέ",
   ],
   "ΑΑΙΛΜΣ": [
     "σαλάμι",
@@ -1281,7 +1281,7 @@ const Map<String, dynamic> words = {
     "κυρά",
     "κρα",
     "κυρ",
-    "κου"
+    "κου",
   ],
   "ΑΕΙΚΡΣ": [
     "κεράσι",
@@ -1297,7 +1297,7 @@ const Map<String, dynamic> words = {
     "κάρι",
     "καρέ",
     "κρα",
-    "και"
+    "και",
   ],
   "ΑΗΜΝΟ": [
     "μηνα",
@@ -1310,7 +1310,7 @@ const Map<String, dynamic> words = {
     "μονή",
     "μην",
     "μαη",
-    "μνα"
+    "μνα",
   ],
   "ΑΓΙΚΣ": [
     "για",
@@ -1323,7 +1323,7 @@ const Map<String, dynamic> words = {
     "σακί",
     "σία",
     "σικ",
-    "σκι"
+    "σκι",
   ],
   "ΕΘΙΜΟΣ": [
     "εθιμο",
@@ -1333,7 +1333,7 @@ const Map<String, dynamic> words = {
     "θειος",
     "θείος",
     "Θεός",
-    "θείο"
+    "θείο",
   ],
   "ΕΟΣΤΥΧ": [
     "σου",
@@ -1349,7 +1349,7 @@ const Map<String, dynamic> words = {
     "στου",
     "χυσε",
     "του",
-    "χου"
+    "χου",
   ],
   "ΑΙΜΠΣΤ": [
     "τσαμπί",
@@ -1393,7 +1393,7 @@ const Map<String, dynamic> words = {
     "τουρ",
     "ρου",
     "ιστου",
-    "σουτ"
+    "σουτ",
   ],
   "ΓΙΚΛΟΥ": [
     "λουκι",
@@ -1407,7 +1407,7 @@ const Map<String, dynamic> words = {
     "γου",
     "λιγο",
     "κιλο",
-    "κουλι"
+    "κουλι",
   ],
   "ΕΗΛΞΣΩ": [
     "εξώλης",
@@ -1420,7 +1420,7 @@ const Map<String, dynamic> words = {
     "λες",
     "σεξ",
     "ξες",
-    "λεω"
+    "λεω",
   ],
   "ΑΙΟΡΣΤ": [
     "άρτιος",
@@ -1437,7 +1437,7 @@ const Map<String, dynamic> words = {
     "ροτα",
     "ιστο",
     "οστα",
-    "ασο"
+    "ασο",
   ],
 };
 
@@ -1475,10 +1475,7 @@ class LevelsService {
           .single();
 
       kLog.f(data);
-      if (data != null) {
-        return Level.fromJson(data);
-      }
-      return null;
+      return Level.fromJson(data);
     } catch (e) {
       kLog.e(e);
       return null;
@@ -1501,13 +1498,13 @@ class LevelsService {
     try {
       var level = 1;
 
-      List<String> sortedWords = words.keys.toList()
+      final List<String> sortedWords = words.keys.toList()
         ..sort(
           (a, b) => a.length.compareTo(b.length),
         );
 
-      Map<String, dynamic> sortedMap = {
-        for (var key in sortedWords) key: words[key]
+      final Map<String, dynamic> sortedMap = {
+        for (final key in sortedWords) key: words[key],
       };
 
       sortedMap.forEach((key, value) async {
