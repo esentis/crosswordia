@@ -46,7 +46,7 @@ bool canStartHorizontally({
 
   int horizontalColIterator = actualHorizontalCol;
 
-  int actualHorizontalRow =
+  final int actualHorizontalRow =
       actualHorizontalStartingLocationIfAvailable.before('.')!.toInt()!;
 
   bool hasActualConflicts = false;
@@ -61,31 +61,33 @@ bool canStartHorizontally({
     }
 
     // Main location to check
-    String locationToCheck = '$rowInt.$horizontalColIterator';
+    final String locationToCheck = '$rowInt.$horizontalColIterator';
     // Locations to check to the top and bottom
-    String topLocationToCheck = '${rowInt - 1}.$horizontalColIterator';
-    String topLeftLocationToCheck =
+    final String topLocationToCheck = '${rowInt - 1}.$horizontalColIterator';
+    final String topLeftLocationToCheck =
         '${rowInt - 1}.${horizontalColIterator - 1}';
-    String topRightLocationToCheck =
+    final String topRightLocationToCheck =
         '${rowInt - 1}.${horizontalColIterator + 1}';
 
-    String bottomLocationToCheck = '${rowInt + 1}.$horizontalColIterator';
-    String bottomLeftLocationToCheck =
+    final String bottomLocationToCheck = '${rowInt + 1}.$horizontalColIterator';
+    final String bottomLeftLocationToCheck =
         '${rowInt + 1}.${horizontalColIterator - 1}';
-    String bottomRightLocationToCheck =
+    final String bottomRightLocationToCheck =
         '${rowInt + 1}.${horizontalColIterator + 1}';
 
-    String beforeStartWordLetterLocation =
+    final String beforeStartWordLetterLocation =
         '$rowInt.${colInt - distanceFromLeftOfLetter - 1}';
 
-    String afterEndWordLetterLocation =
+    final String afterEndWordLetterLocation =
         '$rowInt.${colInt - distanceFromLeftOfLetter + word.length}';
 
     final bool hasConflicts = () {
-      final letterOfCheckingLocationMap = letterPositions
-          .whereValue((value) => value.contains(locationToCheck), orElse: () {
-        return {};
-      });
+      final letterOfCheckingLocationMap = letterPositions.whereValue(
+        (value) => value.contains(locationToCheck),
+        orElse: () {
+          return {};
+        },
+      );
 
       final String? checkingLocationLetter =
           letterOfCheckingLocationMap.isNotEmpty
@@ -105,29 +107,30 @@ bool canStartHorizontally({
       //         (v) => v.contains(actualHorizontalStartingLocationIfAvailable)) &&
       //     checkingLocationLetter != word.charAt(1));
 
-      final bool currentLocationHasConflict = (letterPositions
+      final bool currentLocationHasConflict = letterPositions
               .anyValue((value) => value.contains(locationToCheck)) &&
           locationToCheck != location &&
           (locationToCheck == actualHorizontalEndingLocationIfAvailable
               ? checkingLocationLetter != word.charAt(word.length - 1)
-              : checkingLocationLetter != word.charAt(letterIndex)));
+              : checkingLocationLetter != word.charAt(letterIndex));
 
-      final bool topLeftLocationHasConflict = (letterPositions.anyValue(
+      final bool topLeftLocationHasConflict = letterPositions.anyValue(
             (v) => v.contains(topLeftLocationToCheck),
           ) &&
           locationToCheck != location &&
-          beforeStartHasConflicts);
+          beforeStartHasConflicts;
 
-      final bool topRightLocationHasConflict = (letterPositions.anyValue(
+      final bool topRightLocationHasConflict = letterPositions.anyValue(
             (v) => v.contains(topRightLocationToCheck),
           ) &&
           (letterPositions.anyValue(
             (v) => v.contains(topLocationToCheck),
-          )));
+          ));
 
       final bool topLocationConflictExtraCheck = !letterPositions.anyValue(
-              (value) => value
-                  .contains(actualHorizontalStartingLocationIfAvailable)) &&
+            (value) =>
+                value.contains(actualHorizontalStartingLocationIfAvailable),
+          ) &&
           letterPositions.anyValue(
             (v) =>
                 v.contains(topLocationToCheck) && locationToCheck != location,

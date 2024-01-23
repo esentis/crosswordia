@@ -29,18 +29,19 @@ class _LevelScreenState extends State<LevelScreen>
 
   late Animation<Matrix4> _animation;
 
-  void panToNode(LevelNode node) async {
-    LevelNode targetNode = node;
+  Future<void> panToNode(LevelNode node) async {
+    final LevelNode targetNode = node;
 
-    double screenHeight = MediaQuery.of(context).size.height;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     // Keep the current X position
-    double currentX = _transformationController.value.getTranslation().x;
+    final double currentX = _transformationController.value.getTranslation().x;
 
-    double targetY = (screenHeight / 1.5) - targetNode.position.dy;
+    final double targetY = (screenHeight / 1.5) - targetNode.position.dy;
 
     // Calculate the target transformation matrix
-    Matrix4 targetMatrix = Matrix4.identity()..translate(currentX, targetY);
+    final Matrix4 targetMatrix = Matrix4.identity()
+      ..translate(currentX, targetY);
 
     // Set up the animation
     _animation = Matrix4Tween(
@@ -78,20 +79,20 @@ class _LevelScreenState extends State<LevelScreen>
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
-    int nodeCount = widget.levelCount;
-    double horizontalSpacingFactor =
+    final int nodeCount = widget.levelCount;
+    const double horizontalSpacingFactor =
         0.4; // Adjust this to control the horizontal spacing
-    double verticalSpacingFactor =
+    const double verticalSpacingFactor =
         0.2; // Adjust this to control the vertical spacing
 
-    double sineFrequency =
+    const double sineFrequency =
         2; // Adjust this to control the frequency of the sine function
-    double sineAmplitude =
+    const double sineAmplitude =
         4; // Adjust this to control the amplitude of the sine function
-    double sineOffset =
+    const double sineOffset =
         0.5; // Adjust this to control the offset of the sine function
 
     final List<LevelNode> nodes = List.generate(
@@ -107,8 +108,10 @@ class _LevelScreenState extends State<LevelScreen>
           screenWidth / 2 +
               screenWidth *
                   horizontalSpacingFactor *
-                  math.sin(sineFrequency * index * math.pi / 3 +
-                      sineOffset * sineAmplitude),
+                  math.sin(
+                    sineFrequency * index * math.pi / 3 +
+                        sineOffset * sineAmplitude,
+                  ),
           screenHeight * verticalSpacingFactor +
               index * screenHeight * verticalSpacingFactor,
         ),
@@ -124,8 +127,8 @@ class _LevelScreenState extends State<LevelScreen>
     double maxY = double.negativeInfinity;
 
     for (final node in nodes) {
-      double x = node.position.dx;
-      double y = node.position.dy;
+      final double x = node.position.dx;
+      final double y = node.position.dy;
 
       if (x < minX) minX = x;
       if (x > maxX) maxX = x;
@@ -133,94 +136,99 @@ class _LevelScreenState extends State<LevelScreen>
       if (y > maxY) maxY = y;
     }
 
-    double customPaintWidth = maxX - minX + 2 * 40;
-    double customPaintHeight = maxY - minY + 2 * 40;
+    final double customPaintWidth = maxX - minX + 2 * 40;
+    final double customPaintHeight = maxY - minY + 2 * 40;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Choose your level')),
       body: Stack(
         children: [
           Positioned.fill(
-              child: Image.asset(
-            'assets/bg.webp',
-            fit: BoxFit.cover,
-          )),
+            child: Image.asset(
+              'assets/bg.webp',
+              fit: BoxFit.cover,
+            ),
+          ),
           Container(
             color: Colors.white.withOpacity(0.6),
           ),
-          Consumer(builder: (context, ref, child) {
-            final authState = ref.read(authStateProvider.notifier);
-            return InteractiveViewer(
-              transformationController: _transformationController,
-              scaleEnabled: true,
-              constrained: false,
-              clipBehavior: Clip.none,
-              minScale: 0.3,
-              maxScale: 2.0,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: customPaintWidth * 1.3,
-                    maxHeight: customPaintHeight * 1.1,
-                  ),
-                  child: Stack(
-                    // clipBehavior: Clip.none,
-                    children: [
-                      CustomPaint(
-                        painter: LevelScreenPainter(nodes: nodes),
-                        size: Size.infinite,
-                      ),
-                      ...nodes.map((node) {
-                        return Positioned(
-                          left: node.position.dx - 40,
-                          top: node.position.dy - 40,
-                          child: LevelNodeWidget(
-                            node: node,
-                            radius: 40,
-                            onTap: () async {
-                              Set<String> levelWords = {};
-                              Set<String> foundWords = {};
+          Consumer(
+            builder: (context, ref, child) {
+              final authState = ref.read(authStateProvider.notifier);
+              return InteractiveViewer(
+                transformationController: _transformationController,
+                constrained: false,
+                clipBehavior: Clip.none,
+                minScale: 0.3,
+                maxScale: 2.0,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: customPaintWidth * 1.3,
+                      maxHeight: customPaintHeight * 1.1,
+                    ),
+                    child: Stack(
+                      // clipBehavior: Clip.none,
+                      children: [
+                        CustomPaint(
+                          painter: LevelScreenPainter(nodes: nodes),
+                          size: Size.infinite,
+                        ),
+                        ...nodes.map((node) {
+                          return Positioned(
+                            left: node.position.dx - 40,
+                            top: node.position.dy - 40,
+                            child: LevelNodeWidget(
+                              node: node,
+                              radius: 40,
+                              onTap: () async {
+                                Set<String> levelWords = {};
+                                Set<String> foundWords = {};
 
-                              final results = await Future.wait([
-                                LevelsService.instance.getLevel(node.level),
-                                PlayerStatusService.instance
-                                    .getLevelsFoundWords(
-                                        authState.session!.user.id, node.level),
-                                PlayerStatusService.instance
-                                    .getPlayerStatus(authState.session!.user.id)
-                              ]);
-                              final Level? level = results[0] as Level?;
-                              foundWords = results[1] as Set<String>? ?? {};
-                              final PlayerStatus? playerStatus =
-                                  results[2] as PlayerStatus?;
-                              if (level != null && playerStatus != null) {
-                                levelWords = level.words;
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CrosswordBoardScreen(
-                                        words: levelWords,
-                                        foundWords: foundWords,
-                                        level: node.level,
-                                        playerStatus: playerStatus,
-                                        userId: authState.session!.user.id,
+                                final results = await Future.wait([
+                                  LevelsService.instance.getLevel(node.level),
+                                  PlayerStatusService.instance
+                                      .getLevelsFoundWords(
+                                    authState.session!.user.id,
+                                    node.level,
+                                  ),
+                                  PlayerStatusService.instance.getPlayerStatus(
+                                    authState.session!.user.id,
+                                  ),
+                                ]);
+                                final Level? level = results[0] as Level?;
+                                foundWords = results[1] as Set<String>? ?? {};
+                                final PlayerStatus? playerStatus =
+                                    results[2] as PlayerStatus?;
+                                if (level != null && playerStatus != null) {
+                                  levelWords = level.words;
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CrosswordBoardScreen(
+                                          words: levelWords,
+                                          foundWords: foundWords,
+                                          level: node.level,
+                                          playerStatus: playerStatus,
+                                          userId: authState.session!.user.id,
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
                                 }
-                              }
-                            },
-                          ),
-                        );
-                      }),
-                    ],
+                              },
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ],
       ),
     );

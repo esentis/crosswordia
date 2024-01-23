@@ -66,12 +66,14 @@ class _LetterConnectorState extends State<LetterConnector>
   bool insideLetter = false;
 
   void _startDrawing(Offset localPosition) {
-    int index = _getLetterIndexAtOffset(localPosition);
+    final int index = _getLetterIndexAtOffset(localPosition);
 
     if (index != -1 && !insideLetter) {
       kLog.i('Start drawing at $index');
-      path.moveTo(letterPositions[index].position.dx,
-          letterPositions[index].position.dy);
+      path.moveTo(
+        letterPositions[index].position.dx,
+        letterPositions[index].position.dy,
+      );
       insideLetter = true;
       _snapLetter(index);
       currentOffset = localPosition;
@@ -87,13 +89,17 @@ class _LetterConnectorState extends State<LetterConnector>
     snappedLetters.add(letters[index]);
     snappedLettersIndexes.add(index);
     lastSnappedLetter = index;
-    widget.onSnap(LetterPosition(
-        position: letterPositions[index].position, letter: letters[index]));
+    widget.onSnap(
+      LetterPosition(
+        position: letterPositions[index].position,
+        letter: letters[index],
+      ),
+    );
   }
 
   void _unsnapLastLetter() {
     if (snappedLettersIndexes.isNotEmpty) {
-      int lastIndex = snappedLettersIndexes.last;
+      final int lastIndex = snappedLettersIndexes.last;
       // Reset the controller and play a different tween
       _letterSnapAnimationController[lastIndex].reverse();
       // Play forward with a potentially different tween or duration
@@ -112,17 +118,21 @@ class _LetterConnectorState extends State<LetterConnector>
   }
 
   void _updateDrawing(Offset localPosition) {
-    int index = _getLetterIndexAtOffset(localPosition);
+    final int index = _getLetterIndexAtOffset(localPosition);
 
     if (index != -1 && index != lastSnappedLetter && !insideLetter) {
       insideLetter = true;
       if (!snappedLettersIndexes.contains(index)) {
         if (snappedLettersIndexes.isEmpty) {
-          path.moveTo(letterPositions[index].position.dx,
-              letterPositions[index].position.dy);
+          path.moveTo(
+            letterPositions[index].position.dx,
+            letterPositions[index].position.dy,
+          );
         } else {
-          path.lineTo(letterPositions[index].position.dx,
-              letterPositions[index].position.dy);
+          path.lineTo(
+            letterPositions[index].position.dx,
+            letterPositions[index].position.dy,
+          );
         }
         _snapLetter(index);
       }
@@ -137,17 +147,23 @@ class _LetterConnectorState extends State<LetterConnector>
       // Remove the last line segment
       if (snappedLettersIndexes.length > 1) {
         path = Path();
-        path.moveTo(letterPositions[snappedLettersIndexes[0]].position.dx,
-            letterPositions[snappedLettersIndexes[0]].position.dy);
+        path.moveTo(
+          letterPositions[snappedLettersIndexes[0]].position.dx,
+          letterPositions[snappedLettersIndexes[0]].position.dy,
+        );
         for (int i = 1; i < snappedLettersIndexes.length; i++) {
-          path.lineTo(letterPositions[snappedLettersIndexes[i]].position.dx,
-              letterPositions[snappedLettersIndexes[i]].position.dy);
+          path.lineTo(
+            letterPositions[snappedLettersIndexes[i]].position.dx,
+            letterPositions[snappedLettersIndexes[i]].position.dy,
+          );
         }
       } else if (snappedLettersIndexes.length == 1) {
         // Move to the first letter when there's only one letter left
         path = Path();
-        path.moveTo(letterPositions[snappedLettersIndexes[0]].position.dx,
-            letterPositions[snappedLettersIndexes[0]].position.dy);
+        path.moveTo(
+          letterPositions[snappedLettersIndexes[0]].position.dx,
+          letterPositions[snappedLettersIndexes[0]].position.dy,
+        );
       }
     } else if (index == -1) {
       insideLetter = false;
@@ -163,28 +179,29 @@ class _LetterConnectorState extends State<LetterConnector>
     snappedLetters.clear();
     lastSnappedLetter = -1;
     insideLetter = false;
-    for (var controller in _letterSnapAnimationController) {
+    for (final controller in _letterSnapAnimationController) {
       controller.reset();
     }
   }
 
   int _getLetterIndexAtOffset(Offset offset) {
-    double touchTolerance = 10.0; // Adjust as needed for snap sensitivity
+    const double touchTolerance = 10.0; // Adjust as needed for snap sensitivity
 
     for (int i = 0; i < letterPositions.length; i++) {
       if (widget.letterStyle == LetterStyle.circle) {
-        double radius =
+        final double radius =
             (widget.letterSize?.toDouble() ?? 25.0) + touchTolerance;
         if ((offset - letterPositions[i].position).distance <= radius) {
           return i;
         }
       } else if (widget.letterStyle == LetterStyle.square) {
-        double squareSize =
+        final double squareSize =
             (widget.letterSize?.toDouble() ?? 50.0) / 2 + touchTolerance;
-        Rect squareBounds = Rect.fromCenter(
-            center: letterPositions[i].position,
-            width: squareSize,
-            height: squareSize);
+        final Rect squareBounds = Rect.fromCenter(
+          center: letterPositions[i].position,
+          width: squareSize,
+          height: squareSize,
+        );
         if (squareBounds.contains(offset)) {
           return i;
         }
@@ -259,10 +276,11 @@ class _LetterConnectorState extends State<LetterConnector>
     );
 
     _colorAnimation = ColorTween(
-        begin: Colors.transparent,
-        end: Colors.green.withOpacity(
-          0.5,
-        )).animate(
+      begin: Colors.transparent,
+      end: Colors.green.withOpacity(
+        0.5,
+      ),
+    ).animate(
       CurvedAnimation(
         parent: _successAnimationController,
         curve: Curves.easeInOut,
@@ -276,7 +294,7 @@ class _LetterConnectorState extends State<LetterConnector>
     _successAnimationController.dispose();
     _scaleAnimation.removeListener(() {});
     _colorAnimation.removeListener(() {});
-    for (var controller in _letterSnapAnimationController) {
+    for (final controller in _letterSnapAnimationController) {
       controller.dispose();
     }
     super.dispose();
@@ -289,7 +307,9 @@ class _LetterConnectorState extends State<LetterConnector>
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(
-              _shakeAnimation.value * sin(_shakeController.value * 2 * pi), 0),
+            _shakeAnimation.value * sin(_shakeController.value * 2 * pi),
+            0,
+          ),
           child: child,
         );
       },
@@ -360,7 +380,8 @@ class _LetterConnectorState extends State<LetterConnector>
                   });
                 },
                 currentIndex: _getLetterIndexAtOffset(
-                    currentOffset ?? const Offset(0, 0)),
+                  currentOffset ?? Offset.zero,
+                ),
                 letterStyle: widget.letterStyle,
                 distanceOfLetters: widget.distanceOfLetters,
                 lineColor: widget.lineColor,
@@ -424,16 +445,16 @@ class _LetterConnectPainter extends CustomPainter {
   }
 
   void _drawCircularLetters(Canvas canvas, Size size) {
-    double radius =
+    final double radius =
         distanceOfLetters?.toDouble() ?? min(size.width, size.height) / 2 - 70;
-    Offset center = Offset(size.width / 2, size.height / 2);
+    final Offset center = Offset(size.width / 2, size.height / 2);
 
     for (int i = 0; i < letters.length; i++) {
-      double scale = letterAnimations[i].value;
-      double angle = (2 * pi / letters.length) * i;
-      double dx = center.dx + radius * cos(angle);
-      double dy = center.dy + radius * sin(angle);
-      Offset position = Offset(dx, dy);
+      final double scale = letterAnimations[i].value;
+      final double angle = (2 * pi / letters.length) * i;
+      final double dx = center.dx + radius * cos(angle);
+      final double dy = center.dy + radius * sin(angle);
+      final Offset position = Offset(dx, dy);
 
       if (letterPositions.length < letters.length) {
         letterPositions.add(
@@ -444,7 +465,7 @@ class _LetterConnectPainter extends CustomPainter {
         );
       }
 
-      Color color = snappedLetters.contains(i)
+      final Color color = snappedLetters.contains(i)
           ? selectedLetterColor ?? Colors.red
           : unselectedLetterColor ?? Colors.white;
       letterStyle == LetterStyle.circle
@@ -457,23 +478,31 @@ class _LetterConnectPainter extends CustomPainter {
   }
 
 // SQUARE LETTER
-  void _drawLetterInSquare(Canvas canvas, String letter, Offset position,
-      Color color, double scale) {
-    double squareSize = (letterSize?.toDouble() ?? 50.0) * scale;
+  void _drawLetterInSquare(
+    Canvas canvas,
+    String letter,
+    Offset position,
+    Color color,
+    double scale,
+  ) {
+    final double squareSize = (letterSize?.toDouble() ?? 50.0) * scale;
 
     // Draw the square
-    Paint squarePaint = Paint()
+    final Paint squarePaint = Paint()
       ..color = color
       ..strokeWidth = 2.0
       ..style = PaintingStyle.fill;
-    Rect rect = Rect.fromCenter(
-        center: position, width: squareSize, height: squareSize);
-    RRect roundedRect =
+    final Rect rect = Rect.fromCenter(
+      center: position,
+      width: squareSize,
+      height: squareSize,
+    );
+    final RRect roundedRect =
         RRect.fromRectAndRadius(rect, const Radius.circular(10));
     canvas.drawRRect(roundedRect, squarePaint);
 
     // Draw the border
-    Paint borderPaint = Paint()
+    final Paint borderPaint = Paint()
       ..color =
           borderColor ?? Colors.black // Set your desired border color here
       ..style = PaintingStyle.stroke
@@ -481,7 +510,7 @@ class _LetterConnectPainter extends CustomPainter {
     canvas.drawRRect(roundedRect, borderPaint);
 
     // Draw the letter
-    TextPainter textPainter = TextPainter(
+    final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: letter,
         style: letterTextStyle ??
@@ -491,22 +520,29 @@ class _LetterConnectPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    textPainter.paint(canvas,
-        position - Offset(textPainter.width / 2, textPainter.height / 2));
+    textPainter.paint(
+      canvas,
+      position - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
   }
 
-  void _drawLetterInCircle(Canvas canvas, String letter, Offset position,
-      Color color, double scale) {
-    double circleRadius = (letterSize?.toDouble() ?? 25.0) * scale;
+  void _drawLetterInCircle(
+    Canvas canvas,
+    String letter,
+    Offset position,
+    Color color,
+    double scale,
+  ) {
+    final double circleRadius = (letterSize?.toDouble() ?? 25.0) * scale;
 
     // Draw the filled circle
-    Paint circlePaint = Paint()
+    final Paint circlePaint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
     canvas.drawCircle(position, circleRadius, circlePaint);
 
     // Draw the border
-    Paint borderPaint = Paint()
+    final Paint borderPaint = Paint()
       ..color =
           borderColor ?? Colors.black // Set your desired border color here
       ..style = PaintingStyle.stroke
@@ -514,7 +550,7 @@ class _LetterConnectPainter extends CustomPainter {
     canvas.drawCircle(position, circleRadius, borderPaint);
 
     // Draw the letter
-    TextPainter textPainter = TextPainter(
+    final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: letter,
         style: letterTextStyle ??
@@ -524,19 +560,21 @@ class _LetterConnectPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    textPainter.paint(canvas,
-        position - Offset(textPainter.width / 2, textPainter.height / 2));
+    textPainter.paint(
+      canvas,
+      position - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
   }
 
   void _drawPath(Canvas canvas) {
-    Paint paint = Paint()
+    final Paint paint = Paint()
       ..color = lineColor ?? Colors.red
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8.0;
 
     if (currentOffset != null &&
-        (snappedLetters.isEmpty ? currentIndex != -1 : true)) {
-      Path newPath = Path.from(path);
+        (snappedLetters.isNotEmpty || currentIndex != -1)) {
+      final Path newPath = Path.from(path);
       newPath.lineTo(currentOffset!.dx, currentOffset!.dy);
       canvas.drawPath(newPath, paint);
     } else {

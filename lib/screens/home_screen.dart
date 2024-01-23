@@ -19,10 +19,11 @@ class HomeScreen extends ConsumerWidget {
     return Stack(
       children: [
         Positioned.fill(
-            child: Image.asset(
-          'assets/bg.webp',
-          fit: BoxFit.cover,
-        )),
+          child: Image.asset(
+            'assets/bg.webp',
+            fit: BoxFit.cover,
+          ),
+        ),
         Container(
           color: Colors.white.withOpacity(0.7),
         ),
@@ -34,27 +35,28 @@ class HomeScreen extends ConsumerWidget {
                   shadowColor: Colors.transparent,
                   toolbarHeight: 100,
                   actions: [
-                    authProvider.isAdmin
-                        ? GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => AdminScreen(
-                                    authProvider: authProvider,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.admin_panel_settings,
-                                color: Colors.red,
-                                size: 40,
+                    if (authProvider.isAdmin)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AdminScreen(
+                                authProvider: authProvider,
                               ),
                             ),
-                          )
-                        : const SizedBox(),
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.admin_panel_settings,
+                            color: Colors.red,
+                            size: 40,
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox(),
                   ],
                   title: BlurContainer(
                     height: 80,

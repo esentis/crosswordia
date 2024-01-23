@@ -104,8 +104,10 @@ ${status.toJson()}
   Future<void> incrementTotalCoins(String playerId, int coins) async {
     kLog.i('Incrementing total couns for $playerId');
     try {
-      final data = await Supabase.instance.client.rpc('incrementplayercoins',
-          params: {'coinstoadd': coins, 'playerid': playerId});
+      final data = await Supabase.instance.client.rpc(
+        'incrementplayercoins',
+        params: {'coinstoadd': coins, 'playerid': playerId},
+      );
 
       kLog.f(data);
     } on PostgrestException catch (e) {
@@ -122,8 +124,10 @@ ${status.toJson()}
   Future<void> incrementTotalWordsFound(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
     try {
-      await Supabase.instance.client.rpc('incrementtotalwordsfound',
-          params: {'wordscount': 1, 'playerid': playerId});
+      await Supabase.instance.client.rpc(
+        'incrementtotalwordsfound',
+        params: {'wordscount': 1, 'playerid': playerId},
+      );
 
       kLog.f('Incremented total words found for $playerId');
     } on PostgrestException catch (e) {
@@ -192,7 +196,10 @@ ${status.toJson()}
   ///
   /// If the level progress does not exist, it will be initialized
   Future<void> updateLevelProgress(
-      String playerId, int level, List<String> words) async {
+    String playerId,
+    int level,
+    List<String> words,
+  ) async {
     kLog.i('Updating found words for $playerId');
 
     final levelId = await getLevelId(level);
@@ -227,7 +234,10 @@ ${status.toJson()}
   }
 
   Future<bool> checkIfWordAlreadyFound(
-      String playerId, int level, String word) async {
+    String playerId,
+    int level,
+    String word,
+  ) async {
     kLog.i('Checking if word already found for $playerId');
 
     final levelId = await getLevelId(level);
@@ -271,7 +281,10 @@ ${status.toJson()}
   /// [level] is the level number.
   /// [word] is the word to be added in the level progress.
   Future<void> addWordInLevelProgress(
-      String playerId, int level, String word) async {
+    String playerId,
+    int level,
+    String word,
+  ) async {
     kLog.i('Adding word in level progress for $playerId');
 
     final levelId = await getLevelId(level);
@@ -288,11 +301,14 @@ ${status.toJson()}
     await checkIfLevelProgressExists(playerId, level);
 
     try {
-      await Supabase.instance.client.rpc('updatewordlevel', params: {
-        'player': playerId,
-        'word': word,
-        'level': levelId,
-      });
+      await Supabase.instance.client.rpc(
+        'updatewordlevel',
+        params: {
+          'player': playerId,
+          'word': word,
+          'level': levelId,
+        },
+      );
 
       await incrementTotalWordsFound(playerId);
 

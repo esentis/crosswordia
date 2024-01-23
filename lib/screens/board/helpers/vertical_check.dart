@@ -31,9 +31,9 @@ bool canStartVertically({
     return false;
   }
 
-  int verticalRowIterator = actualVerticalRow;
+  final int verticalRowIterator = actualVerticalRow;
 
-  int actualStartingRowInt =
+  final int actualStartingRowInt =
       actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
 
   bool hasActualConflicts = false;
@@ -50,41 +50,46 @@ bool canStartVertically({
       break;
     }
     // Main location to check
-    String locationToCheck = '${verticalRowIterator + k}.$col';
+    final String locationToCheck = '${verticalRowIterator + k}.$col';
 
     // Locations to check to the left and right
-    String beforeStartWordLetterLocation =
+    final String beforeStartWordLetterLocation =
         '${actualVerticalRow - distanceFromTopOfLetter}.$colInt';
-    String afterEndWordLetterLocation =
+    final String afterEndWordLetterLocation =
         '${actualVerticalRow + distanceFromBottomtOfLetter}.$colInt';
 
-    String leftLocationToCheck = '${verticalRowIterator + k}.${colInt - 1}';
-    String leftBottomLocationToCheck =
+    final String leftLocationToCheck =
+        '${verticalRowIterator + k}.${colInt - 1}';
+    final String leftBottomLocationToCheck =
         '${verticalRowIterator + k + 1}.${colInt - 1}';
-    String leftTopLocationToCheck =
+    final String leftTopLocationToCheck =
         '${verticalRowIterator + k - 1}.${colInt - 1}';
 
-    String rightLocationToCheck = '${verticalRowIterator + k}.${colInt + 1}';
-    String rightBottomLocationToCheck =
+    final String rightLocationToCheck =
+        '${verticalRowIterator + k}.${colInt + 1}';
+    final String rightBottomLocationToCheck =
         '${verticalRowIterator + k + 1}.${colInt + 1}';
-    String rightTopLocationToCheck =
+    final String rightTopLocationToCheck =
         '${verticalRowIterator + k - 1}.${colInt + 1}';
 
-    String topLocationToCheck = '${verticalRowIterator + k - 1}.$colInt';
-    String bottomLocationToCheck = '${verticalRowIterator + k + 1}.$colInt';
+    final String topLocationToCheck = '${verticalRowIterator + k - 1}.$colInt';
+    final String bottomLocationToCheck =
+        '${verticalRowIterator + k + 1}.$colInt';
 
-    bool isRightBottomOutOfReach =
+    final bool isRightBottomOutOfReach =
         rightBottomLocationToCheck.before('.')!.toInt()! >
             actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
-    bool isLeftBottomOutOfReach =
+    final bool isLeftBottomOutOfReach =
         leftBottomLocationToCheck.before('.')!.toInt()! >
             actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
 
-    bool isRightTopOutOfReach = rightTopLocationToCheck.before('.')!.toInt()! <
-        actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+    final bool isRightTopOutOfReach =
+        rightTopLocationToCheck.before('.')!.toInt()! <
+            actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
 
-    bool isLeftTopOutOfReach = leftTopLocationToCheck.before('.')!.toInt()! <
-        actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+    final bool isLeftTopOutOfReach =
+        leftTopLocationToCheck.before('.')!.toInt()! <
+            actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
 
     final hasConflicts = () {
       // This is the letter of the location we are checking
@@ -118,10 +123,12 @@ bool canStartVertically({
                       ));
 
       final bool afterEndHasConflicts = letterPositions.anyValue(
-          (v) => v.contains(actualVerticalAfterEndingLocationIfAvailable));
+        (v) => v.contains(actualVerticalAfterEndingLocationIfAvailable),
+      );
 
       final bool beforeStartHasConflicts = letterPositions.anyValue(
-          (v) => v.contains(actualVerticalBeforeStartingLocationIfAvailable));
+        (v) => v.contains(actualVerticalBeforeStartingLocationIfAvailable),
+      );
 
       final bool leftTopLocationHasConflict = (letterPositions.anyValue(
                 (v) => v.contains(leftTopLocationToCheck),
@@ -187,17 +194,17 @@ Actual vertical row $actualVerticalRow
 
 Letter $letter letterIndex $letterIndex
 
-First check ${(letterPositions.anyValue(
+First check ${letterPositions.anyValue(
                   (v) => v.contains(leftLocationToCheck),
                 ) && letterPositions.anyValue(
                   (v) => v.contains(leftTopLocationToCheck),
-                ))}
+                )}
 
-Second check ${(letterPositions.anyValue(
+Second check ${letterPositions.anyValue(
                   (v) => v.contains(leftLocationToCheck),
                 ) && letterPositions.anyValue(
                   (v) => v.contains(leftBottomLocationToCheck),
-                ))}
+                )}
               
 What is this ${(!isCurrentLetterPartOfTheWord && locationToCheck == actualVerticalStartingLocationIfAvailable) && letterPositions.anyValue(
                   (v) => v.contains(leftLocationToCheck),
@@ -269,14 +276,14 @@ Found locations
 $foundLocations
 ''');
       }
-      return (currentLocationHasConflict ||
+      return currentLocationHasConflict ||
           afterEndHasConflicts ||
           beforeStartHasConflicts ||
           leftLocationHasConflict ||
           leftTopLocationHasConflict ||
           rightLocationHasConflict ||
           beforeStartHasConflicts ||
-          afterEndHasConflicts);
+          afterEndHasConflicts;
     }.call();
 
     // log.f(locationToCheck);

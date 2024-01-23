@@ -37,23 +37,23 @@ class LevelScreenPainter extends CustomPainter {
       final startPosition = nodes[i].position;
       final endPosition = nodes[i + 1].position;
 
-      double controlPoint1X =
+      final double controlPoint1X =
           startPosition.dx + (endPosition.dx - startPosition.dx) * 0.25;
-      double controlPoint1Y =
+      final double controlPoint1Y =
           startPosition.dy - (endPosition.dy - startPosition.dy) * 0.25;
 
-      double controlPoint2X =
+      final double controlPoint2X =
           startPosition.dx + (endPosition.dx - startPosition.dx) * 0.75;
-      double controlPoint2Y =
+      final double controlPoint2Y =
           endPosition.dy + (endPosition.dy - startPosition.dy) * 0.25;
 
-      double loopControlPoint1X =
+      final double loopControlPoint1X =
           startPosition.dx + (endPosition.dx - startPosition.dx) * 0.5;
-      double loopControlPoint1Y = startPosition.dy - 50;
+      final double loopControlPoint1Y = startPosition.dy - 50;
 
-      double loopControlPoint2X =
+      final double loopControlPoint2X =
           startPosition.dx + (endPosition.dx - startPosition.dx) * 0.5;
-      double loopControlPoint2Y = startPosition.dy + 50;
+      final double loopControlPoint2Y = startPosition.dy + 50;
 
       final paint = Paint()
         ..color = nodes[i].isFinished
@@ -137,19 +137,20 @@ class LevelNodeWidget extends StatelessWidget {
           Pulse(
             infinite: true,
             child: Container(
-                width: 75,
-                height: 75,
-                decoration: BoxDecoration(
-                  color: const Color(0xffF5C6EC).withOpacity(0.3),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                )),
+              width: 75,
+              height: 75,
+              decoration: BoxDecoration(
+                color: const Color(0xffF5C6EC).withOpacity(0.3),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+            ),
           ),
         Bounceable(
           scaleFactor: 0.5,

@@ -3,18 +3,19 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class BlurContainer extends StatelessWidget {
-  const BlurContainer(
-      {super.key,
-      this.sigmaX,
-      this.sigmaY,
-      this.color,
-      this.opacity,
-      this.borderRadius,
-      this.borderWidth,
-      this.borderColor,
-      this.height,
-      this.width,
-      required this.child});
+  const BlurContainer({
+    super.key,
+    this.sigmaX,
+    this.sigmaY,
+    this.color,
+    this.opacity,
+    this.borderRadius,
+    this.borderWidth,
+    this.borderColor,
+    this.height,
+    this.width,
+    required this.child,
+  });
 
   final double? sigmaX;
   final double? sigmaY;

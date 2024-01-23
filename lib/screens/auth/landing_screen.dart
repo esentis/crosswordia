@@ -13,10 +13,11 @@ class LandingScreen extends ConsumerWidget {
     return Stack(
       children: [
         Positioned.fill(
-            child: Image.asset(
-          'assets/bg.webp',
-          fit: BoxFit.cover,
-        )),
+          child: Image.asset(
+            'assets/bg.webp',
+            fit: BoxFit.cover,
+          ),
+        ),
         Container(
           color: Colors.white.withOpacity(0.7),
         ),

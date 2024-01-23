@@ -55,13 +55,11 @@ extension WordExtensions on String {
       return letterFrequencies[letter.toGreekUpperCase()] ?? 0.0;
     }
 
-    for (var letter in split('')) {
-      num letterFreq = getLetterFrequency(letter);
+    for (final letter in split('')) {
+      final num letterFreq = getLetterFrequency(letter);
       score += letterFreq == 0 ? 0 : (1 / letterFreq).round();
     }
 
-    score += (length * 10);
-
-    return score;
+    return score += length * 10;
   }
 }

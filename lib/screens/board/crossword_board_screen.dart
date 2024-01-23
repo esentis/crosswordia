@@ -82,7 +82,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   /// Checks if the List a is a subset of List b
   bool isSubset(List<String> a, List<String> b) {
-    int i = 0, j = 0;
+    int i = 0;
+    int j = 0;
 
     while (i < a.length && j < b.length) {
       if (a[i] == b[j]) {
@@ -96,7 +97,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   void filterWords() {
     kLog.f('Started filtering words');
-    Map<String, Set<String>> groupedWords = {};
+    final Map<String, Set<String>> groupedWords = {};
 
     for (final word in wordsToLook) {
       // Skip words with a length less than 3
@@ -172,8 +173,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         'starting at $row, $col');
     placedWords.add(word);
     //kLog.i('Added word $word');
-    int rowInt = int.parse(row);
-    int colInt = int.parse(col);
+    final int rowInt = int.parse(row);
+    final int colInt = int.parse(col);
 
     wordPositions[word] = [];
 
@@ -208,7 +209,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   List<String> words = [];
 
   /// Checks if the word is in the wordPositions map
-  _checkCreatedWord(List<String> word) async {
+  Future<void> _checkCreatedWord(List<String> word) async {
     void resetCreatedWord() {
       setState(() {
         currentlyCreatedWord = '';
@@ -227,7 +228,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         widget.words.any((word) => word.toGreekUpperCase() == joinedWord);
 
     kLog.f(
-        '$word joined word: $joinedWord created word exists: $createdWordExists');
+      '$word joined word: $joinedWord created word exists: $createdWordExists',
+    );
 
     // If the word exists and is not in the found words list save it
     if (createdWordExists && !foundWords.contains(joinedWord)) {
@@ -235,9 +237,9 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       resetCreatedWord();
 
       // We add a delay so the animation finished playing
-      Future.delayed(const Duration(milliseconds: 300), (() {
+      Future.delayed(const Duration(milliseconds: 300), () {
         lettersForTheBoard.shuffle();
-      }));
+      });
 
       kLog.f('Adding $joinedWord to found words');
       foundWords.add(joinedWord);
@@ -323,7 +325,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       for (var i = 0; i < wordsForArrangement.length; i++) {
         if (i == 0 && placedWords.isEmpty) {
           // We calculate the approxiate middle of the board to put the first word
-          int startAfter =
+          final int startAfter =
               (((boardRows - wordsForArrangement[i].length) / 2) + 1).ceil();
           _placeWord(
             row: '6',
@@ -469,7 +471,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     // Initial placement of the words
     arrangeWords(words);
 
-    List<String> notPlacedWords =
+    final List<String> notPlacedWords =
         words.where((w) => !placedWords.contains(w)).toList();
 
     if (notPlacedWords.isNotEmpty) {
@@ -477,7 +479,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       arrangeWords(notPlacedWords);
     }
     kLog.f(
-        'all words $words\nplaced words $placedWords\nnot placed words $notPlacedWords');
+      'all words $words\nplaced words $placedWords\nnot placed words $notPlacedWords',
+    );
 
     _generateLettersForConnector();
     _mapFoundWordLetterPositions();
@@ -488,13 +491,13 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
   /// for example if a word has 3 "A" three "A"s will be present in the connector
   void _generateLettersForConnector() {
     // find repeated letters and their count
-    Map<String, int> repeatedLetters = {};
+    final Map<String, int> repeatedLetters = {};
 
-    List<String> extraLettersToAdd = [];
+    final List<String> extraLettersToAdd = [];
 
     for (final word in placedWords) {
       // kLog.i('Char occurences for word $word\n${word.charOccurences}');
-      for (Map<String, int> charOcc in word.charOccurences) {
+      for (final Map<String, int> charOcc in word.charOccurences) {
         if (charOcc.values.first > 1) {
           // If the occurence of the letter is greater than the one already in the map
           if (repeatedLetters[charOcc.keys.first] == null ||
@@ -517,7 +520,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
           .split('')
           .toSet()
           .where((value) => !value.isIn(repeatedLetters.keys)),
-      ...extraLettersToAdd
+      ...extraLettersToAdd,
     ]..shuffle();
   }
 
@@ -537,10 +540,11 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-              child: Image.asset(
-            'assets/bg.webp',
-            fit: BoxFit.cover,
-          )),
+            child: Image.asset(
+              'assets/bg.webp',
+              fit: BoxFit.cover,
+            ),
+          ),
           Container(
             color: Colors.white.withOpacity(0.6),
           ),
@@ -586,14 +590,15 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                         crossAxisCount: boardRows,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        int row = (index ~/ boardRows) + 1;
-                        int col = (index % boardRows) + 1;
+                        final int row = (index ~/ boardRows) + 1;
+                        final int col = (index % boardRows) + 1;
 
                         final currentPosition = '$row.$col';
 
                         final Map<String, dynamic> letterFound =
                             letterPositions.whereValue(
-                                (letters) => letters.contains(currentPosition));
+                          (letters) => letters.contains(currentPosition),
+                        );
                         final bool letterFoundIsNotAlreadyRevealed =
                             !revealedLetterPositions.contains(currentPosition);
 
@@ -607,9 +612,9 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                   letterFoundIsNotAlreadyRevealed &&
                                   letterIsAlreadyFound == false
                               ? () async {
-                                  num letterFreq = letterFrequencies[letterFound
-                                          .keys.first
-                                          .toGreekUpperCase()] ??
+                                  final num letterFreq = letterFrequencies[
+                                          letterFound.keys.first
+                                              .toGreekUpperCase()] ??
                                       0.0;
                                   final letterScore = letterFreq == 0
                                       ? 0
@@ -626,9 +631,11 @@ Letter score $letterScore
                                       playerStatus != null) {
                                     await PlayerStatusService.instance
                                         .updatePlayerStatus(
-                                            playerStatus!.copyWith(
-                                      coins: playerStatus!.coins - letterScore,
-                                    ));
+                                      playerStatus!.copyWith(
+                                        coins:
+                                            playerStatus!.coins - letterScore,
+                                      ),
+                                    );
                                     playerStatus = await PlayerStatusService
                                         .instance
                                         .getPlayerStatus(widget.userId);
@@ -672,8 +679,9 @@ Letter score $letterScore
                                 child: Text(
                                   letterFound.isNotEmpty
                                       ? foundLetterPositions.values.any(
-                                                  (element) => element
-                                                      .contains("$row.$col")) ||
+                                                (element) => element
+                                                    .contains("$row.$col"),
+                                              ) ||
                                               revealedLetterPositions
                                                   .contains("$row.$col")
                                           ? letterFound.keys.first.toUpperCase()
@@ -747,7 +755,6 @@ Letter score $letterScore
                           Center(
                             child: LetterConnector(
                               controller: _controller,
-                              letterStyle: LetterStyle.circle,
                               distanceOfLetters: 94,
                               letterSize: 23,
                               borderColor: Colors.white,
@@ -772,9 +779,11 @@ Letter score $letterScore
                                 _checkCreatedWord(word);
                               },
                               letters: lettersForTheBoard,
-                              key: ValueKey(lettersForTheBoard.last +
-                                  lettersForTheBoard.first +
-                                  lettersForTheBoard[1]),
+                              key: ValueKey(
+                                lettersForTheBoard.last +
+                                    lettersForTheBoard.first +
+                                    lettersForTheBoard[1],
+                              ),
                             ),
                           ),
                         Center(
@@ -789,7 +798,7 @@ Letter score $letterScore
                               size: 40,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

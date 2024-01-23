@@ -78,20 +78,27 @@ class SignupScreen extends ConsumerWidget {
               ),
               if (!isLogin)
                 Checkbox(
-                    value: isAdminProvider.registeringAsAdmin,
-                    onChanged: (isAdmin) {
-                      kLog.i(isAdmin);
-                      isAdminProviderRead.toggleRegisteringAsAdmin();
-                    }),
+                  value: isAdminProvider.registeringAsAdmin,
+                  onChanged: (isAdmin) {
+                    kLog.i(isAdmin);
+                    isAdminProviderRead.toggleRegisteringAsAdmin();
+                  },
+                ),
               TextButton(
                 onPressed: () async {
                   try {
                     isLogin
-                        ? await authProvider.signIn(emailController.text,
-                            passwordController.text, context)
-                        : await authProvider.signUp(emailController.text,
-                            passwordController.text, context,
-                            isAdmin: isAdminProvider.registeringAsAdmin);
+                        ? await authProvider.signIn(
+                            emailController.text,
+                            passwordController.text,
+                            context,
+                          )
+                        : await authProvider.signUp(
+                            emailController.text,
+                            passwordController.text,
+                            context,
+                            isAdmin: isAdminProvider.registeringAsAdmin,
+                          );
                   } catch (e) {
                     kLog.e('Rethrown\n$e');
                   }

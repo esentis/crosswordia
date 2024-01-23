@@ -128,7 +128,7 @@ class AdminScreen extends StatelessWidget {
                               ),
                             ],
                           );
-                          final totalLevelCounts = res[0] as int;
+                          final totalLevelCounts = res[0]! as int;
                           final status = res[1] as PlayerStatus?;
                           if (status != null) {
                             if (context.mounted) {
