@@ -49,7 +49,7 @@ extension WordExtensions on String {
   int calculateWordScore() {
     int score = 0;
     num getLetterFrequency(String letter) {
-      if (letter.onlyLetters!.length != 1) {
+      if (letter.onlyLetters.length != 1) {
         return 0.0;
       }
       return letterFrequencies[letter.toGreekUpperCase()] ?? 0.0;
