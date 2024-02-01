@@ -105,7 +105,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
         continue;
       }
 
-      final wordSlicedAndSorted = word.toGreekUpperCase()!.split('')..sort();
+      final wordSlicedAndSorted = word.toGreekUpperCase().split('')..sort();
       final String wordUpperAndSorted = wordSlicedAndSorted.join();
 
       if (word.length <= 5) {
@@ -201,7 +201,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
 
   late List<String> sortedWords = widget.words
       .map(
-        (e) => e.toGreekUpperCase()!,
+        (e) => e.toGreekUpperCase(),
       )
       .toList()
     ..sort((a, b) => b.length.compareTo(a.length));
@@ -346,8 +346,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
             if (foundLocations != null) {
               for (final location in foundLocations) {
                 // The row and column of the found letter
-                final String row = location.before('.')!;
-                final String col = location.after('.')!;
+                final String row = location.before('.');
+                final String col = location.after('.');
 
                 final int rowInt = int.parse(row);
                 final int colInt = int.parse(col);
@@ -443,7 +443,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                     word: word,
                     isHorizontal: false,
                     startingPoint: actualVerticalStartingLocationIfAvailable
-                        .before('.')!
+                        .before('.')
                         .toInt()!,
                   );
                   break letterLoop;
@@ -454,7 +454,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                     word: word,
                     isHorizontal: true,
                     startingPoint: actualHorizontalStartingLocationIfAvailable
-                        .after('.')!
+                        .after('.')
                         .toInt()!,
                   );
                   break letterLoop;
@@ -772,7 +772,7 @@ Letter score $letterScore
                               onUnsnap: (letterPosition) {
                                 setState(() {
                                   currentlyCreatedWord =
-                                      currentlyCreatedWord.removeLast(1)!;
+                                      currentlyCreatedWord.removeLast(1);
                                 });
                               },
                               onCompleted: (word) {

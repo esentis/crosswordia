@@ -42,12 +42,12 @@ bool canStartHorizontally({
 
   // This is the HORIZONTAL starting point of the word IF it can be placed
   final int actualHorizontalCol =
-      actualHorizontalStartingLocationIfAvailable.after('.')!.toInt()!;
+      actualHorizontalStartingLocationIfAvailable.after('.').toInt()!;
 
   int horizontalColIterator = actualHorizontalCol;
 
   final int actualHorizontalRow =
-      actualHorizontalStartingLocationIfAvailable.before('.')!.toInt()!;
+      actualHorizontalStartingLocationIfAvailable.before('.').toInt()!;
 
   bool hasActualConflicts = false;
 

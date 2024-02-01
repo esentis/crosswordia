@@ -24,16 +24,16 @@ Future<void> scrape() async {
         final String word = (res.data as String)
             .substring(foundIndex, foundIndex + 100)
             .after('<dt><b>')
-            .before('</b>')!
-            .stripHtml!
+            .before('</b>')
+            .stripHtml
             .split(' ')
             .first;
 
         final String description = (res.data as String)
             .substring(foundIndex, foundIndex + 500)
             .after('<b>:</b>')
-            .before(':')!
-            .stripHtml!;
+            .before(':')
+            .stripHtml;
 
         // if (description.contains('.')) {
         //   description = description.before('.')!;

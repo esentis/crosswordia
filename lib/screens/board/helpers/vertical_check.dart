@@ -22,7 +22,7 @@ bool canStartVertically({
 }) {
   // This is the VERTICAL starting point of the word IF it can be placed
   final int actualVerticalRow =
-      actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+      actualVerticalStartingLocationIfAvailable.before('.').toInt()!;
 
   // Checking if there is enough space to the bottom & top
   if (spaceFromTop < distanceFromTopOfLetter ||
@@ -34,7 +34,7 @@ bool canStartVertically({
   final int verticalRowIterator = actualVerticalRow;
 
   final int actualStartingRowInt =
-      actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+      actualVerticalStartingLocationIfAvailable.before('.').toInt()!;
 
   bool hasActualConflicts = false;
 
@@ -77,24 +77,24 @@ bool canStartVertically({
         '${verticalRowIterator + k + 1}.$colInt';
 
     final bool isRightBottomOutOfReach =
-        rightBottomLocationToCheck.before('.')!.toInt()! >
-            actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
+        rightBottomLocationToCheck.before('.').toInt()! >
+            actualVerticalEndingLocationIfAvailable.before('.').toInt()!;
     final bool isLeftBottomOutOfReach =
-        leftBottomLocationToCheck.before('.')!.toInt()! >
-            actualVerticalEndingLocationIfAvailable.before('.')!.toInt()!;
+        leftBottomLocationToCheck.before('.').toInt()! >
+            actualVerticalEndingLocationIfAvailable.before('.').toInt()!;
 
     final bool isRightTopOutOfReach =
-        rightTopLocationToCheck.before('.')!.toInt()! <
-            actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+        rightTopLocationToCheck.before('.').toInt()! <
+            actualVerticalStartingLocationIfAvailable.before('.').toInt()!;
 
     final bool isLeftTopOutOfReach =
-        leftTopLocationToCheck.before('.')!.toInt()! <
-            actualVerticalStartingLocationIfAvailable.before('.')!.toInt()!;
+        leftTopLocationToCheck.before('.').toInt()! <
+            actualVerticalStartingLocationIfAvailable.before('.').toInt()!;
 
     final hasConflicts = () {
       // This is the letter of the location we are checking
       // If it is empty, it means that there is no letter in the location
-      final String? checkingLetter = word.charAt(k);
+      final String checkingLetter = word.charAt(k);
 
       final String currentLocationLetter = letterPositions
           .whereValue(
@@ -133,8 +133,8 @@ bool canStartVertically({
       final bool leftTopLocationHasConflict = (letterPositions.anyValue(
                 (v) => v.contains(leftTopLocationToCheck),
               ) &&
-              actualVerticalStartingLocationIfAvailable.before('.')!.toInt()! <=
-                  leftTopLocationToCheck.before('.')!.toInt()!) &&
+              actualVerticalStartingLocationIfAvailable.before('.').toInt()! <=
+                  leftTopLocationToCheck.before('.').toInt()!) &&
           letterPositions.anyValue(
             (v) => v.contains(leftLocationToCheck),
           );
@@ -158,7 +158,7 @@ bool canStartVertically({
               letterPositions.anyValue(
                 (v) => v.contains(rightLocationToCheck),
               ) ||
-          checkingLetter == null &&
+          checkingLetter.isEmpty &&
               letterPositions.anyValue(
                 (v) => v.contains(rightLocationToCheck),
               );
@@ -183,7 +183,7 @@ bool canStartVertically({
               letterPositions.anyValue(
                 (v) => v.contains(leftLocationToCheck),
               ) ||
-          checkingLetter == null &&
+          checkingLetter.isEmpty &&
               letterPositions.anyValue(
                 (v) => v.contains(leftLocationToCheck),
               );
@@ -210,12 +210,12 @@ What is this ${(!isCurrentLetterPartOfTheWord && locationToCheck == actualVertic
                   (v) => v.contains(leftLocationToCheck),
                 )}
 
-Or this ${checkingLetter == null && letterPositions.anyValue(
+Or this ${checkingLetter.isEmpty && letterPositions.anyValue(
                   (v) => v.contains(leftLocationToCheck),
                 )}
               
 Current letter part of the word $isCurrentLetterPartOfTheWord
-Checking letter is null ${checkingLetter == null}
+Checking letter is null ${checkingLetter.isEmpty}
 
 Left location has character ${letterPositions.anyValue((v) => v.contains(leftLocationToCheck))}
 Left top location has character ${letterPositions.anyValue((v) => v.contains(leftTopLocationToCheck))}
