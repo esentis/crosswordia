@@ -55,11 +55,11 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         state = AppAuthState(
           isAuthenticated: true,
         );
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop(context);
         }
       } else {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(response.toString()),
@@ -69,7 +69,7 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         kLog.e(response);
       }
     } on AuthException catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
@@ -102,11 +102,11 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         state = AppAuthState(
           isAuthenticated: true,
         );
-        if (mounted) {
+        if (context.mounted) {
           Navigator.pop(context);
         }
       } else {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(response.toString()),
@@ -117,7 +117,7 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
       }
     } on AuthException catch (e) {
       kLog.e(e);
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.message),
