@@ -705,18 +705,18 @@ packages:
     dependency: transitive
     description:
       name: supabase
-      sha256: "7d2ca0499a6933b9aed2f4ff9eff4cbc4107f54006be35c42c8e1db70e99438e"
+      sha256: "91196ce9137e726ba137419318e4cd8c5266922729c991b40bd9a592b2867002"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.4"
+    version: "2.2.5"
   supabase_flutter:
     dependency: "direct main"
     description:
       name: supabase_flutter
-      sha256: "048d9377a76e43b95039d67e26b4bb2326fc8818df8d2f4bd63b4fdfc79f8f50"
+      sha256: "4ce9a251448a8d03d5bdcbd8700d480b378ad451dab9ce637e41a01ee58ec1b9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.8"
+    version: "2.5.9"
   term_glyph:
     dependency: transitive
     description:
