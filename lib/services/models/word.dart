@@ -45,6 +45,18 @@ class Word {
   }
 }
 
+/// Extension on `String` to calculate the score of a word based on letter frequencies.
+///
+/// The `calculateWordScore` method computes the score of a word by summing up the
+/// inverse of the frequency of each letter in the word. If a letter's frequency is
+/// zero or the letter is not a valid single letter, it contributes zero to the score.
+/// Additionally, the length of the word multiplied by 10 is added to the final score.
+///
+/// The method relies on the `letterFrequencies` map and the `toGreekUpperCase`
+/// extension method to determine the frequency of each letter.
+///
+/// Returns:
+/// - An integer representing the calculated score of the word.
 extension WordExtensions on String {
   int calculateWordScore() {
     int score = 0;
