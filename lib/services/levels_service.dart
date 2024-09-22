@@ -8,6 +8,7 @@ const Map<String, dynamic> words = {
     "στια",
     "άτι",
     "ίσα",
+    "σια",
     "στα",
     "τσια",
   ],
