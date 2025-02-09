@@ -546,7 +546,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
             ),
           ),
           Container(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
           IconButton(
             onPressed: () => Navigator.pop(context),
@@ -651,12 +651,13 @@ Letter score $letterScore
                             child: Container(
                               decoration: BoxDecoration(
                                 color: letterFound.isNotEmpty
-                                    ? Colors.white.withOpacity(0.5)
+                                    ? Colors.white.withValues(alpha: 0.5)
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(6),
                                 border: letterFound.isNotEmpty
                                     ? Border.all(
-                                        color: Colors.blue.withOpacity(0.4),
+                                        color:
+                                            Colors.blue.withValues(alpha: 0.4),
                                         width: 2,
                                       )
                                     : Border.all(color: Colors.transparent),
@@ -691,7 +692,8 @@ Letter score $letterScore
                                     color: letterFound.isNotEmpty
                                         ? revealedLetterPositions
                                                 .contains("$row.$col")
-                                            ? Colors.black.withOpacity(0.3)
+                                            ? Colors.black
+                                                .withValues(alpha: 0.3)
                                             : Colors.black
                                         : Colors.transparent,
                                     fontSize: letterFound.isNotEmpty ? 20 : 10,

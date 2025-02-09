@@ -277,8 +277,8 @@ class _LetterConnectorState extends State<LetterConnector>
 
     _colorAnimation = ColorTween(
       begin: Colors.transparent,
-      end: Colors.green.withOpacity(
-        0.5,
+      end: Colors.green.withValues(
+        alpha: 0.5,
       ),
     ).animate(
       CurvedAnimation(

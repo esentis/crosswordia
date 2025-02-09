@@ -100,7 +100,7 @@ class _LevelScreenState extends State<LevelScreen>
       (index) => LevelNode(
         finishedLineColor: const Color(0xffF5C6EC),
         inProgressLineColor: Colors.grey[300]!,
-        shadowColor: Colors.black.withOpacity(0.4),
+        shadowColor: Colors.black.withValues(alpha: 0.4),
         isFinished: index + 1 < widget.playerStatus.currentLevel,
         level: index + 1,
         userCurrentLevel: widget.playerStatus.currentLevel,
@@ -150,7 +150,7 @@ class _LevelScreenState extends State<LevelScreen>
             ),
           ),
           Container(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
           Consumer(
             builder: (context, ref, child) {

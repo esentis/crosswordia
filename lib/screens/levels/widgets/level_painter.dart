@@ -140,11 +140,11 @@ class LevelNodeWidget extends StatelessWidget {
               width: 75,
               height: 75,
               decoration: BoxDecoration(
-                color: const Color(0xffF5C6EC).withOpacity(0.3),
+                color: const Color(0xffF5C6EC).withValues(alpha: 0.3),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 10,
                     spreadRadius: 5,
                   ),
@@ -167,7 +167,7 @@ class LevelNodeWidget extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   spreadRadius: 5,
                 ),
