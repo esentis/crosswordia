@@ -33,7 +33,7 @@ dependencies:
 
   supabase_flutter: ^2.8.0
   flutter_bounceable: ^1.1.0
-  animate_do: ^3.3.4
+  animate_do: ^4.0.0
   logger: ^2.4.0
   string_extensions: ^0.7.3
   flutter_riverpod: ^2.6.1
