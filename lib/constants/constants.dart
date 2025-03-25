@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final words1 = [
+final List<String> words1 = [
   "μεσοπέλαα",
   "αέναα",
   "πράα",
