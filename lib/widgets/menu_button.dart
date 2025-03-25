@@ -1,4 +1,4 @@
-import 'package:crosswordia/constants.dart';
+import 'package:crosswordia/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 

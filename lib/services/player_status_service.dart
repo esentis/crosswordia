@@ -1,5 +1,4 @@
-// instance singleton of StatusService
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PlayerStatusService {
@@ -9,8 +8,43 @@ class PlayerStatusService {
 
   static PlayerStatusService get instance => _instance;
 
+  /// Gets the current user ID
+  /// Returns null if no user is logged in
   String? getUserId() {
     return Supabase.instance.client.auth.currentUser?.id;
+  }
+
+  /// Gets the current user object
+  /// Returns null if no user is logged in
+  User? getCurrentUser() {
+    return Supabase.instance.client.auth.currentUser;
+  }
+
+  /// Ensures the user has an initialized player status
+  /// Creates a new status if none exists
+  /// Returns the player status
+  Future<PlayerStatus> ensurePlayerStatus() async {
+    final User? currentUser = getCurrentUser();
+    if (currentUser == null) {
+      throw StateError('No user is logged in');
+    }
+
+    final String playerId = currentUser.id;
+
+    // Try to get existing status
+    final PlayerStatus? existingStatus = await getPlayerStatus(playerId);
+
+    // If status exists, return it
+    if (existingStatus != null) {
+      return existingStatus;
+    }
+
+    // If no status exists, create a new one
+    final PlayerStatus newStatus = PlayerStatus.fromNewUser(currentUser);
+    await createPlayerStatus(newStatus);
+
+    kLog.i('Created new player status for $playerId');
+    return newStatus;
   }
 
   /// Retrieves the status of a player with the specified ID.
@@ -37,6 +71,18 @@ class PlayerStatusService {
       }
       return null;
     }
+  }
+
+  /// Gets the player status for the current user
+  /// If no status exists, creates one
+  /// Throws a [StateError] if no user is logged in
+  Future<PlayerStatus> getCurrentPlayerStatus() async {
+    final String? userId = getUserId();
+    if (userId == null) {
+      throw StateError('No user is logged in');
+    }
+
+    return await ensurePlayerStatus();
   }
 
   /// Updates the player status.
@@ -70,7 +116,7 @@ ${status.toJson()}
   ///
   /// [status] The player status to be created.
   ///
-  /// Throws a [FirebaseException] if the operation fails.
+  /// Throws a [PostgrestException] if the operation fails.
   Future<void> createPlayerStatus(PlayerStatus status) async {
     kLog.i('Creating status for ${status.playerId}');
     try {
@@ -92,17 +138,17 @@ ${status.toJson()}
   }
 
   /// Increments the total coins of a player.
+  /// Creates player status if it doesn't exist.
   ///
   /// [playerId] is the ID of the player whose coins will be incremented.
   /// [coins] is the amount of coins to increment.
   /// Returns a [Future] that completes when the operation is done.
-  ///
-  /// Example:
-  /// ```dart
-  /// await incrementTotalCoins('player123', 10);
-  /// ```
   Future<void> incrementTotalCoins(String playerId, int coins) async {
-    kLog.i('Incrementing total couns for $playerId');
+    kLog.i('Incrementing total coins for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     try {
       final data = await Supabase.instance.client.rpc(
         'incrementplayercoins',
@@ -119,10 +165,35 @@ ${status.toJson()}
     }
   }
 
+  /// Ensures a player status exists for the given player ID
+  /// Creates a new one if none exists
+  Future<void> ensurePlayerStatusExists(String playerId) async {
+    final status = await getPlayerStatus(playerId);
+    if (status == null) {
+      final User? user = Supabase.instance.client.auth.currentUser;
+      if (user != null && user.id == playerId) {
+        await createPlayerStatus(PlayerStatus.fromNewUser(user));
+      } else {
+        // If we don't have the user object for this ID, create a basic status
+        await createPlayerStatus(PlayerStatus(
+          playerId: playerId,
+          totalWordsFound: 0,
+          coins: 500,
+          currentLevel: 1,
+        ));
+      }
+    }
+  }
+
   /// Increments the total number of words found by the player with the given [playerId].
+  /// Creates player status if it doesn't exist.
   /// Returns a Future that completes when the operation is done.
   Future<void> incrementTotalWordsFound(String playerId) async {
     kLog.i('Incrementing total words found for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     try {
       await Supabase.instance.client.rpc(
         'incrementtotalwordsfound',
@@ -140,15 +211,19 @@ ${status.toJson()}
   }
 
   /// Increments the level of the player with the given [playerId].
-  ///
+  /// Creates player status if it doesn't exist.
   /// Returns a Future that completes when the operation is done.
   Future<void> incrementLevel(String playerId) async {
     kLog.i('Incrementing level for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     try {
       await Supabase.instance.client
           .rpc('incrementplayerlevel', params: {'playerid': playerId});
 
-      kLog.f('Incremeted level for $playerId');
+      kLog.f('Incremented level for $playerId');
     } on PostgrestException catch (e) {
       kLog.e(e);
       if (e.message.contains('JWT expired')) {
@@ -161,8 +236,13 @@ ${status.toJson()}
   /// Checks if the level progress exists for the player
   ///
   /// If it does not exist, it will be initialized
+  /// Creates player status if it doesn't exist.
   Future<void> checkIfLevelProgressExists(String playerId, int level) async {
     kLog.i('Checking if level progress exists for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
@@ -195,12 +275,16 @@ ${status.toJson()}
   /// Updates the level progress for the player
   ///
   /// If the level progress does not exist, it will be initialized
+  /// Creates player status if it doesn't exist.
   Future<void> updateLevelProgress(
     String playerId,
     int level,
     List<String> words,
   ) async {
     kLog.i('Updating found words for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
@@ -240,6 +324,9 @@ ${status.toJson()}
   ) async {
     kLog.i('Checking if word already found for $playerId');
 
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
@@ -276,6 +363,7 @@ ${status.toJson()}
   }
 
   /// Adds a word in the level progress of a player.
+  /// Creates player status if it doesn't exist.
   ///
   /// [playerId] is the ID of the player.
   /// [level] is the level number.
@@ -286,6 +374,9 @@ ${status.toJson()}
     String word,
   ) async {
     kLog.i('Adding word in level progress for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
@@ -327,6 +418,7 @@ ${status.toJson()}
   }
 
   /// Initializes the progress of a player for a specific level.
+  /// Creates player status if it doesn't exist.
   ///
   /// [playerId] is the ID of the player.
   /// [level] is the level number.
@@ -334,6 +426,10 @@ ${status.toJson()}
   /// Returns a Future that completes when the progress is initialized.
   Future<void> initLevelProgress(String playerId, int level) async {
     kLog.i('Initializing level progress for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     final int? levelId = await getLevelId(level);
 
     if (levelId == null) {
@@ -368,7 +464,7 @@ ${status.toJson()}
           .select()
           .eq('level', level);
 
-      kLog.f('Level id is ${data[0]['id']}');
+      kLog.f('Level id is ${data.isNotEmpty ? data[0]['id'] : "not found"}');
       if (data.isNotEmpty) {
         return data[0]['id'] as int;
       }
@@ -384,6 +480,7 @@ ${status.toJson()}
   }
 
   /// Retrieves the set of words found by the player for a given level.
+  /// Creates player status if it doesn't exist.
   /// Returns null if the player has not found any words for the given level.
   ///
   /// [playerId] is the unique identifier of the player.
@@ -392,6 +489,10 @@ ${status.toJson()}
   /// Throws a [StateError] if the player ID is null or empty.
   Future<Set<String>?> getLevelsFoundWords(String playerId, int level) async {
     kLog.i('Getting found words for $playerId');
+
+    // Ensure player status exists
+    await ensurePlayerStatusExists(playerId);
+
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
@@ -430,7 +531,7 @@ ${status.toJson()}
   /// The count includes all levels, regardless of their status (completed or not).
   ///
   /// Example usage:
-  /// ```
+  /// ``` dart
   /// final totalLevels = await getTotalLevelCounts();
   /// print(totalLevels); // prints the total number of levels
   /// ```

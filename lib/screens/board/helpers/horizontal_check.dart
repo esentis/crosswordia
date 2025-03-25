@@ -1,4 +1,5 @@
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/extensions/map_extensions.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:string_extensions/string_extensions.dart';
 
 /// Determines if a word can start horizontally from a given letter position.

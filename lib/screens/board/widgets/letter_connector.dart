@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:flutter/material.dart';
 
 enum LetterStyle {

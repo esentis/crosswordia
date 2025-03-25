@@ -1,1456 +1,17 @@
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/constants/grouped_words.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-const Map<String, dynamic> words = {
-  "ΑΙΣΤ": [
-    "τσάι",
-    "τάσι",
-    "στια",
-    "άτι",
-    "ίσα",
-    "σια",
-    "στα",
-    "τσια",
-  ],
-  "ΑΙΜΡΤ": [
-    "μίτρα",
-    "ραμί",
-    "ρίμα",
-    "μάτι",
-    "τριμα",
-    "τραμ",
-    "αρμ",
-    "τιμ",
-    "άτι",
-    "ματ",
-    "μία",
-  ],
-  "ΑΙΚΣ": [
-    "σκιά",
-    "σακί",
-    "ίσκα",
-    "ασκί",
-    "σκι",
-    "ίσα",
-    "σικ",
-    "και",
-  ],
-  "ΚΟΣΥ": [
-    "σύκο",
-    "σου",
-    "σοκ",
-    "κου",
-    "ουκ",
-    "ους",
-  ],
-  "ΕΣΤΩ": [
-    "τέως",
-    "ώστε",
-    "έστω",
-    "έως",
-    "σετ",
-    "εσω",
-  ],
-  "ΑΚΟΠ": [
-    "πόκα",
-    "πάκο",
-    "καπό",
-    "από",
-    "οκά",
-    "πόα",
-    "οπα",
-  ],
-  "ΑΚΟΡ": [
-    "όρκα",
-    "άκρο",
-    "κόρα",
-    "καρό",
-    "κρα",
-    "ροκ",
-    "οκά",
-  ],
-  "ΑΕΗΘΙΤ": [
-    "θητεία",
-    "θεία",
-    "θεα",
-    "αθεη",
-  ],
-  "ΗΜΟΡΥ": [
-    "μούρη",
-    "ρύμη",
-    "ορμή",
-    "μύρο",
-    "μου",
-    "ρου",
-    "ροή",
-  ],
-  "ΑΙΔΕΑΙ": [
-    "άδεια",
-    "ίδια",
-    "είδα",
-    "ιδέα",
-    "δια",
-  ],
-  "ΑΙΚΝΟΥ": [
-    "οκα",
-    "κούνια",
-    "όκια",
-    "νια",
-    "ουκ",
-    "και",
-    "νου",
-    "ναι",
-    "νικά",
-    "κοινά",
-  ],
-  "ΑΝΤΥΧΩ": [
-    "τυχών",
-    "χύνω",
-    "χάνω",
-    "ταχύ",
-    "ταυ",
-    "χαν",
-    "χανω",
-    "νυχτα",
-  ],
-  "ΙΚΟΡΣ": [
-    "ρίσκο",
-    "σκορ",
-    "ροκ",
-    "σοκ",
-    "σόι",
-    "σικ",
-    "σκι",
-    "ιος",
-  ],
-  "ΑΙΡΦΧΩ": [
-    "χωράφι",
-    "χαίρω",
-    "χώρια",
-    "ωρα",
-    "χώρα",
-    "χρίω",
-    "χαφ",
-  ],
-  "ΑΔΙΛΟΙΦ": [
-    "φολίδα",
-    "ιδία",
-    "φιλία",
-    "δόλια",
-    "φίδι",
-    "φιλί",
-    "ίδιο",
-    "λαδι",
-    "φολα",
-  ],
-  "ΑΑΠΡΦ": [
-    "φράπα",
-    "άρπα",
-    "φάπα",
-    "φάρα",
-    "άπα",
-    "άρα",
-    "ραπ",
-    "παρα",
-    "πραα",
-  ],
-  "ΑΓΟΡΣΥ": [
-    "γαύρος",
-    "γράσο",
-    "ράσο",
-    "γάρος",
-    "ρουγα",
-    "σουρα",
-    "γύρος",
-    "γύρα",
-    "γαρ",
-    "γου",
-    "ρου",
-    "σου",
-    "ρογα",
-    "ουρα",
-  ],
-  "ΟΠΡΣΥ": [
-    "υπο",
-    "προς",
-    "ρύπος",
-    "πυρός",
-    "ρους",
-    "ους",
-    "σπορ",
-    "ρου",
-    "σου",
-    "που",
-  ],
-  "ΑΙΡΣΤΧ": [
-    "τρίχα",
-    "χτιστα",
-    "αχτι",
-    "ισα",
-    "χαρτί",
-    "χάρις",
-    "τάσι",
-    "τσάι",
-    "τρις",
-    "σταρ",
-    "σιτα",
-    "σταρι",
-  ],
-  "ΑΓΕΙΚΝ": [
-    "και",
-    "γενιά",
-    "ενα",
-    "γένι",
-    "γεια",
-    "γεν",
-    "ίνα",
-    "γκι",
-    "νεα",
-    "κενα",
-  ],
-  "ΑΔΙΚΝΟ": [
-    "και",
-    "ναι",
-    "δικανο",
-    "αδικο",
-    "κόνιδα",
-    "κνίδα",
-    "ικανο",
-    "οίδα",
-    "κανο",
-  ],
-  "ΕΙΚΡΣΤ": [
-    "τσέρκι",
-    "στεκι",
-    "τρεις",
-    "σερι",
-    "σκι",
-    "σικ",
-    "κερι",
-    "ετσι",
-    "στέκι",
-    "τσέρι",
-    "τσεκ",
-    "τρις",
-    "τρικ",
-    "τικ",
-  ],
-  "ΑΕΗΜΡ": [
-    "ημέρα",
-    "μέρα",
-    "ρεμα",
-    "μαη",
-    "έρμα",
-    "άρμη",
-    "αρμέ",
-    "έαρ",
-    "αμέ",
-    "αρμ",
-    "ρημα",
-  ],
-  "ΑΔΕΜΡ": [
-    "δέρμα",
-    "έδρα",
-    "δέμα",
-    "ρεμα",
-    "μέρα",
-    "έρμα",
-    "αρμέ",
-    "έαρ",
-    "αμέ",
-    "αρμ",
-  ],
-  "ΕΛΟΣΤ": [
-    "τέλος",
-    "τσέλο",
-    "σοτέ",
-    "έτος",
-    "έλος",
-    "στο",
-    "έσο",
-    "σολ",
-    "σετ",
-  ],
-  "ΑΛΛΟΥΦ": [
-    "φαουλ",
-    "λουφα",
-    "αλλο",
-    "φολα",
-    "φύλλο",
-    "φουλ",
-    "φύλο",
-    "φλου",
-    "φου",
-    "αλλου",
-  ],
-  "ΟΙΚΛΟΣ": [
-    "κλοιός",
-    "κολιός",
-    "ολικός",
-    "σόλο",
-    "σιλό",
-    "όλος",
-    "όκιο",
-    "κόλο",
-    "κλος",
-    "κιλό",
-    "σολ",
-    "σοκ",
-    "σόι",
-    "σκι",
-    "ιός",
-    "σικ",
-    "όλο",
-    "όσο",
-  ],
-  "ΟΟΠΣΤ": [
-    "τόπος",
-    "πόστο",
-    "οπτός",
-    "τόσο",
-    "στοπ",
-    "σποτ",
-    "ποτό",
-    "ποσό",
-    "οστό",
-    "οπός",
-    "όσο",
-    "ποτ",
-  ],
-  "ΑΒΙΣΤ": [
-    "βίτσα",
-    "άτι",
-    "βάι",
-    "βατ",
-    "βια",
-    "τσαι",
-    "βιτα",
-    "ισα",
-    "σιτα",
-  ],
-  "ΑΖΙΡΧΩ": [
-    "χαιρω",
-    "χαρίζω",
-    "χώρια",
-    "χώρα",
-    "ζάρι",
-    "χάζι",
-    "ζωα",
-    "χαρω",
-  ],
-  "ΙΚΟΠΤΥ": [
-    "που",
-    "τυπο",
-    "τυπικό",
-    "ύπτιο",
-    "τόπι",
-    "τικ",
-    "υπό",
-    "του",
-  ],
-  "ΑΓΗΚΛΥ": [
-    "αγκύλη",
-    "αλυκή",
-    "αυλή",
-    "αυγή",
-    "αλκή",
-    "καλη",
-    "αλγη",
-    "γαλή",
-  ],
-  "ΑΕΛΝΠ": [
-    "ελα",
-    "πάνελ",
-    "πανέ",
-    "πένα",
-    "επαλ",
-    "παν",
-    "λαε",
-    "ναε",
-    "νεα",
-  ],
-  "ΑΖΙΜΤ": [
-    "τζαμί",
-    "μίτζα",
-    "μίζα",
-    "μάτι",
-    "μαζί",
-    "τζα",
-    "άτι",
-    "ματ",
-    "μια",
-    "ζια",
-  ],
-  "ΑΒΛΑΦΕ": [
-    "άβλαβα",
-    "φλέβα",
-    "έλαβα",
-    "φάβα",
-    "λάβα",
-    "λάβε",
-    "βάβα",
-    "έβαλα",
-    "βαφλα",
-    "εβαφα",
-    "αβε",
-    "φαε",
-    "λαε",
-  ],
-  "ΑΕΜΡΤ": [
-    "τέρμα",
-    "τραμ",
-    "ρέμα",
-    "μετρ",
-    "μετά",
-    "αρμέ",
-    "έρμα",
-    "έαρ",
-    "αρμ",
-    "ματ",
-    "αμέ",
-    "μέα",
-    "μερα",
-  ],
-  "ΑΕΡΣΤ": [
-    "τέρας",
-    "στέαρ",
-    "ρέστα",
-    "τρέσα",
-    "σταρ",
-    "σέρα",
-    "έαρ",
-    "σετ",
-    "ασε",
-    "σερ",
-    "σέα",
-    "στα",
-  ],
-  "ΑΗΜΡΧ": [
-    "χρήμα",
-    "χήρα",
-    "χάρη",
-    "ρήμα",
-    "μαη",
-    "ράχη",
-    "μάχη",
-    "άρμη",
-    "αρχή",
-    "αρμ",
-    "χρη",
-  ],
-  "ΑΚΟΣΤ": [
-    "τάκος",
-    "σκότα",
-    "τσοκ",
-    "τσακ",
-    "τόκα",
-    "στοκ",
-    "στοά",
-    "ασκο",
-    "κότα",
-    "κατς",
-    "καστ",
-    "ατός",
-    "σοκ",
-    "οκά",
-    "στα",
-  ],
-  "ΑΜΟΣΤ": [
-    "στόμα",
-    "σοα",
-    "ματσό",
-    "ατμός",
-    "στοά",
-    "ματς",
-    "ατός",
-    "ματ",
-    "στα",
-    "μας",
-    "τοσα",
-  ],
-  "ΑΟΠΡΣ": [
-    "σπορά",
-    "πράσο",
-    "πράος",
-    "σόπρα",
-    "άσπρο",
-    "σπορ",
-    "ράσο",
-    "προς",
-    "πάσο",
-    "από",
-    "προ",
-    "όπα",
-    "πόα",
-  ],
-  "ΑΑΛΠΣ": [
-    "σπάλα",
-    "σάλπα",
-    "λαπάς",
-    "σάλα",
-    "πάσα",
-    "πάλα",
-    "άλας",
-    "άπας",
-    "άπλα",
-    "άπα",
-    "αλά",
-    "άλα",
-    "παλ",
-    "πας",
-  ],
-  "ΙΝΟΣΤ": [
-    "τίνος",
-    "τσόνι",
-    "νιος",
-    "ίσον",
-    "τον",
-    "στο",
-    "σόι",
-    "ιόν",
-    "ιός",
-    "ντο",
-    "ότι",
-  ],
-  "ΑΙΜΡΣ": [
-    "σμάρι",
-    "σιμά",
-    "σάρι",
-    "ρίμα",
-    "ραμί",
-    "μαρς",
-    "αρμ",
-    "ίσα",
-    "μια",
-    "μις",
-    "μία",
-    "μας",
-  ],
-  "ΕΟΣΤΥ": [
-    "σουέτ",
-    "υετός",
-    "σουτ",
-    "σοτέ",
-    "ούτε",
-    "ουστ",
-    "έτος",
-    "του",
-    "έσο",
-    "εσύ",
-    "σου",
-    "σετ",
-    "ους",
-  ],
-  "ΚΟΡΣΥ": [
-    "σκύρο",
-    "κύρος",
-    "κρύος",
-    "σύκο",
-    "σκορ",
-    "ρους",
-    "σου",
-    "σοκ",
-    "κου",
-    "κυρ",
-    "ρου",
-    "ροκ",
-    "ουκ",
-    "ους",
-  ],
-  "ΑΙΚΡΣ": [
-    "σκαρί",
-    "κρασί",
-    "καρσί",
-    "σκιά",
-    "σακί",
-    "ρακί",
-    "κάρι",
-    "ίσκα",
-    "ασκί",
-    "σκι",
-    "ίσα",
-    "σικ",
-    "και",
-    "κρα",
-  ],
-  "ΑΙΚΛΣ": [
-    "σκαλί",
-    "σκιά",
-    "σάλι",
-    "σακί",
-    "κάλι",
-    "ίσκα",
-    "ασκί",
-    "σκι",
-    "ίσα",
-    "σικ",
-    "και",
-    "λακ",
-    "αλί",
-  ],
-  "ΑΑΜΠΣ": [
-    "σάμπα",
-    "μάπας",
-    "αμπάς",
-    "μπας",
-    "πάσα",
-    "μάσα",
-    "μάπα",
-    "άπας",
-    "άσμα",
-    "άπα",
-    "πας",
-    "σπα",
-    "άμα",
-    "μπα",
-    "μας",
-  ],
-  "ΑΙΛΟΣ": [
-    "σάλιο",
-    "σολία",
-    "σόλα",
-    "σιλό",
-    "σάλι",
-    "λάσο",
-    "λαός",
-    "σολ",
-    "σόι",
-    "ιός",
-    "ίσα",
-    "αλί",
-  ],
-  "ΑΓΟΡΥ": [
-    "ρούγα",
-    "ραγού",
-    "ρόγα",
-    "ρουά",
-    "ουρά",
-    "αυγό",
-    "γύρα",
-    "αργό",
-    "γαρ",
-    "γου",
-    "άου",
-    "ρου",
-    "ουά",
-  ],
-  "ΑΙΚΟΡ": [
-    "ροκιά",
-    "ρακί",
-    "όκια",
-    "όρκα",
-    "άκρο",
-    "κόρα",
-    "καρό",
-    "κάρο",
-    "κάρι",
-    "και",
-    "κρα",
-    "ροκ",
-    "οκά",
-    "και",
-  ],
-  "ΑΚΟΡΣ": [
-    "ροκάς",
-    "ράκος",
-    "όσκαρ",
-    "άκρος",
-    "σκορ",
-    "ράσο",
-    "όρκα",
-    "άκρο",
-    "κόσα",
-    "κόρα",
-    "καρό",
-    "σοκ",
-    "κρα",
-    "ροκ",
-    "οκά",
-  ],
-  "ΑΑΓΙΡ": [
-    "αργία",
-    "γραία",
-    "άγρια",
-    "ράγια",
-    "ράγα",
-    "αίγα",
-    "ρίγα",
-    "άγια",
-    "άρια",
-    "άγρα",
-    "γαρ",
-    "γρι",
-    "αρά",
-    "για",
-  ],
-  "ΑΟΤΥΦ": [
-    "τούφα",
-    "φυτά",
-    "άουτ",
-    "ατού",
-    "αφού",
-    "φυτό",
-    "φτου",
-    "του",
-    "ταυ",
-    "φου",
-    "άου",
-    "ουά",
-    "ουφ",
-    "τυφο",
-    "αυτό",
-    "φατο",
-  ],
-  "ΑΙΚΟΠΡ": [
-    "προικα",
-    "κόπρια",
-    "πρόκα",
-    "πάρκο",
-    "κόπια",
-    "ροκα",
-    "ποκα",
-    "ρακι",
-    "καπο",
-    "καρο",
-    "κορα",
-    "πάκο",
-    "όρκα",
-    "άκρο",
-    "ποιο",
-    "από",
-    "κρα",
-    "ροκ",
-    "οκά",
-    "προ",
-    "όπα",
-    "πόα",
-    "πια",
-    "και",
-  ],
-  "ΑΙΜΠΡ": [
-    "πρίμα",
-    "μπίρα",
-    "αμπρί",
-    "αμπίρ",
-    "ρίμα",
-    "ραμί",
-    "πριμ",
-    "μπαρ",
-    "αρμ",
-    "μια",
-    "μπα",
-    "μία",
-    "πια",
-  ],
-  "ΑΚΟΡΤ": [
-    "τράκο",
-    "τρακ",
-    "τόκα",
-    "ρότα",
-    "όρκα",
-    "άκρο",
-    "κότα",
-    "κόρα",
-    "καρό",
-    "κάρο",
-    "κρα",
-    "ροκ",
-    "οκά",
-  ],
-  "ΑΙΠΣΤ": [
-    "πίτσα",
-    "πίστα",
-    "πάτσι",
-    "τσαπί",
-    "τσίπα",
-    "τσιπ",
-    "τσάι",
-    "τάσι",
-    "ταπί",
-    "πίτα",
-    "άτι",
-    "ίσα",
-    "σία",
-    "πια",
-    "στα",
-  ],
-  "ΑΕΙΝΠ": [
-    "πιένα",
-    "πενιά",
-    "πενία",
-    "πείνα",
-    "πένα",
-    "πανί",
-    "πανέ",
-    "ενα",
-    "επί",
-    "ίνα",
-    "ναι",
-    "αεί",
-    "πια",
-    "παν",
-    "νια",
-    "νέα",
-  ],
-  "ΑΙΝΟΠ": [
-    "πιάνο",
-    "πόνι",
-    "πίνα",
-    "πανό",
-    "πανί",
-    "ίνα",
-    "ιόν",
-    "από",
-    "ναι",
-    "όπα",
-    "πόα",
-    "πιο",
-    "πια",
-    "παν",
-    "νια",
-  ],
-  "ΑΕΛΜΠ": [
-    "πέλμα",
-    "μπέλα",
-    "έμπα",
-    "πλέα",
-    "πάλε",
-    "μπλε",
-    "λαμέ",
-    "έλα",
-    "αμέ",
-    "μέα",
-    "άμε",
-    "μπα",
-    "μπε",
-    "παλ",
-  ],
-  "ΑΑΛΠΡ": [
-    "πάρλα",
-    "πράα",
-    "παρά",
-    "πάλα",
-    "άπλα",
-    "άρπα",
-    "αρά",
-    "άπα",
-    "αλά",
-    "παλ",
-    "ραπ",
-  ],
-  "ΑΔΟΡΥ": [
-    "ούρδα",
-    "ρουά",
-    "ρόδα",
-    "ύδρα",
-    "ουρά",
-    "δόρυ",
-    "δου",
-    "δύο",
-    "άου",
-    "ρου",
-    "ουά",
-  ],
-  "ΑΑΜΝΤ": [
-    "ντάμα",
-    "τάμα",
-    "νάμα",
-    "αμάν",
-    "μανά",
-    "άντα",
-    "άτα",
-    "ανά",
-    "ματ",
-    "άμα",
-    "μνα",
-    "ντα",
-  ],
-  "ΑΑΛΜΠ": [
-    "μπάλα",
-    "λάμπα",
-    "πάλα",
-    "άλμα",
-    "μάπα",
-    "λάμα",
-    "άπλα",
-    "άπα",
-    "άμα",
-    "μπα",
-    "αλά",
-    "παλ",
-  ],
-  "ΑΕΙΜΡ": [
-    "μεριά",
-    "ερμιά",
-    "ρίμα",
-    "ρέμα",
-    "ραμί",
-    "μερα",
-    "αέρι",
-    "μερί",
-    "αρμέ",
-    "έρμα",
-    "έαρ",
-    "αρμ",
-    "αμέ",
-    "μέα",
-    "άμε",
-    "μια",
-    "αεί",
-    "μία",
-  ],
-  "ΑΑΙΜΤ": [
-    "ματιά",
-    "τάμα",
-    "τιμά",
-    "άμια",
-    "μαία",
-    "αίμα",
-    "μάτι",
-    "άτι",
-    "άτα",
-    "ματ",
-    "άμα",
-    "μια",
-  ],
-  "ΑΑΚΜΡ": [
-    "μάρκα",
-    "κράμα",
-    "κάρμα",
-    "μάρα",
-    "μάκα",
-    "κάρα",
-    "κάμα",
-    "άρμα",
-    "αρμ",
-    "αρά",
-    "κρα",
-    "άμα",
-  ],
-  "ΑΕΜΡΣ": [
-    "μασέρ",
-    "σέρα",
-    "ρέμα",
-    "μέσα",
-    "μαρς",
-    "αρμέ",
-    "έρμα",
-    "έαρ",
-    "αρμ",
-    "σερ",
-    "σέα",
-    "αμέ",
-    "μέα",
-    "μες",
-    "μας",
-  ],
-  "ΑΙΜΣΤ": [
-    "τσίμα",
-    "τσάι",
-    "τάσι",
-    "στια",
-    "σιμά",
-    "ματς",
-    "μάτι",
-    "άτι",
-    "ίσα",
-    "σία",
-    "ματ",
-    "μις",
-    "μία",
-    "στα",
-    "μας",
-  ],
-  "ΑΕΚΜΡ": [
-    "κρέμα",
-    "κέρμα",
-    "μερα",
-    "ρέμα",
-    "κρεμ",
-    "καρέ",
-    "αρμέ",
-    "έρμα",
-    "έαρ",
-    "αρμ",
-    "κρα",
-    "αμέ",
-    "μέα",
-  ],
-  "ΑΚΟΠΥ": [
-    "κούπα",
-    "κάπου",
-    "πόκα",
-    "πάκο",
-    "κουπ",
-    "καπό",
-    "υπό",
-    "από",
-    "κου",
-    "άου",
-    "οκά",
-    "που",
-    "όπα",
-    "πόα",
-    "ουά",
-    "ουκ",
-  ],
-  "ΑΙΚΟΠ": [
-    "κόπια",
-    "απίκο",
-    "πόκα",
-    "πίκα",
-    "πάκο",
-    "όκια",
-    "καπό",
-    "και",
-    "από",
-    "οκά",
-    "όπα",
-    "πόα",
-    "πιο",
-    "πια",
-  ],
-  "ΑΔΙΜΡΙΩ": [
-    "ίδρωμα",
-    "ιδίωμα",
-    "ίριδα",
-    "ιδία",
-    "μωρα",
-    "δωρα",
-    "ωρα",
-    "δωμα",
-    "ριμαδι",
-    "δρω",
-    "μαδω",
-    "ωμα",
-    "ριμα",
-  ],
-  "ΑΓΖΑΙΚ": [
-    "γκαζιά",
-    "αγια",
-    "γαζία",
-    "γκάζι",
-    "γαία",
-    "γαζί",
-    "γάζα",
-    "γκι",
-    "για",
-  ],
-  "ΑΔΑΕΙΜΡ": [
-    "ραμα",
-    "δεμα",
-    "μαρίδα",
-    "μερίδα",
-    "έριδα",
-    "ίριδα",
-    "μερα",
-    "αρίδα",
-    "είδα",
-    "ιδέα",
-    "άδεια",
-    "αερα",
-    "δια",
-  ],
-  "ΑΕΖΙΜΡ": [
-    "μαζι",
-    "ρεμίζα",
-    "μέριζα",
-    "μέρζα",
-    "αμε",
-    "ρεμα",
-    "ριμα",
-    "ρίζα",
-    "μίζα",
-    "ρέζα",
-    "ζαρι",
-    "ζέα",
-    "μερα",
-  ],
-  "ΑΕΗΙΜΡ": [
-    "μερη",
-    "μερια",
-    "ρημα",
-    "ρεμα",
-    "μαη",
-    "ημερα",
-    "ηρεμία",
-    "ερημία",
-    "μία",
-  ],
-  "ΑΕΝΟΣΤ": [
-    "ενας",
-    "τοσα",
-    "ασε",
-    "ενα",
-    "ενος",
-    "νεος",
-    "εαν",
-    "οταν",
-    "άνετος",
-    "ετος",
-    "ασετόν",
-    "αετός",
-    "ατός",
-    "άντε",
-    "σανό",
-    "νοτα",
-    "σατεν",
-    "ναος",
-    "τοσα",
-  ],
-  "ΑΒΙΟΤΥ": [
-    "βουτιά",
-    "αυτί",
-    "βιο",
-    "ατού",
-    "βούα",
-    "άουτ",
-    "άου",
-    "βου",
-    "άτι",
-    "βάι",
-    "βατ",
-    "βια",
-  ],
-  "ΑΛΟΠΣΥ": [
-    "ποσα",
-    "σαλο",
-    "λουσα",
-    "άλυπος",
-    "αυλός",
-    "άυλος",
-    "άσυλο",
-    "απλός",
-    "άου",
-    "από",
-  ],
-  "ΕΙΣΤΦΩ": [
-    "σεφ",
-    "φως",
-    "ωστε",
-    "σετ",
-    "σεα",
-    "εφιστώ",
-    "εστί",
-    "έτσι",
-    "έστω",
-    "έως",
-    "εις",
-  ],
-  "ΑΓΙΚΟΣ": [
-    "και",
-    "αγιος",
-    "γιόκας",
-    "γκιόσα",
-    "ασκι",
-    "ίσκα",
-    "σκια",
-    "γιος",
-    "γιοκ",
-    "γκι",
-    "ιός",
-    "ίσα",
-    "σια",
-    "σοι",
-    "οκα",
-    "σοκ",
-  ],
-  "ΑΙΚΟΣΦ": [
-    "σοφια",
-    "φας",
-    "σκια",
-    "φακος",
-    "φιάσκο",
-    "σκάφοι",
-    "φίσκα",
-    "φίκος",
-    "ίσκα",
-    "ασκι",
-    "σακι",
-    "φίσα",
-    "φις",
-    "σοκ",
-    "ιός",
-    "ίσα",
-    "σια",
-    "και",
-  ],
-  "ΑΕΙΛΜΦ": [
-    "λιμα",
-    "φαι",
-    "φαε",
-    "ελα",
-    "λαέ",
-    "φίλεμα",
-    "φλέμα",
-    "φιμέ",
-    "φελί",
-    "φιλμ",
-    "φιλέ",
-  ],
-  "ΑΑΙΛΜΣ": [
-    "σαλάμι",
-    "σάμαλι",
-    "μασάλι",
-    "σαλμί",
-    "μασιά",
-    "λάμια",
-    "λαιμά",
-    "σάλια",
-    "μιλα",
-    "μάλια",
-    "σιμά",
-    "σάλι",
-    "σάλα",
-    "άμια",
-    "μαία",
-    "αίμα",
-    "άλας",
-    "άλμα",
-    "μάσα",
-    "λίμα",
-    "λάμα",
-    "άσμα",
-    "ίσα",
-    "άμα",
-    "μια",
-    "μις",
-    "αλί",
-    "αλά",
-    "μία",
-    "μας",
-  ],
-  "ΑΑΙΜΡΣ": [
-    "σαμάρι",
-    "ράισμα",
-    "αμιράς",
-    "σμάρι",
-    "σαράι",
-    "μασιά",
-    "σάρια",
-    "σαρία",
-    "σιμά",
-    "σάρι",
-    "σάρα",
-    "ρίμα",
-    "ραμί",
-    "άμια",
-    "άρια",
-    "μαία",
-    "αίμα",
-    "μάσα",
-    "μαρς",
-    "μάρα",
-    "άρμα",
-    "άσμα",
-    "αρμ",
-    "ίσα",
-    "αρά",
-    "άμα",
-    "μια",
-    "μις",
-    "μας",
-  ],
-  "ΑΙΚΛΟΡ": [
-    "κάλιο",
-    "κολάι",
-    "κλαρί",
-    "κιόλα",
-    "καρό",
-    "κάρο",
-    "κιλό",
-    "κάρι",
-    "κόλα",
-    "κόρα",
-    "καλό",
-    "κάλι",
-    "κρα",
-    "και",
-    "λακ",
-    "λιρα",
-  ],
-  "ΑΚΟΡΣΥ": [
-    "κούρσα",
-    "ροκα",
-    "κύρο",
-    "κρύος",
-    "κούρα",
-    "κάρυο",
-    "καρό",
-    "κάρο",
-    "κόρα",
-    "κόσα",
-    "κρύο",
-    "κυρά",
-    "κρα",
-    "κυρ",
-    "κου",
-  ],
-  "ΑΕΙΚΡΣ": [
-    "κεράσι",
-    "ρακι",
-    "σειρα",
-    "κασέρι",
-    "κρέας",
-    "κρασί",
-    "καρσί",
-    "κέρας",
-    "κασέ",
-    "κερί",
-    "κάρι",
-    "καρέ",
-    "κρα",
-    "και",
-  ],
-  "ΑΗΜΝΟ": [
-    "μηνα",
-    "μανό",
-    "αμην",
-    "αμνο",
-    "νόημα",
-    "νομή",
-    "νήμα",
-    "μονή",
-    "μην",
-    "μαη",
-    "μνα",
-  ],
-  "ΑΓΙΚΣ": [
-    "για",
-    "γκι",
-    "ασκι",
-    "σκάγι",
-    "και",
-    "σκιά",
-    "σιγά",
-    "σακί",
-    "σία",
-    "σικ",
-    "σκι",
-  ],
-  "ΕΘΙΜΟΣ": [
-    "εθιμο",
-    "εθισμο",
-    "θες",
-    "θέσμιο",
-    "θειος",
-    "θείος",
-    "Θεός",
-    "θείο",
-  ],
-  "ΕΟΣΤΥΧ": [
-    "σου",
-    "του",
-    "τεύχος",
-    "σετ",
-    "ουε",
-    "ουτε",
-    "χυτός",
-    "υετός",
-    "χτες",
-    "χοές",
-    "στου",
-    "χυσε",
-    "του",
-    "χου",
-  ],
-  "ΑΙΜΠΣΤ": [
-    "τσαμπί",
-    "πιτσα",
-    "πατσι",
-    "πιστα",
-    "πιτα",
-    "σιμα",
-    "μπας",
-    "πια",
-    "πασι",
-    "μπα",
-    "ισα",
-    "ματι",
-    "τσι",
-    "μισα",
-    "μια",
-    "πας",
-    "μας",
-    "μαστ",
-    "ματς",
-    "τιμα",
-    "τσίπα",
-    "τσίμα",
-    "τσαπί",
-    "ταπί",
-    "τάσι",
-    "τσιπ",
-    "τσάι",
-  ],
-  "ΙΟΡΣΤΥ": [
-    "τουρσί",
-    "υιός",
-    "τυρί",
-    "τρις",
-    "του",
-    "στορι",
-    "σορι",
-    "στο",
-    "ιος",
-    "τουρ",
-    "ρου",
-    "ιστου",
-    "σουτ",
-  ],
-  "ΓΙΚΛΟΥ": [
-    "λουκι",
-    "ιγκλού",
-    "γουλί",
-    "γλυκό",
-    "γκολ",
-    "γιοκ",
-    "γκι",
-    "ουκ",
-    "γου",
-    "λιγο",
-    "κιλο",
-    "κουλι",
-  ],
-  "ΕΗΛΞΣΩ": [
-    "εξώλης",
-    "έξωση",
-    "έλξη",
-    "εξής",
-    "έως",
-    "έξη",
-    "έξω",
-    "λες",
-    "σεξ",
-    "ξες",
-    "λεω",
-  ],
-  "ΑΙΟΡΣΤ": [
-    "άρτιος",
-    "ασορτί",
-    "άστρο",
-    "άστρι",
-    "άρτος",
-    "ατός",
-    "άτι",
-    "σταρι",
-    "τσαι",
-    "ρασο",
-    "τρια",
-    "ροτα",
-    "ιστο",
-    "οστα",
-    "ασο",
-  ],
-};
-
 class LevelsService {
-  static final LevelsService _instance = LevelsService._();
+  Map<String, dynamic> words;
+  static final LevelsService _instance = LevelsService._(words: levels);
 
-  LevelsService._();
+  LevelsService._({required this.words});
 
   static LevelsService get instance => _instance;
 
+  /// Gets all levels from the database, ordered by ID
+  /// Returns an empty list if there's an error or no levels found
   Future<List<Level>> getAllLevels() async {
     try {
       final data = await Supabase.instance.client
@@ -1458,17 +19,29 @@ class LevelsService {
           .select()
           .order('id', ascending: true);
 
-      kLog.f(data);
+      kLog.f('Retrieved ${data.length} levels');
       if (data.isNotEmpty) {
         return data.map((e) => Level.fromJson(e)).toList();
       }
       return [];
+    } on PostgrestException catch (e) {
+      kLog.e('PostgrestException getting all levels: ${e.message}');
+      if (e.code == '404') {
+        kLog.e('Table "levels" might not exist. Check your database schema.');
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return getAllLevels();
+      }
+      return [];
     } catch (e) {
-      kLog.e(e);
+      kLog.e('Unexpected error getting all levels: $e');
       return [];
     }
   }
 
+  /// Gets a specific level by level number
+  /// Returns null if the level doesn't exist or there's an error
   Future<Level?> getLevel(int level) async {
     try {
       final data = await Supabase.instance.client
@@ -1477,49 +50,181 @@ class LevelsService {
           .eq('level', level)
           .single();
 
-      kLog.f(data);
+      kLog.f('Retrieved level $level');
       return Level.fromJson(data);
+    } on PostgrestException catch (e) {
+      kLog.e('PostgrestException getting level $level: ${e.message}');
+      if (e.code == '404') {
+        kLog.e('Table "levels" might not exist. Check your database schema.');
+      } else if (e.code == 'PGRST116') {
+        kLog.e('Level $level not found');
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return getLevel(level);
+      }
+      return null;
     } catch (e) {
-      kLog.e(e);
+      kLog.e('Unexpected error getting level $level: $e');
       return null;
     }
   }
 
-  Future<void> addGroupedWords(Level groupedWords) async {
+  /// Creates a new level with the provided level data
+  /// Returns true if successful, false otherwise
+  Future<bool> addGroupedWords(Level levelData) async {
     try {
-      await Supabase.instance.client.from('levels').insert({
-        'words': groupedWords.words,
-        'letters': groupedWords.letters,
-        'level': groupedWords.level,
-      });
+      kLog.i(
+          'Adding level ${levelData.level} with ${levelData.words.length} words');
+      final response = await Supabase.instance.client.from('levels').insert({
+        'words': levelData.words.toList(), // Convert Set to List for Supabase
+        'letters':
+            levelData.letters.toList(), // Convert Set to List for Supabase
+        'level': levelData.level,
+      }).select();
+
+      kLog.f('Successfully added level ${levelData.level}');
+      return true;
+    } on PostgrestException catch (e) {
+      kLog.e(
+          'PostgrestException adding level ${levelData.level}: ${e.message}');
+      if (e.code == '404') {
+        kLog.e('Table "levels" might not exist. Check your database schema.');
+      } else if (e.code == '23505') {
+        kLog.e(
+            'Duplicate key violation: Level ${levelData.level} might already exist.');
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return addGroupedWords(levelData);
+      }
+      return false;
     } catch (e) {
-      kLog.e(e);
+      kLog.e('Unexpected error adding level ${levelData.level}: $e');
+      return false;
     }
   }
 
-  Future<void> addGroupedWordsFromMap() async {
+  /// Adds all grouped words from the predefined map to the database
+  /// Returns the number of levels successfully added
+  Future<int> addGroupedWordsFromMap() async {
+    int successCount = 0;
     try {
       var level = 1;
 
-      final List<String> sortedWords = words.keys.toList()
-        ..sort(
-          (a, b) => a.length.compareTo(b.length),
-        );
+      // Get existing levels to avoid duplicates
+      final existingLevels = await getAllLevels();
+      final existingLevelNumbers = existingLevels.map((l) => l.level).toSet();
 
+      // Sort words by length to create a progression
+      final List<String> sortedWords = words.keys.toList()
+        ..sort((a, b) => a.length.compareTo(b.length));
+
+      // Create the map with the sorted keys
       final Map<String, dynamic> sortedMap = {
         for (final key in sortedWords) key: words[key],
       };
 
-      sortedMap.forEach((key, value) async {
-        kLog.f('Add $key');
-        await Supabase.instance.client.from('levels').insert({
-          'words': value,
-          'letters': key.split(''),
-          'level': level++,
-        });
-      });
+      // Add each level in sequence
+      for (final entry in sortedMap.entries) {
+        final String key = entry.key;
+        final dynamic value = entry.value;
+
+        // Skip levels that already exist
+        if (existingLevelNumbers.contains(level)) {
+          kLog.i('Level $level already exists, skipping');
+          level++;
+          continue;
+        }
+
+        kLog.i('Adding level $level with key $key');
+
+        try {
+          final newLevel = Level(
+            id: 0, // ID will be assigned by the database
+            level: level,
+            words: Set<String>.from(value as List<dynamic>),
+            letters: key.split('').toSet(),
+          );
+
+          final success = await addGroupedWords(newLevel);
+          if (success) {
+            successCount++;
+          }
+        } on PostgrestException catch (e) {
+          kLog.e('PostgrestException adding level $level: ${e.message}');
+          if (e.message.contains('JWT expired')) {
+            await Supabase.instance.client.auth.refreshSession();
+            // Don't retry this specific level as it would disrupt our sequence
+          }
+        } catch (e) {
+          kLog.e('Error adding level $level: $e');
+        }
+
+        level++;
+      }
+
+      kLog.i('Added $successCount new levels to database');
+      return successCount;
     } catch (e) {
-      kLog.e(e);
+      kLog.e('Unexpected error in addGroupedWordsFromMap: $e');
+      return successCount;
+    }
+  }
+
+  /// Checks if the "levels" table exists in the database
+  /// Returns true if it exists, false otherwise
+  Future<bool> checkIfLevelsTableExists() async {
+    try {
+      // Try to fetch a single record (we don't care about the result)
+      // Just checking if the table exists
+      await Supabase.instance.client.from('levels').select().limit(1);
+      return true;
+    } on PostgrestException catch (e) {
+      if (e.code == '404') {
+        kLog.e('Table "levels" does not exist');
+        return false;
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return checkIfLevelsTableExists();
+      }
+      kLog.e('Error checking if levels table exists: ${e.message}');
+      return false;
+    } catch (e) {
+      kLog.e('Unexpected error checking if levels table exists: $e');
+      return false;
+    }
+  }
+
+  /// Creates the "levels" table in the database if it doesn't exist
+  /// Use this method to initialize the database
+  /// Returns true if the table was created or already exists, false otherwise
+  Future<bool> createLevelsTableIfNotExists() async {
+    // This would typically be done via migrations in a production app
+    // But for simplicity, we'll create the table directly
+
+    if (await checkIfLevelsTableExists()) {
+      kLog.i('Levels table already exists');
+      return true;
+    }
+
+    try {
+      // Note: This requires RLS policies to be configured properly
+      // and might require admin privileges depending on your setup
+      await Supabase.instance.client.rpc('create_levels_table');
+      kLog.i('Created levels table');
+      return true;
+    } on PostgrestException catch (e) {
+      kLog.e('PostgrestException creating levels table: ${e.message}');
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return createLevelsTableIfNotExists();
+      }
+      return false;
+    } catch (e) {
+      kLog.e('Unexpected error creating levels table: $e');
+      return false;
     }
   }
 }
@@ -1527,7 +232,6 @@ class LevelsService {
 class Level {
   final int id;
   final int level;
-
   final Set<String> words;
   final Set<String> letters;
 
@@ -1550,9 +254,14 @@ class Level {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'words': words,
-      'letters': letters,
       'level': level,
+      'words': words.toList(), // Convert Set to List for JSON serialization
+      'letters': letters.toList(), // Convert Set to List for JSON serialization
     };
+  }
+
+  @override
+  String toString() {
+    return 'Level{id: $id, level: $level, letters: $letters, words: ${words.length} words}';
   }
 }

@@ -1,4 +1,4 @@
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,7 +113,7 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
             ),
           );
         }
-        kLog.e(response);
+        kLog.e(response.session?.toJson());
       }
     } on AuthException catch (e) {
       kLog.e(e);

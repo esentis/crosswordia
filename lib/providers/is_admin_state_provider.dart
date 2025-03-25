@@ -1,4 +1,4 @@
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final isAdmingRegistrationProvider =

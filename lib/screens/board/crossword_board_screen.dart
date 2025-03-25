@@ -1,10 +1,11 @@
-import 'package:crosswordia/constants.dart';
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/constants/constants.dart';
+import 'package:crosswordia/constants/letter_frequencies.dart';
+import 'package:crosswordia/extensions/map_extensions.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/screens/board/widgets/letter_connector.dart';
-import 'package:crosswordia/services/models/word.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:string_extensions/string_extensions.dart';

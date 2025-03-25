@@ -1,9 +1,10 @@
-import 'package:crosswordia/constants.dart';
-import 'package:crosswordia/helper.dart';
+import 'package:crosswordia/constants/constants.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/admin_screen.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
+import 'package:crosswordia/screens/levels/level_screen.dart';
 import 'package:crosswordia/screens/player_status_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,12 +65,16 @@ class HomeScreen extends ConsumerWidget {
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Welcome you are logged in as \n${authProvider.currentUser?.email}',
-                          textAlign: TextAlign.center,
-                          style: kStyle.copyWith(
-                            fontSize: 14,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Welcome you are logged in as \n${authProvider.currentUser?.email}',
+                              textAlign: TextAlign.center,
+                              style: kStyle.copyWith(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

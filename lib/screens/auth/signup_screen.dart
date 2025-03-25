@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:crosswordia/helper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/providers/is_admin_state_provider.dart';
+import 'package:crosswordia/scraper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
