@@ -1,5 +1,6 @@
 import 'package:crosswordia/scraper.dart';
-import 'package:crosswordia/screens/levels/level_screen.dart';
+import 'package:crosswordia/screens/levels/choose_level_screen.dart';
+import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -13,10 +14,12 @@ class PlayerStatusScreen extends StatefulWidget {
 
 class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
   final PlayerStatusService _statusService = PlayerStatusService.instance;
+  final LevelsService _levelsService = LevelsService.instance;
   bool _isLoading = true;
   PlayerStatus? _playerStatus;
   Set<String>? _foundWords;
   int _totalLevels = 0;
+  int _totalWordsOfCurrentLevel = 0;
   List<String> _recentWords = [];
 
   @override
@@ -41,12 +44,17 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
 
     try {
       // Load player status
-      final status = await _statusService.getPlayerStatus(userId);
+      final PlayerStatus? status = await _statusService.getPlayerStatus(userId);
       // Load total level count
-      final totalLevels = await _statusService.getTotalLevelCounts();
+      final int totalLevels = await _statusService.getTotalLevelCounts();
       // Load found words for current level
-      final foundWords = await _statusService.getLevelsFoundWords(
+      final Set<String>? foundWords = await _statusService.getLevelsFoundWords(
         userId,
+        status?.currentLevel ?? 1,
+      );
+      // Get the total words of the current level
+      final int totalWordsOfCurrentLevel =
+          await _levelsService.getTotalWordsForLevel(
         status?.currentLevel ?? 1,
       );
 
@@ -55,6 +63,7 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
         _totalLevels = totalLevels;
         _foundWords = foundWords;
         _isLoading = false;
+        _totalWordsOfCurrentLevel = totalWordsOfCurrentLevel;
 
         // Get the most recent words (up to 5)
         if (foundWords != null && foundWords.isNotEmpty) {
@@ -87,26 +96,51 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
 
   Widget _buildStatusContent() {
     final currentLevel = _playerStatus!.currentLevel;
-    final levelProgress =
-        (_foundWords?.length ?? 0) / 20; // Assuming 20 words per level
+    final levelProgress = (_foundWords?.length ?? 0) /
+        _totalWordsOfCurrentLevel; // Assuming 20 words per level
 
     return RefreshIndicator(
       onRefresh: _loadPlayerData,
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPlayerSummaryCard(),
-            const SizedBox(height: 24),
-            _buildLevelProgressCard(currentLevel, levelProgress),
-            const SizedBox(height: 24),
-            _buildRecentWordsCard(),
-            const SizedBox(height: 24),
-            _buildAchievementsCard(),
-          ],
-        ),
+      child: ListView(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16.0, vertical: kToolbarHeight),
+        children: [
+          _buildPlayerSummaryCard(),
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChooseLevelScreen(
+                    levelCount: _totalLevels,
+                    playerStatus: _playerStatus!,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'PLAY',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildLevelProgressCard(currentLevel, levelProgress),
+          const SizedBox(height: 24),
+          _buildRecentWordsCard(),
+        ],
       ),
     );
   }
@@ -135,42 +169,19 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Level ${_playerStatus!.currentLevel}',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          Text(
-                            'Word Master',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
-                          ),
-                        ],
+                      Text(
+                        'Level ${_playerStatus!.currentLevel}',
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LevelScreen(
-                                levelCount: _totalLevels,
-                                playerStatus: _playerStatus!,
-                              ),
+                      Text(
+                        'Word Master',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.grey[600],
                             ),
-                          );
-                        },
-                        child: const Text('PLAY'
-                            // style: TextStyle(
-                            //   color: Theme.of(context).colorScheme.primary,
-                            // ),
-                            ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -241,7 +252,7 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  '${(_foundWords?.length ?? 0)} words found',
+                  '${_foundWords?.length ?? 0}/$_totalWordsOfCurrentLevel words found',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
@@ -356,88 +367,6 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
             child: const Text('Close'),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildAchievementsCard() {
-    // Sample achievements based on player's status
-    final achievements = [
-      {
-        'title': 'Word Hunter',
-        'description': 'Find 50 words',
-        'completed': _playerStatus!.totalWordsFound >= 50,
-        'progress': _playerStatus!.totalWordsFound / 50,
-      },
-      {
-        'title': 'Level Master',
-        'description': 'Reach level 5',
-        'completed': _playerStatus!.currentLevel >= 5,
-        'progress': _playerStatus!.currentLevel / 5,
-      },
-      {
-        'title': 'Collector',
-        'description': 'Collect 1000 coins',
-        'completed': _playerStatus!.coins >= 1000,
-        'progress': _playerStatus!.coins / 1000,
-      },
-    ];
-
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Achievements',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            ...achievements.map((achievement) {
-              final completed = achievement['completed'] as bool;
-              final progress = achievement['progress'] as double;
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      completed ? Icons.check_circle : Icons.circle_outlined,
-                      color: completed ? Colors.green : Colors.grey,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            achievement['title'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(achievement['description'] as String),
-                          const SizedBox(height: 4),
-                          LinearPercentIndicator(
-                            lineHeight: 8.0,
-                            percent: progress.clamp(0.0, 1.0),
-                            progressColor: completed
-                                ? Colors.green
-                                : Theme.of(context).colorScheme.primary,
-                            backgroundColor: Colors.grey[300],
-                            barRadius: const Radius.circular(4),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
       ),
     );
   }
