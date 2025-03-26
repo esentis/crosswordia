@@ -1,11 +1,12 @@
 import 'dart:math';
 
-import 'package:crosswordia/scraper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum LetterStyle {
   square,
   circle,
+  woodenCircle,
 }
 
 class LetterConnector extends StatefulWidget {
@@ -15,7 +16,7 @@ class LetterConnector extends StatefulWidget {
     required this.onUnsnap,
     required this.onCompleted,
     required this.controller,
-    this.letterStyle = LetterStyle.circle,
+    this.letterStyle = LetterStyle.woodenCircle,
     this.distanceOfLetters,
     this.letterSize,
     this.borderColor,
@@ -25,6 +26,7 @@ class LetterConnector extends StatefulWidget {
     this.textStyle,
     super.key,
   });
+
   final List<String> letters;
   final void Function(LetterPosition letter) onSnap;
   final void Function(List<String> allSelectedLetters) onCompleted;
@@ -38,554 +40,753 @@ class LetterConnector extends StatefulWidget {
   final Color? unselectedColor;
   final TextStyle? textStyle;
   final LettersController controller;
+
   @override
   State<StatefulWidget> createState() => _LetterConnectorState();
 }
 
 class _LetterConnectorState extends State<LetterConnector>
     with TickerProviderStateMixin {
-  List<LetterPosition> letterPositions = [];
+  // Letter positions and hitboxes
+  final List<Offset> letterPositions = [];
+  final List<Rect> letterHitboxes = [];
+  bool positionsCalculated = false;
 
-  List<String> get letters => widget.letters;
+  // Selection state
+  final List<int> selectedIndices = [];
+  final List<String> selectedLetters = [];
 
-  late List<AnimationController> _letterSnapAnimationController;
-  late List<Animation<double>> _letterSnapAnimations;
+  // Touch state
+  Offset? currentPosition;
+  bool isDragging = false;
+  int? lastSelectedIndex;
+  int? currentlyTouchedIndex; // Track which letter is currently being touched
+  Set<int> visitedLetters = {}; // Track which letters we've already visited
 
-  late AnimationController _shakeController;
-  late Animation<double> _shakeAnimation;
+  // Path for drawing
+  final Path path = Path();
 
-  late AnimationController _successAnimationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<Color?> _colorAnimation;
+  // Container size for layout
+  Size? containerSize;
 
-  Path path = Path();
-  List<int> snappedLettersIndexes = [];
-  List<String> snappedLetters = [];
-  Offset? currentOffset;
-  int lastSnappedLetter = -1;
-  bool insideLetter = false;
-
-  void _startDrawing(Offset localPosition) {
-    final int index = _getLetterIndexAtOffset(localPosition);
-
-    if (index != -1 && !insideLetter) {
-      kLog.i('Start drawing at $index');
-      path.moveTo(
-        letterPositions[index].position.dx,
-        letterPositions[index].position.dy,
-      );
-      insideLetter = true;
-      _snapLetter(index);
-      currentOffset = localPosition;
-    } else {
-      insideLetter = false;
-      currentOffset = null;
-    }
-  }
-
-  void _snapLetter(int index) {
-    _letterSnapAnimationController[index]
-        .forward(from: 0.0); // Reset and play forward
-    snappedLetters.add(letters[index]);
-    snappedLettersIndexes.add(index);
-    lastSnappedLetter = index;
-    widget.onSnap(
-      LetterPosition(
-        position: letterPositions[index].position,
-        letter: letters[index],
-      ),
-    );
-  }
-
-  void _unsnapLastLetter() {
-    if (snappedLettersIndexes.isNotEmpty) {
-      final int lastIndex = snappedLettersIndexes.last;
-      // Reset the controller and play a different tween
-      _letterSnapAnimationController[lastIndex].reverse();
-      // Play forward with a potentially different tween or duration
-      final lastLetter = snappedLetters.last;
-      final lastLetterPosition =
-          letterPositions[snappedLettersIndexes.last].position;
-      snappedLetters.removeLast();
-      snappedLettersIndexes.removeLast();
-      lastSnappedLetter =
-          snappedLettersIndexes.isNotEmpty ? snappedLettersIndexes.last : -1;
-
-      widget.onUnsnap(
-        LetterPosition(position: lastLetterPosition, letter: lastLetter),
-      );
-    }
-  }
-
-  void _updateDrawing(Offset localPosition) {
-    final int index = _getLetterIndexAtOffset(localPosition);
-
-    if (index != -1 && index != lastSnappedLetter && !insideLetter) {
-      insideLetter = true;
-      if (!snappedLettersIndexes.contains(index)) {
-        if (snappedLettersIndexes.isEmpty) {
-          path.moveTo(
-            letterPositions[index].position.dx,
-            letterPositions[index].position.dy,
-          );
-        } else {
-          path.lineTo(
-            letterPositions[index].position.dx,
-            letterPositions[index].position.dy,
-          );
-        }
-        _snapLetter(index);
-      }
-    } else if (index == lastSnappedLetter &&
-        !insideLetter &&
-        snappedLetters.length > 1) {
-      insideLetter = true;
-      if (snappedLetters.isNotEmpty && snappedLettersIndexes.isNotEmpty) {
-        _unsnapLastLetter();
-      }
-
-      // Remove the last line segment
-      if (snappedLettersIndexes.length > 1) {
-        path = Path();
-        path.moveTo(
-          letterPositions[snappedLettersIndexes[0]].position.dx,
-          letterPositions[snappedLettersIndexes[0]].position.dy,
-        );
-        for (int i = 1; i < snappedLettersIndexes.length; i++) {
-          path.lineTo(
-            letterPositions[snappedLettersIndexes[i]].position.dx,
-            letterPositions[snappedLettersIndexes[i]].position.dy,
-          );
-        }
-      } else if (snappedLettersIndexes.length == 1) {
-        // Move to the first letter when there's only one letter left
-        path = Path();
-        path.moveTo(
-          letterPositions[snappedLettersIndexes[0]].position.dx,
-          letterPositions[snappedLettersIndexes[0]].position.dy,
-        );
-      }
-    } else if (index == -1) {
-      insideLetter = false;
-    }
-    currentOffset = localPosition;
-  }
-
-  void _endDrawing() {
-    widget.onCompleted(snappedLetters);
-    currentOffset = null;
-    path = Path();
-    snappedLettersIndexes.clear();
-    snappedLetters.clear();
-    lastSnappedLetter = -1;
-    insideLetter = false;
-    for (final controller in _letterSnapAnimationController) {
-      controller.reset();
-    }
-  }
-
-  int _getLetterIndexAtOffset(Offset offset) {
-    const double touchTolerance = 10.0; // Adjust as needed for snap sensitivity
-
-    for (int i = 0; i < letterPositions.length; i++) {
-      if (widget.letterStyle == LetterStyle.circle) {
-        final double radius =
-            (widget.letterSize?.toDouble() ?? 25.0) + touchTolerance;
-        if ((offset - letterPositions[i].position).distance <= radius) {
-          return i;
-        }
-      } else if (widget.letterStyle == LetterStyle.square) {
-        final double squareSize =
-            (widget.letterSize?.toDouble() ?? 50.0) / 2 + touchTolerance;
-        final Rect squareBounds = Rect.fromCenter(
-          center: letterPositions[i].position,
-          width: squareSize,
-          height: squareSize,
-        );
-        if (squareBounds.contains(offset)) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  }
-
-  void triggerSuccessAnimation() {
-    _successAnimationController.forward(from: 0.0).then((_) {
-      _successAnimationController.reverse();
-    });
-  }
-
-  void triggerErrorShake() {
-    _shakeController.forward(from: 0.0);
-  }
+  // Animations
+  late List<AnimationController> letterAnimControllers;
+  late List<Animation<double>> letterScaleAnimations;
+  late AnimationController shakeController;
+  late Animation<double> shakeAnimation;
+  late AnimationController successController;
+  late Animation<double> successScaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    widget.controller.getLetterPositions = () => letterPositions;
-    widget.controller.triggerErrorShake = () => triggerErrorShake();
-    widget.controller.triggerSuccessAnimation = () => triggerSuccessAnimation();
 
-    _letterSnapAnimationController =
-        List.generate(widget.letters.length, (index) {
-      return AnimationController(
-        duration: const Duration(milliseconds: 300),
+    // Set up controller callbacks
+    widget.controller.getLetterPositions = () => letterPositions
+        .asMap()
+        .entries
+        .map((e) =>
+            LetterPosition(position: e.value, letter: widget.letters[e.key]))
+        .toList();
+
+    widget.controller.triggerErrorShake = _triggerErrorAnimation;
+    widget.controller.triggerSuccessAnimation = _triggerSuccessAnimation;
+
+    // Initialize letter animations
+    letterAnimControllers = List.generate(
+      widget.letters.length,
+      (i) => AnimationController(
+        duration: const Duration(milliseconds: 200),
         vsync: this,
-      );
-    });
+      ),
+    );
 
-    _letterSnapAnimations = _letterSnapAnimationController.map((controller) {
-      return Tween<double>(begin: 1, end: 1.3).animate(
+    letterScaleAnimations = letterAnimControllers.map((controller) {
+      return Tween<double>(begin: 1.0, end: 1.2).animate(
         CurvedAnimation(
           parent: controller,
-          curve: Curves.bounceIn,
-          reverseCurve: Curves.bounceOut,
+          curve: Curves.easeOutBack,
+          reverseCurve: Curves.easeInBack,
         ),
       );
     }).toList();
 
-    // Initialize the shake animation controller
-    _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 200),
+    // Initialize shake animation
+    shakeController = AnimationController(
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
-    // Define the shake animation
-    _shakeAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
+    shakeAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
       CurvedAnimation(
-        parent: _shakeController,
+        parent: shakeController,
         curve: Curves.elasticInOut,
       ),
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          _shakeController.reverse();
+          shakeController.reverse();
         }
       });
 
-    _successAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 450),
+    // Initialize success animation
+    successController = AnimationController(
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+    successScaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(
-        parent: _successAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    _colorAnimation = ColorTween(
-      begin: Colors.transparent,
-      end: Colors.green.withValues(
-        alpha: 0.5,
-      ),
-    ).animate(
-      CurvedAnimation(
-        parent: _successAnimationController,
-        curve: Curves.easeInOut,
+        parent: successController,
+        curve: Curves.easeInOutBack,
       ),
     );
   }
 
   @override
   void dispose() {
-    _shakeController.dispose();
-    _successAnimationController.dispose();
-    _scaleAnimation.removeListener(() {});
-    _colorAnimation.removeListener(() {});
-    for (final controller in _letterSnapAnimationController) {
+    for (final controller in letterAnimControllers) {
       controller.dispose();
     }
+    shakeController.dispose();
+    successController.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _shakeAnimation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(
-            _shakeAnimation.value * sin(_shakeController.value * 2 * pi),
-            0,
+  void didUpdateWidget(LetterConnector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Force recalculation of positions if letters change
+    if (oldWidget.letters.length != widget.letters.length) {
+      positionsCalculated = false;
+      // Ensure animation controllers match new letter count
+      if (letterAnimControllers.length != widget.letters.length) {
+        // Dispose old controllers
+        for (final controller in letterAnimControllers) {
+          controller.dispose();
+        }
+
+        // Create new controllers
+        letterAnimControllers = List.generate(
+          widget.letters.length,
+          (i) => AnimationController(
+            duration: const Duration(milliseconds: 200),
+            vsync: this,
           ),
-          child: child,
         );
-      },
-      child: AnimatedBuilder(
-        animation: _successAnimationController,
-        builder: (context, child) {
-          // Apply the success animations (scale and color)
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Transform.rotate(
-              angle: _successAnimationController.value * 32 * pi,
-              child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  _colorAnimation.value ?? Colors.white,
-                  BlendMode.srcATop,
-                ),
-                child: child,
-              ),
+
+        letterScaleAnimations = letterAnimControllers.map((controller) {
+          return Tween<double>(begin: 1.0, end: 1.2).animate(
+            CurvedAnimation(
+              parent: controller,
+              curve: Curves.easeOutBack,
+              reverseCurve: Curves.easeInBack,
             ),
           );
-        },
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (details) {
-            setState(() {
-              _startDrawing(details.localPosition);
-            });
-          },
-          onTapUp: (details) {
-            setState(() {
-              _endDrawing();
-            });
-          },
-          onPanStart: (details) {
-            setState(() {
-              _startDrawing(details.localPosition);
-            });
-          },
-          onPanUpdate: (details) {
-            setState(() {
-              _updateDrawing(details.localPosition);
-            });
-          },
-          onPanEnd: (details) {
-            setState(() {
-              _endDrawing();
-            });
+        }).toList();
+      }
+    }
+  }
+
+  // Calculate letter positions and hitboxes in a circle
+  void _calculatePositions(Size size) {
+    // Only recalculate if needed
+    if (positionsCalculated) return;
+
+    letterPositions.clear();
+    letterHitboxes.clear();
+
+    final double radius = widget.distanceOfLetters?.toDouble() ??
+        min(size.width, size.height) / 2 - 70;
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double letterSize = widget.letterSize?.toDouble() ?? 50.0;
+
+    for (int i = 0; i < widget.letters.length; i++) {
+      final double angle = (2 * pi / widget.letters.length) * i - (pi / 2);
+      final double dx = center.dx + radius * cos(angle);
+      final double dy = center.dy + radius * sin(angle);
+
+      final Offset position = Offset(dx, dy);
+      letterPositions.add(position);
+
+      // Create hitbox exactly centered on position
+      final Rect hitbox = Rect.fromCenter(
+        center: position,
+        width: letterSize * 1.5,
+        height: letterSize * 1.5,
+      );
+      letterHitboxes.add(hitbox);
+    }
+
+    positionsCalculated = true;
+  }
+
+  // Find which letter is being touched using hitbox rect.contains
+  int? _getLetterIndexAt(Offset position) {
+    for (int i = 0; i < letterHitboxes.length; i++) {
+      if (letterHitboxes[i].contains(position)) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  // Handle touch down
+// Fix for the _handleTouchDown method to check mounted state
+  void _handleTouchDown(Offset position) {
+    if (!mounted) return; // Prevent setState call if widget is disposed
+
+    final int? letterIndex = _getLetterIndexAt(position);
+
+    if (letterIndex != null) {
+      setState(() {
+        isDragging = true;
+        currentPosition = position;
+        currentlyTouchedIndex = letterIndex;
+        visitedLetters.clear();
+        visitedLetters.add(letterIndex);
+        _selectLetter(letterIndex);
+      });
+    }
+  }
+
+  void _handleTouchMove(Offset position) {
+    if (!isDragging || !mounted)
+      return; // Prevent setState call if widget is disposed
+
+    setState(() {
+      currentPosition = position;
+      int? letterIndex = _getLetterIndexAt(position);
+
+      // Update which letter we're currently touching
+      if (letterIndex != currentlyTouchedIndex) {
+        currentlyTouchedIndex = letterIndex;
+
+        // If we've moved to a valid letter
+        if (letterIndex != null) {
+          // If we've never visited this letter before
+          if (!visitedLetters.contains(letterIndex)) {
+            visitedLetters.add(letterIndex);
+            _selectLetter(letterIndex);
+          }
+          // If we're returning to the last letter in our selection
+          else if (selectedIndices.isNotEmpty &&
+              letterIndex == selectedIndices.last &&
+              selectedIndices.length > 1) {
+            // Unselect the current letter
+            _unselectLastLetter();
+            // Remove it from visited letters so we can select it again
+            visitedLetters.remove(letterIndex);
+          }
+        }
+      }
+    });
+  }
+
+  // Handle touch up
+  void _handleTouchUp() {
+    if (!isDragging || !mounted)
+      return; // Prevent setState call if widget is disposed
+
+    widget.onCompleted(selectedLetters);
+
+    setState(() {
+      isDragging = false;
+      currentPosition = null;
+      currentlyTouchedIndex = null;
+      visitedLetters.clear();
+      path.reset();
+      selectedIndices.clear();
+      selectedLetters.clear();
+      lastSelectedIndex = null;
+    });
+
+    for (final controller in letterAnimControllers) {
+      controller.reset();
+    }
+  }
+
+  // Select a letter
+  void _selectLetter(int index) {
+    if (selectedIndices.contains(index)) return;
+
+    letterAnimControllers[index].forward(from: 0.0);
+    selectedIndices.add(index);
+    selectedLetters.add(widget.letters[index]);
+    lastSelectedIndex = index;
+
+    widget.onSnap(
+      LetterPosition(
+        position: letterPositions[index],
+        letter: widget.letters[index],
+      ),
+    );
+
+    HapticFeedback.lightImpact();
+
+    // Update path
+    if (selectedIndices.length == 1) {
+      path.reset();
+      path.moveTo(
+        letterPositions[index].dx,
+        letterPositions[index].dy,
+      );
+    } else {
+      path.lineTo(
+        letterPositions[index].dx,
+        letterPositions[index].dy,
+      );
+    }
+  }
+
+  // Unselect the last letter
+  void _unselectLastLetter() {
+    if (selectedIndices.isEmpty) return;
+
+    final lastIndex = selectedIndices.last;
+    final lastLetter = selectedLetters.last;
+    final lastPosition = letterPositions[lastIndex];
+
+    letterAnimControllers[lastIndex].reverse();
+
+    selectedIndices.removeLast();
+    selectedLetters.removeLast();
+    lastSelectedIndex =
+        selectedIndices.isNotEmpty ? selectedIndices.last : null;
+
+    widget.onUnsnap(
+      LetterPosition(position: lastPosition, letter: lastLetter),
+    );
+
+    HapticFeedback.lightImpact();
+
+    // Update path
+    path.reset();
+    if (selectedIndices.isNotEmpty) {
+      path.moveTo(
+        letterPositions[selectedIndices.first].dx,
+        letterPositions[selectedIndices.first].dy,
+      );
+
+      for (int i = 1; i < selectedIndices.length; i++) {
+        path.lineTo(
+          letterPositions[selectedIndices[i]].dx,
+          letterPositions[selectedIndices[i]].dy,
+        );
+      }
+    }
+  }
+
+  // Trigger error animation
+  void _triggerErrorAnimation() {
+    shakeController.forward(from: 0.0);
+    HapticFeedback.vibrate();
+  }
+
+  // Trigger success animation
+  void _triggerSuccessAnimation() {
+    successController.forward(from: 0.0).then((_) {
+      successController.reverse();
+    });
+    HapticFeedback.mediumImpact();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        containerSize = Size(constraints.maxWidth, constraints.maxHeight);
+        _calculatePositions(containerSize!);
+
+        return AnimatedBuilder(
+          animation: shakeAnimation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(
+                shakeAnimation.value * sin(shakeController.value * 2 * pi),
+                0,
+              ),
+              child: child,
+            );
           },
           child: AnimatedBuilder(
-            animation: Listenable.merge(_letterSnapAnimations),
-            builder: (context, child) => CustomPaint(
-              painter: _LetterConnectPainter(
-                letterPositions: letterPositions,
-                letters: letters,
-                snappedLetters: snappedLettersIndexes,
-                letterAnimations: _letterSnapAnimations,
-                letterSize: widget.letterSize,
-                path: path,
-                borderColor: widget.borderColor,
-                currentOffset: currentOffset,
-                onLetterPositionsDetermined: (positions) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (letterPositions.isEmpty) {
-                      setState(() {
-                        letterPositions = positions;
-                      });
-                    }
-                  });
-                },
-                currentIndex: _getLetterIndexAtOffset(
-                  currentOffset ?? Offset.zero,
+            animation: successController,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: successScaleAnimation.value,
+                child: child,
+              );
+            },
+            child: Listener(
+              onPointerDown: (event) => _handleTouchDown(event.localPosition),
+              onPointerMove: (event) => _handleTouchMove(event.localPosition),
+              onPointerUp: (event) => _handleTouchUp(),
+              onPointerCancel: (event) => _handleTouchUp(),
+              child: CustomPaint(
+                painter: LetterConnectorPainter(
+                  letters: widget.letters,
+                  letterPositions: letterPositions,
+                  letterHitboxes: letterHitboxes,
+                  selectedIndices: selectedIndices,
+                  currentPosition: currentPosition,
+                  isDragging: isDragging,
+                  path: path,
+                  letterStyle: widget.letterStyle,
+                  letterSize: widget.letterSize?.toDouble() ?? 50.0,
+                  letterScaleAnimations: letterScaleAnimations,
+                  borderColor: widget.borderColor,
+                  selectedColor: widget.selectedColor ?? Colors.blue.shade600,
+                  unselectedColor:
+                      widget.unselectedColor ?? Colors.blue.shade200,
+                  lineColor: widget.lineColor ?? Colors.blue.shade600,
+                  textStyle: widget.textStyle,
+                  showDebugHitboxes:
+                      false, // Set to true for debugging hitboxes
                 ),
-                letterStyle: widget.letterStyle,
-                distanceOfLetters: widget.distanceOfLetters,
-                lineColor: widget.lineColor,
-                selectedLetterColor: widget.selectedColor,
-                unselectedLetterColor: widget.unselectedColor,
-                letterTextStyle: widget.textStyle,
-              ),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
+                size: Size.infinite,
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-class _LetterConnectPainter extends CustomPainter {
-  final List<LetterPosition> letterPositions;
+class LetterConnectorPainter extends CustomPainter {
   final List<String> letters;
-  final List<int> snappedLetters;
+  final List<Offset> letterPositions;
+  final List<Rect> letterHitboxes;
+  final List<int> selectedIndices;
+  final Offset? currentPosition;
+  final bool isDragging;
   final Path path;
-  final Offset? currentOffset;
-  final int currentIndex;
   final LetterStyle letterStyle;
-  final num? distanceOfLetters;
-  final num? letterSize;
+  final double letterSize;
+  final List<Animation<double>> letterScaleAnimations;
   final Color? borderColor;
-  final Color? selectedLetterColor;
-  final Color? unselectedLetterColor;
-  final Color? lineColor;
-  final TextStyle? letterTextStyle;
-  final List<Animation<double>> letterAnimations;
-  final Function(List<LetterPosition> letterPositions)
-      onLetterPositionsDetermined;
-  _LetterConnectPainter({
-    required this.letterPositions,
+  final Color selectedColor;
+  final Color unselectedColor;
+  final Color lineColor;
+  final TextStyle? textStyle;
+  final bool showDebugHitboxes;
+
+  LetterConnectorPainter({
     required this.letters,
+    required this.letterPositions,
+    required this.letterHitboxes,
+    required this.selectedIndices,
+    required this.currentPosition,
+    required this.isDragging,
     required this.path,
-    required this.currentOffset,
-    required this.snappedLetters,
-    required this.currentIndex,
     required this.letterStyle,
-    required this.onLetterPositionsDetermined,
-    required this.letterAnimations,
-    this.distanceOfLetters,
-    this.letterSize,
+    required this.letterSize,
+    required this.letterScaleAnimations,
+    required this.selectedColor,
+    required this.unselectedColor,
+    required this.lineColor,
     this.borderColor,
-    this.selectedLetterColor,
-    this.unselectedLetterColor,
-    this.lineColor,
-    this.letterTextStyle,
+    this.textStyle,
+    this.showDebugHitboxes = false,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    _drawPath(canvas);
-    _drawCircularLetters(canvas, size);
-  }
-
-  void _drawCircularLetters(Canvas canvas, Size size) {
-    final double radius =
-        distanceOfLetters?.toDouble() ?? min(size.width, size.height) / 2 - 70;
-    final Offset center = Offset(size.width / 2, size.height / 2);
-
-    for (int i = 0; i < letters.length; i++) {
-      final double scale = letterAnimations[i].value;
-      final double angle = (2 * pi / letters.length) * i;
-      final double dx = center.dx + radius * cos(angle);
-      final double dy = center.dy + radius * sin(angle);
-      final Offset position = Offset(dx, dy);
-
-      if (letterPositions.length < letters.length) {
-        letterPositions.add(
-          LetterPosition(
-            position: position,
-            letter: letters[i],
-          ),
-        );
-      }
-
-      final Color color = snappedLetters.contains(i)
-          ? selectedLetterColor ?? Colors.red
-          : unselectedLetterColor ?? Colors.white;
-      letterStyle == LetterStyle.circle
-          ? // Pass the scale to the drawing methods
-          _drawLetterInCircle(canvas, letters[i], position, color, scale)
-          : _drawLetterInSquare(canvas, letters[i], position, color, scale);
+    // Draw background if wooden style
+    if (letterStyle == LetterStyle.woodenCircle) {
+      _drawWoodenBackground(canvas, size);
     }
 
-    onLetterPositionsDetermined(letterPositions);
+    // Draw path lines first
+    _drawPaths(canvas);
+
+    // Draw debug hitboxes if enabled
+    if (showDebugHitboxes) {
+      _drawHitboxes(canvas);
+    }
+
+    // Draw letters on top
+    _drawLetters(canvas);
   }
 
-// SQUARE LETTER
-  void _drawLetterInSquare(
-    Canvas canvas,
-    String letter,
-    Offset position,
-    Color color,
-    double scale,
-  ) {
-    final double squareSize = (letterSize?.toDouble() ?? 50.0) * scale;
+  void _drawWoodenBackground(Canvas canvas, Size size) {
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double radius = min(size.width, size.height) / 2 - 30;
 
-    // Draw the square
-    final Paint squarePaint = Paint()
-      ..color = color
-      ..strokeWidth = 2.0
+    // Wooden background circle
+    final Paint woodPaint = Paint()
+      ..color = const Color(0xFFe0b982)
       ..style = PaintingStyle.fill;
-    final Rect rect = Rect.fromCenter(
-      center: position,
-      width: squareSize,
-      height: squareSize,
-    );
-    final RRect roundedRect =
-        RRect.fromRectAndRadius(rect, const Radius.circular(10));
-    canvas.drawRRect(roundedRect, squarePaint);
 
-    // Draw the border
+    canvas.drawCircle(center, radius + 40, woodPaint);
+
+    // Border
     final Paint borderPaint = Paint()
-      ..color =
-          borderColor ?? Colors.black // Set your desired border color here
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawRRect(roundedRect, borderPaint);
-
-    // Draw the letter
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: letter,
-        style: letterTextStyle ??
-            const TextStyle(fontSize: 24, color: Colors.black),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      position - Offset(textPainter.width / 2, textPainter.height / 2),
-    );
-  }
-
-  void _drawLetterInCircle(
-    Canvas canvas,
-    String letter,
-    Offset position,
-    Color color,
-    double scale,
-  ) {
-    final double circleRadius = (letterSize?.toDouble() ?? 25.0) * scale;
-
-    // Draw the filled circle
-    final Paint circlePaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(position, circleRadius, circlePaint);
-
-    // Draw the border
-    final Paint borderPaint = Paint()
-      ..color =
-          borderColor ?? Colors.black // Set your desired border color here
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawCircle(position, circleRadius, borderPaint);
-
-    // Draw the letter
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: letter,
-        style: letterTextStyle ??
-            const TextStyle(fontSize: 24, color: Colors.black),
-      ),
-      textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      position - Offset(textPainter.width / 2, textPainter.height / 2),
-    );
-  }
-
-  void _drawPath(Canvas canvas) {
-    final Paint paint = Paint()
-      ..color = lineColor ?? Colors.red
+      ..color = const Color(0xFF8B5A2B)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8.0;
 
-    if (currentOffset != null &&
-        (snappedLetters.isNotEmpty || currentIndex != -1)) {
-      final Path newPath = Path.from(path);
-      newPath.lineTo(currentOffset!.dx, currentOffset!.dy);
-      canvas.drawPath(newPath, paint);
-    } else {
-      canvas.drawPath(path, paint);
+    canvas.drawCircle(center, radius + 40, borderPaint);
+
+    // Inner circle with lighter color
+    final Paint innerPaint = Paint()
+      ..color = const Color(0xFFf0d8b6)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(center, radius + 20, innerPaint);
+  }
+
+  void _drawHitboxes(Canvas canvas) {
+    final Paint hitboxPaint = Paint()
+      ..color = Colors.red.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    for (final hitbox in letterHitboxes) {
+      canvas.drawRect(hitbox, hitboxPaint);
     }
   }
 
+  void _drawPaths(Canvas canvas) {
+    final Paint pathPaint = Paint()
+      ..color = lineColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 6.0
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    // Draw fixed path between selected letters
+    canvas.drawPath(path, pathPaint);
+
+    // Draw dynamic line from last letter to finger position
+    if (isDragging && currentPosition != null && selectedIndices.isNotEmpty) {
+      final lastIndex = selectedIndices.last;
+      final lastPosition = letterPositions[lastIndex];
+
+      final dynamicPath = Path()
+        ..moveTo(lastPosition.dx, lastPosition.dy)
+        ..lineTo(currentPosition!.dx, currentPosition!.dy);
+
+      canvas.drawPath(dynamicPath, pathPaint);
+    }
+  }
+
+  void _drawLetters(Canvas canvas) {
+    for (int i = 0; i < letterPositions.length; i++) {
+      final position = letterPositions[i];
+      final letter = letters[i];
+      final bool isSelected = selectedIndices.contains(i);
+      final double scale = i < letterScaleAnimations.length
+          ? letterScaleAnimations[i].value
+          : 1.0;
+
+      if (letterStyle == LetterStyle.woodenCircle) {
+        _drawWoodenStyleLetter(canvas, letter, position, isSelected, scale);
+      } else if (letterStyle == LetterStyle.circle) {
+        _drawCircleLetter(canvas, letter, position, isSelected, scale);
+      } else {
+        _drawSquareLetter(canvas, letter, position, isSelected, scale);
+      }
+    }
+  }
+
+  void _drawWoodenStyleLetter(Canvas canvas, String letter, Offset position,
+      bool isSelected, double scale) {
+    final double bubbleSize = letterSize * scale;
+
+    // Shadow for 3D effect (if not selected)
+    if (!isSelected) {
+      final Paint shadowPaint = Paint()
+        ..color = Colors.black.withOpacity(0.3)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 3);
+
+      final Rect shadowRect = Rect.fromCenter(
+        center: position.translate(2, 2),
+        width: bubbleSize,
+        height: bubbleSize,
+      );
+
+      final RRect roundedShadowRect = RRect.fromRectAndRadius(
+        shadowRect,
+        Radius.circular(bubbleSize / 4),
+      );
+
+      canvas.drawRRect(roundedShadowRect, shadowPaint);
+    }
+
+    // Letter background
+    final Paint bubblePaint = Paint()
+      ..color = isSelected ? selectedColor : unselectedColor
+      ..style = PaintingStyle.fill;
+
+    final Rect rect = Rect.fromCenter(
+      center: position,
+      width: bubbleSize,
+      height: bubbleSize,
+    );
+
+    final RRect roundedRect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(bubbleSize / 4),
+    );
+
+    canvas.drawRRect(roundedRect, bubblePaint);
+
+    // Highlight effect for unselected letters
+    if (!isSelected) {
+      final Paint highlightPaint = Paint()
+        ..color = Colors.white.withOpacity(0.5)
+        ..style = PaintingStyle.fill;
+
+      final Path highlightPath = Path()
+        ..addRRect(RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            rect.left + 2,
+            rect.top + 2,
+            rect.width - 4,
+            rect.height / 3,
+          ),
+          Radius.circular(bubbleSize / 5),
+        ));
+
+      canvas.drawPath(highlightPath, highlightPaint);
+    }
+
+    // Border
+    final Paint borderPaint = Paint()
+      ..color = isSelected
+          ? Colors.white.withOpacity(0.8)
+          : Colors.white.withOpacity(0.4)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isSelected ? 3.0 : 2.0;
+
+    canvas.drawRRect(roundedRect, borderPaint);
+
+    // Letter text
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style: textStyle ??
+            TextStyle(
+                fontSize: bubbleSize * 0.6,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withOpacity(0.3),
+                    offset: Offset(1, 1),
+                    blurRadius: 2,
+                  )
+                ]),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      position - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
+  }
+
+  void _drawCircleLetter(Canvas canvas, String letter, Offset position,
+      bool isSelected, double scale) {
+    final double radius = letterSize * 0.5 * scale;
+
+    // Circle
+    final Paint circlePaint = Paint()
+      ..color = isSelected ? selectedColor : unselectedColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(position, radius, circlePaint);
+
+    // Border
+    final Paint borderPaint = Paint()
+      ..color = borderColor ?? Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawCircle(position, radius, borderPaint);
+
+    // Letter
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style:
+            textStyle ?? TextStyle(fontSize: radius * 0.9, color: Colors.black),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      position - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
+  }
+
+  void _drawSquareLetter(Canvas canvas, String letter, Offset position,
+      bool isSelected, double scale) {
+    final double size = letterSize * scale;
+
+    // Square
+    final Paint squarePaint = Paint()
+      ..color = isSelected ? selectedColor : unselectedColor
+      ..style = PaintingStyle.fill;
+
+    final Rect rect = Rect.fromCenter(
+      center: position,
+      width: size,
+      height: size,
+    );
+
+    final RRect roundedRect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(size / 8),
+    );
+
+    canvas.drawRRect(roundedRect, squarePaint);
+
+    // Border
+    final Paint borderPaint = Paint()
+      ..color = borderColor ?? Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawRRect(roundedRect, borderPaint);
+
+    // Letter
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style:
+            textStyle ?? TextStyle(fontSize: size * 0.5, color: Colors.black),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      position - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
+  }
+
   @override
-  bool shouldRepaint(covariant _LetterConnectPainter oldDelegate) {
+  bool shouldRepaint(covariant LetterConnectorPainter oldDelegate) {
     return oldDelegate.path != path ||
-        oldDelegate.currentOffset != currentOffset;
+        oldDelegate.currentPosition != currentPosition ||
+        oldDelegate.isDragging != isDragging ||
+        !listEquals(oldDelegate.selectedIndices, selectedIndices);
+  }
+
+  bool listEquals<T>(List<T> a, List<T> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 }
 
