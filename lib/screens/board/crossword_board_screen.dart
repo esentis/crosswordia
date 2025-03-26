@@ -620,14 +620,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                   final letterScore = letterFreq == 0
                                       ? 0
                                       : (1 / letterFreq).round();
-                                  kLog.f('''
-
-Letter ${letterFound.keys.first}
-Position $currentPosition
-Letter frequency $letterFreq
-Letter score $letterScore
-
-''');
                                   if (letterFound.isNotEmpty &&
                                       playerStatus != null) {
                                     await PlayerStatusService.instance
@@ -730,22 +722,25 @@ Letter score $letterScore
                 //   child: Text('try'),
                 // ),
 
-                BlurContainer(
-                  color: Colors.blue,
-                  borderColor: Colors.blue,
-                  opacity: 0.2,
-                  height: 60,
-                  child: Center(
-                    child: Text(
-                      currentlyCreatedWord,
-                      style: kStyle.copyWith(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
+                // BlurContainer(
+                //   color: Colors.blue,
+                //   borderColor: Colors.blue,
+                //   opacity: 0.2,
+                //   height: 60,
+                //   child: Center(
+                //     child: Text(
+                //       currentlyCreatedWord,
+                //       style: kStyle.copyWith(
+                //         fontSize: 35,
+                //         fontWeight: FontWeight.w700,
+                //         color: Colors.black,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+// This is how you would modify your CrosswordBoardScreen to use the improved LetterConnector
+
+// Find this section in the build method and replace it
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -758,19 +753,33 @@ Letter score $letterScore
                           Center(
                             child: LetterConnector(
                               controller: _controller,
-                              distanceOfLetters: 94,
-                              letterSize: 23,
+                              distanceOfLetters:
+                                  100, // Adjusted for wooden circle style
+                              letterSize:
+                                  40, // Significantly increased for better touch detection
+                              letterStyle: LetterStyle
+                                  .woodenCircle, // Use our new wooden style
                               borderColor: Colors.white,
-                              selectedColor: Colors.blue,
-                              lineColor: Colors.blue,
-                              textStyle: kStyle.copyWith(
-                                fontSize: 23,
+                              selectedColor: Colors.blue.shade500,
+                              unselectedColor: Colors.blue.shade200,
+                              lineColor: Colors.blue.shade600,
+                              textStyle: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    offset: Offset(1, 1),
+                                    blurRadius: 2,
+                                  )
+                                ],
                               ),
                               onSnap: (letterPosition) {
-                                // kLog.f(letterPosition.toString());
                                 setState(() {
                                   currentlyCreatedWord += letterPosition.letter;
                                 });
+                                // You could add HapticFeedback.lightImpact() here if needed
                               },
                               onUnsnap: (letterPosition) {
                                 setState(() {
@@ -796,9 +805,25 @@ Letter score $letterScore
                                 lettersForTheBoard.shuffle();
                               });
                             },
-                            child: const Icon(
-                              Icons.shuffle,
-                              size: 40,
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade700,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 5,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.shuffle,
+                                size: 30,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
