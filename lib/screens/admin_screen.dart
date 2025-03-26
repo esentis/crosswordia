@@ -2,7 +2,7 @@ import 'package:crosswordia/constants/constants.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
-import 'package:crosswordia/screens/levels/level_screen.dart';
+import 'package:crosswordia/screens/levels/choose_level_screen.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:crosswordia/widgets/menu_button.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +135,7 @@ class AdminScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => LevelScreen(
+                                  builder: (context) => ChooseLevelScreen(
                                     levelCount: totalLevelCounts,
                                     playerStatus: status,
                                   ),
