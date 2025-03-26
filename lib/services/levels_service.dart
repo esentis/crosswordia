@@ -76,7 +76,7 @@ class LevelsService {
     try {
       kLog.i(
           'Adding level ${levelData.level} with ${levelData.words.length} words');
-      final response = await Supabase.instance.client.from('levels').insert({
+      await Supabase.instance.client.from('levels').insert({
         'words': levelData.words.toList(), // Convert Set to List for Supabase
         'letters':
             levelData.letters.toList(), // Convert Set to List for Supabase
@@ -225,6 +225,20 @@ class LevelsService {
     } catch (e) {
       kLog.e('Unexpected error creating levels table: $e');
       return false;
+    }
+  }
+
+  Future<int> getTotalWordsForLevel(int level) async {
+    try {
+      final Level? levelData = await getLevel(level);
+      if (levelData != null) {
+        return levelData.words.length;
+      }
+      kLog.e('Could not get total words count: Level $level not found');
+      return 0;
+    } catch (e) {
+      kLog.e('Error getting total words for level $level: $e');
+      return 0;
     }
   }
 }
