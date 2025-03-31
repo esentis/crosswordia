@@ -769,8 +769,8 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                 color: Colors.white,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    offset: Offset(1, 1),
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                    offset: const Offset(1, 1),
                                     blurRadius: 2,
                                   )
                                 ],
@@ -813,13 +813,13 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     blurRadius: 5,
-                                    offset: Offset(0, 2),
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.shuffle,
                                 size: 30,
                                 color: Colors.white,
