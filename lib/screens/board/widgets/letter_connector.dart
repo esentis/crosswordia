@@ -250,12 +250,13 @@ class _LetterConnectorState extends State<LetterConnector>
   }
 
   void _handleTouchMove(Offset position) {
-    if (!isDragging || !mounted)
+    if (!isDragging || !mounted) {
       return; // Prevent setState call if widget is disposed
+    }
 
     setState(() {
       currentPosition = position;
-      int? letterIndex = _getLetterIndexAt(position);
+      final int? letterIndex = _getLetterIndexAt(position);
 
       // Update which letter we're currently touching
       if (letterIndex != currentlyTouchedIndex) {
@@ -284,8 +285,9 @@ class _LetterConnectorState extends State<LetterConnector>
 
   // Handle touch up
   void _handleTouchUp() {
-    if (!isDragging || !mounted)
+    if (!isDragging || !mounted) {
       return; // Prevent setState call if widget is disposed
+    }
 
     widget.onCompleted(selectedLetters);
 

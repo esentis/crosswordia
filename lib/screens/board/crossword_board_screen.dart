@@ -757,8 +757,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                                   100, // Adjusted for wooden circle style
                               letterSize:
                                   40, // Significantly increased for better touch detection
-                              letterStyle: LetterStyle
-                                  .woodenCircle, // Use our new wooden style
                               borderColor: Colors.white,
                               selectedColor: Colors.blue.shade500,
                               unselectedColor: Colors.blue.shade200,
