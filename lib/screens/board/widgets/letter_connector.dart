@@ -441,8 +441,6 @@ class _LetterConnectorState extends State<LetterConnector>
                       widget.unselectedColor ?? Colors.blue.shade200,
                   lineColor: widget.lineColor ?? Colors.blue.shade600,
                   textStyle: widget.textStyle,
-                  showDebugHitboxes:
-                      false, // Set to true for debugging hitboxes
                 ),
                 size: Size.infinite,
               ),
@@ -539,7 +537,7 @@ class LetterConnectorPainter extends CustomPainter {
 
   void _drawHitboxes(Canvas canvas) {
     final Paint hitboxPaint = Paint()
-      ..color = Colors.red.withOpacity(0.15)
+      ..color = Colors.red.withValues(alpha: 0.15)
       ..style = PaintingStyle.fill;
 
     for (final hitbox in letterHitboxes) {
@@ -597,7 +595,7 @@ class LetterConnectorPainter extends CustomPainter {
     // Shadow for 3D effect (if not selected)
     if (!isSelected) {
       final Paint shadowPaint = Paint()
-        ..color = Colors.black.withOpacity(0.3)
+        ..color = Colors.black.withValues(alpha: 0.3)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 3);
 
       final Rect shadowRect = Rect.fromCenter(
@@ -635,7 +633,7 @@ class LetterConnectorPainter extends CustomPainter {
     // Highlight effect for unselected letters
     if (!isSelected) {
       final Paint highlightPaint = Paint()
-        ..color = Colors.white.withOpacity(0.5)
+        ..color = Colors.white.withValues(alpha: 0.5)
         ..style = PaintingStyle.fill;
 
       final Path highlightPath = Path()
@@ -655,8 +653,8 @@ class LetterConnectorPainter extends CustomPainter {
     // Border
     final Paint borderPaint = Paint()
       ..color = isSelected
-          ? Colors.white.withOpacity(0.8)
-          : Colors.white.withOpacity(0.4)
+          ? Colors.white.withValues(alpha: 0.8)
+          : Colors.white.withValues(alpha: 0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = isSelected ? 3.0 : 2.0;
 
@@ -673,7 +671,7 @@ class LetterConnectorPainter extends CustomPainter {
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     offset: Offset(1, 1),
                     blurRadius: 2,
                   )

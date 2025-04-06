@@ -126,7 +126,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
                             borderRadius: BorderRadius.circular(15),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -152,7 +152,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               spreadRadius: 1,
                               blurRadius: 4,
                               offset: const Offset(0, 2),
@@ -281,11 +281,11 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFCB500).withOpacity(0.9),
+                        color: const Color(0xFFFCB500).withValues(alpha: 0.9),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: const Offset(0, 2),
@@ -315,11 +315,11 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFCB500).withOpacity(0.9),
+                        color: const Color(0xFFFCB500).withValues(alpha: 0.9),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             spreadRadius: 1,
                             blurRadius: 4,
                             offset: const Offset(0, 2),
@@ -346,7 +346,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -498,7 +498,7 @@ class _LevelTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 3,
                   offset: const Offset(0, 2),
