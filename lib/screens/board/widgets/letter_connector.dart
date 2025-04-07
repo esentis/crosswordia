@@ -596,7 +596,7 @@ class LetterConnectorPainter extends CustomPainter {
     if (!isSelected) {
       final Paint shadowPaint = Paint()
         ..color = Colors.black.withValues(alpha: 0.3)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 3);
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
 
       final Rect shadowRect = Rect.fromCenter(
         center: position.translate(2, 2),
@@ -672,7 +672,7 @@ class LetterConnectorPainter extends CustomPainter {
                 shadows: [
                   Shadow(
                     color: Colors.black.withValues(alpha: 0.3),
-                    offset: Offset(1, 1),
+                    offset: const Offset(1, 1),
                     blurRadius: 2,
                   )
                 ]),

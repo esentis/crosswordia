@@ -303,28 +303,29 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            _recentWords.isEmpty
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('No words found yet in this level.'),
+            if (_recentWords.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No words found yet in this level.'),
+                ),
+              )
+            else
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _recentWords.map((word) {
+                  return Chip(
+                    label: Text(
+                      word,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )
-                : Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _recentWords.map((word) {
-                      return Chip(
-                        label: Text(
-                          word,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        backgroundColor: Colors.blue[100],
-                      );
-                    }).toList(),
-                  ),
+                    backgroundColor: Colors.blue[100],
+                  );
+                }).toList(),
+              ),
             if (_foundWords != null && _foundWords!.length > 5) ...[
               const SizedBox(height: 8),
               Align(

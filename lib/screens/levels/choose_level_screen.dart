@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/board/crossword_board_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';
@@ -424,7 +426,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen> {
 
         // Show error snackbar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load level: ${e.toString()}')),
+          SnackBar(content: Text('Failed to load level: $e')),
         );
       }
     }
