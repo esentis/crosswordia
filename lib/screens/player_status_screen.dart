@@ -1,4 +1,5 @@
 import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/levels/choose_level_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
@@ -87,8 +88,26 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _playerStatus == null
-              ? const Center(
-                  child: Text('You need to log in to view your status'),
+              ? Center(
+                  child: Column(
+                    children: [
+                      Text('You need to log in to view your status'),
+                      SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {
+                          // Navigate to login screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LandingScreen(),
+                            ),
+                          );
+                        },
+                        child: Text('Log In'),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 )
               : _buildStatusContent(),
     );

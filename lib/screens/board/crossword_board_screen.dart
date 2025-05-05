@@ -1,6 +1,7 @@
 import 'package:crosswordia/constants/constants.dart';
 import 'package:crosswordia/constants/letter_frequencies.dart';
 import 'package:crosswordia/extensions/map_extensions.dart';
+import 'package:crosswordia/find_word_groups.dart';
 import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
@@ -80,53 +81,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
     // .where((element) => element.hasUniqueCharacters())
     // .toList()
     ..sort((a, b) => b.length.compareTo(a.length));
-
-  /// Checks if the List a is a subset of List b
-  bool isSubset(List<String> a, List<String> b) {
-    int i = 0;
-    int j = 0;
-
-    while (i < a.length && j < b.length) {
-      if (a[i] == b[j]) {
-        i++;
-      }
-      j++;
-    }
-
-    return i == a.length;
-  }
-
-  void filterWords() {
-    kLog.f('Started filtering words');
-    final Map<String, Set<String>> groupedWords = {};
-
-    for (final word in wordsToLook) {
-      // Skip words with a length less than 3
-      if (word.length < 3) {
-        continue;
-      }
-
-      final wordSlicedAndSorted = word.toGreekUpperCase().split('')..sort();
-      final String wordUpperAndSorted = wordSlicedAndSorted.join();
-
-      if (word.length <= 5) {
-        groupedWords.putIfAbsent(wordUpperAndSorted, () => <String>{});
-        groupedWords[wordUpperAndSorted]!.add(word);
-      }
-
-      if (word.length >= 3) {
-        for (final key in groupedWords.keys
-            .where((k) => k.length >= wordUpperAndSorted.length)) {
-          final keyChars = key.split('');
-          if (isSubset(wordUpperAndSorted.split(''), keyChars)) {
-            groupedWords[key]!.add(word);
-          }
-        }
-      }
-    }
-
-    kLog.f(groupedWords);
-  }
 
 // ΑΑΙΛΜΣ
   // Set<String> testWords = {
@@ -578,6 +532,26 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(),
+                TextButton(
+                  onPressed: () {
+                    //  kLog.f('Αγία'.hasUniqueCharacters());
+                    filterWords(wordsToLook);
+                    // kLog.f(words2
+                    //     .where((element) =>
+                    //         element.toGreekUpperCase()!.hasUniqueCharacters())
+                    //     .toList());
+                    // kLog.f(groupedWords);
+                    // kLog.f(mergeMap(groupedWords));
+                    // kLog.f('abcd'.countUncommonLetters('abcdeef'));
+                    // kLog.f(
+                    //   filterWords(
+                    //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
+                    //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
+                    //   ),
+                    // );
+                  },
+                  child: Text('try'),
+                ),
                 Center(
                   child: SizedBox(
                     width: 420,
@@ -701,26 +675,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                     ),
                   ),
                 ),
-                // TextButton(
-                //   onPressed: () {
-                //     //  kLog.f('Αγία'.hasUniqueCharacters());
-                //     filterWords();
-                //     // kLog.f(words2
-                //     //     .where((element) =>
-                //     //         element.toGreekUpperCase()!.hasUniqueCharacters())
-                //     //     .toList());
-                //     // kLog.f(groupedWords);
-                //     // kLog.f(mergeMap(groupedWords));
-                //     // kLog.f('abcd'.countUncommonLetters('abcdeef'));
-                //     // kLog.f(
-                //     //   filterWords(
-                //     //     allWs.map((e) => e.toGreekUpperCase()!).toList(),
-                //     //     ['Α', 'Τ', 'Ε', 'Σ', 'Ο', 'Ρ'],
-                //     //   ),
-                //     // );
-                //   },
-                //   child: Text('try'),
-                // ),
 
                 // BlurContainer(
                 //   color: Colors.blue,
