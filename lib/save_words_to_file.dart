@@ -31,3 +31,58 @@ Future<void> saveWordsToFile(List<Word> words) async {
     kLog.e('Error saving words to file: $e');
   }
 }
+
+// Function to save the grouped words to a text file, with both text and Map formats
+Future<void> saveGroupedWordsToFile(
+    Map<String, Set<String>> groupedWords, String filePath) async {
+  kLog.f('Saving grouped words to: $filePath');
+
+  try {
+    final file = File(filePath);
+    final buffer = StringBuffer();
+
+    // Sort keys alphabetically for consistent output
+    final sortedKeys = groupedWords.keys.toList()..sort();
+
+    // // First format: Plain text
+    // buffer.writeln('=== GROUPED WORDS (TEXT FORMAT) ===');
+    // for (final key in sortedKeys) {
+    //   final words = groupedWords[key]!.toList()..sort();
+    //   buffer.writeln('"$key": "${words.join(', ')}"');
+    // }
+
+    // Second format: Flutter const Map
+    buffer.writeln('\n\n=== FLUTTER CONST MAP FORMAT ===');
+    buffer.writeln('const Map<String, List<String>> levels = {');
+
+    for (int i = 0; i < sortedKeys.length; i++) {
+      final key = sortedKeys[i];
+      final words = groupedWords[key]!.toList()..sort();
+
+      // Format list of words as Dart string list
+      buffer.write('  "$key": [');
+      for (int j = 0; j < words.length; j++) {
+        buffer.write('"${words[j]}"');
+        if (j < words.length - 1) {
+          buffer.write(', ');
+        }
+      }
+      buffer.write(']');
+
+      // Add comma for all but the last entry
+      if (i < sortedKeys.length - 1) {
+        buffer.writeln(',');
+      } else {
+        buffer.writeln();
+      }
+    }
+
+    buffer.writeln('};');
+
+    await file.writeAsString(buffer.toString());
+    kLog.f(
+        'Successfully saved ${sortedKeys.length} groups to file in both formats');
+  } catch (e) {
+    kLog.f('Error saving to file: $e');
+  }
+}
