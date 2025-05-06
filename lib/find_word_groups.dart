@@ -2,7 +2,7 @@ import 'package:crosswordia/save_words_to_file.dart';
 import 'package:crosswordia/scraper.dart';
 import 'package:string_extensions/string_extensions.dart';
 
-void filterWords(List<String> wordsToLook) async {
+Future<void> filterWords(List<String> wordsToLook) async {
   kLog.f('Started filtering words with max key length of 7');
   final Map<String, Set<String>> groupedWords = {};
   final int totalWords = wordsToLook.length;
@@ -73,7 +73,7 @@ void filterWords(List<String> wordsToLook) async {
   // Filter out groups with less than 4 words
   final Map<String, Set<String>> filteredGroups = {};
   int filteredCount = 0;
-  int totalGroups = groupedWords.length;
+  final int totalGroups = groupedWords.length;
 
   for (final entry in groupedWords.entries) {
     filteredCount++;
