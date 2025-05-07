@@ -91,8 +91,8 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
               ? Center(
                   child: Column(
                     children: [
-                      Text('You need to log in to view your status'),
-                      SizedBox(height: 16),
+                      const Text('You need to log in to view your status'),
+                      const SizedBox(height: 16),
                       TextButton(
                         onPressed: () {
                           // Navigate to login screen
@@ -103,7 +103,7 @@ class _PlayerStatusScreenState extends State<PlayerStatusScreen> {
                             ),
                           );
                         },
-                        child: Text('Log In'),
+                        child: const Text('Log In'),
                       ),
                       const SizedBox(height: 16),
                     ],

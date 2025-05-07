@@ -550,7 +550,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                     //   ),
                     // );
                   },
-                  child: Text('try'),
+                  child: const Text('try'),
                 ),
                 Center(
                   child: SizedBox(
