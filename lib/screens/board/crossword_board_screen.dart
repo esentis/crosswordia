@@ -7,6 +7,7 @@ import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/screens/board/widgets/letter_connector.dart';
+import 'package:crosswordia/services/models/word_placement_data.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:string_extensions/string_extensions.dart';
@@ -343,27 +344,29 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 // Check if the word can be placed vertically
                 final bool canStartVerticallyWithThatLetter =
                     canStartVertically(
-                  actualVerticalStartingLocationIfAvailable:
-                      actualVerticalStartingLocationIfAvailable,
-                  actualVerticalEndingLocationIfAvailable:
-                      actualVerticalEndingLocationIfAvailable,
-                  distanceFromTopOfLetter: dinstanceFromTopOfLetter,
-                  distanceFromBottomtOfLetter: distanceFromBottomOfLetter,
-                  rowInt: rowInt,
-                  colInt: colInt,
-                  col: col,
-                  actualVerticalAfterEndingLocationIfAvailable:
-                      actualVerticalAfterEndingLocationIfAvailable,
-                  actualVerticalBeforeStartingLocationIfAvailable:
-                      actualVerticalBeforeStartingLocationIfAvailable,
-                  location: location,
-                  spaceFromBottom: spaceFromBottom,
-                  spaceFromTop: spaceFromTop,
-                  word: word,
-                  letterPositions: letterPositions,
-                  letter: letter,
-                  letterIndex: i,
-                  foundLocations: foundLocations,
+                  WordPlacementData(
+                    distanceFromTopOfLetter: dinstanceFromTopOfLetter,
+                    distanceFromBottomOfLetter: distanceFromBottomOfLetter,
+                    spaceFromTop: spaceFromTop,
+                    spaceFromBottom: spaceFromBottom,
+                    actualVerticalStartingLocationIfAvailable:
+                        actualVerticalStartingLocationIfAvailable,
+                    actualVerticalEndingLocationIfAvailable:
+                        actualVerticalEndingLocationIfAvailable,
+                    word: word,
+                    col: col,
+                    location: location,
+                    actualVerticalBeforeStartingLocationIfAvailable:
+                        actualVerticalBeforeStartingLocationIfAvailable,
+                    actualVerticalAfterEndingLocationIfAvailable:
+                        actualVerticalAfterEndingLocationIfAvailable,
+                    rowInt: rowInt,
+                    colInt: colInt,
+                    letterPositions: letterPositions,
+                    letter: letter,
+                    letterIndex: i,
+                    foundLocations: foundLocations,
+                  ),
                 );
 
                 final bool canStartHorizontallyWithThatLetter =
