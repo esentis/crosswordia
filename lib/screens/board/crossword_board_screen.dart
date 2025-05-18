@@ -1,7 +1,7 @@
 import 'package:crosswordia/constants/constants.dart';
 import 'package:crosswordia/constants/letter_frequencies.dart';
 import 'package:crosswordia/extensions/map_extensions.dart';
-import 'package:crosswordia/find_word_groups.dart';
+import 'package:crosswordia/find_possible_words.dart';
 import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
@@ -538,7 +538,9 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen> {
                 TextButton(
                   onPressed: () {
                     //  kLog.f('Αγία'.hasUniqueCharacters());
-                    filterWords(wordsToLook);
+                    //    filterWords(wordsToLook);
+
+                    findPossibleWords('εφημερίδα', wordsToLook);
                     // kLog.f(words2
                     //     .where((element) =>
                     //         element.toGreekUpperCase()!.hasUniqueCharacters())
