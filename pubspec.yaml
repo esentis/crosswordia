@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  supabase_flutter: ^2.8.0
+  supabase_flutter: ^2.9.0
   flutter_bounceable: ^1.1.0
   animate_do: ^4.0.0
   logger: ^2.4.0
@@ -40,6 +40,7 @@ dependencies:
   dio: ^5.7.0
   lint: ^2.3.0
   percent_indicator: ^4.2.4
+  diacritic: ^0.1.6
 
 dev_dependencies:
   flutter_test:
