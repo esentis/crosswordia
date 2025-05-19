@@ -1,3 +1,4 @@
+import 'package:crosswordia/constants/greek_diacritics.dart';
 import 'package:crosswordia/scraper.dart';
 
 List<String> findPossibleWords(String characters, List<String> dict,
@@ -57,29 +58,7 @@ List<String> findPossibleWords(String characters, List<String> dict,
 
 // Improved Greek diacritic removal function
 String removeGreekDiacritics(String text) {
-  final Map<String, String> replacements = {
-    'ά': 'α',
-    'έ': 'ε',
-    'ή': 'η',
-    'ί': 'ι',
-    'ό': 'ο',
-    'ύ': 'υ',
-    'ώ': 'ω',
-    'Ά': 'Α',
-    'Έ': 'Ε',
-    'Ή': 'Η',
-    'Ί': 'Ι',
-    'Ό': 'Ο',
-    'Ύ': 'Υ',
-    'Ώ': 'Ω',
-    'ϊ': 'ι',
-    'ϋ': 'υ',
-    'ΐ': 'ι',
-    'ΰ': 'υ',
-    'Ϊ': 'Ι',
-    'Ϋ': 'Υ',
-    'ς': 'σ'
-  };
+  final Map<String, String> replacements = greekDiacritics;
 
   String result = text;
   replacements.forEach((key, value) {
