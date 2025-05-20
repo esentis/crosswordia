@@ -220,11 +220,11 @@ Iterating over letter ${data.word.charAt(k)}
 data.word.charAt(k) != checkingLocationLetter ${data.word.charAt(k) != checkingLetter}
 Possible start ${data.actualVerticalStartingLocationIfAvailable}
 Possible end ${data.actualVerticalEndingLocationIfAvailable}
-Before start ${beforeStartWordLetterLocation} actual ${data.actualVerticalBeforeStartingLocationIfAvailable}
-After end ${afterEndWordLetterLocation} actual ${data.actualVerticalAfterEndingLocationIfAvailable}
+Before start $beforeStartWordLetterLocation actual ${data.actualVerticalBeforeStartingLocationIfAvailable}
+After end $afterEndWordLetterLocation actual ${data.actualVerticalAfterEndingLocationIfAvailable}
 
-locationToCheck ${locationToCheck}
-locationToCheck letter ${currentLocationLetter} is it part of the word ? ${isCurrentLetterPartOfTheWord}
+locationToCheck $locationToCheck
+locationToCheck letter $currentLocationLetter is it part of the word ? $isCurrentLetterPartOfTheWord
 location ${data.location}
 
 
