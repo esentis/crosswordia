@@ -1,4 +1,4 @@
-import 'package:crosswordia/constants/constants.dart';
+import 'package:crosswordia/core/constants/constants.dart';
 import 'package:crosswordia/screens/auth/signup_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
 import 'package:crosswordia/widgets/menu_button.dart';

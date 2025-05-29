@@ -1,6 +1,6 @@
-import 'package:crosswordia/constants/constants.dart';
+import 'package:crosswordia/core/constants/constants.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
-import 'package:crosswordia/scraper.dart';
 import 'package:crosswordia/screens/admin_screen.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';

@@ -1,4 +1,4 @@
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

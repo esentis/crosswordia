@@ -1,4 +1,4 @@
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/levels/choose_level_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';

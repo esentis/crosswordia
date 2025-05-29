@@ -1,5 +1,5 @@
-import 'package:crosswordia/extensions/map_extensions.dart';
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/extensions/map_extensions.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/services/models/word_placement_data.dart';
 import 'package:string_extensions/string_extensions.dart';
 

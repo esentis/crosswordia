@@ -1,4 +1,4 @@
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PlayerStatusService {

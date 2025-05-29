@@ -1,8 +1,8 @@
-import 'package:crosswordia/constants/constants.dart';
-import 'package:crosswordia/constants/letter_frequencies.dart';
-import 'package:crosswordia/extensions/map_extensions.dart';
-import 'package:crosswordia/find_possible_words.dart';
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/constants/constants.dart';
+import 'package:crosswordia/core/constants/letter_frequencies.dart';
+import 'package:crosswordia/core/extensions/map_extensions.dart';
+import 'package:crosswordia/core/helpers/find_possible_words.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/screens/board/helpers/horizontal_check.dart';
 import 'package:crosswordia/screens/board/helpers/vertical_check.dart';
 import 'package:crosswordia/screens/board/widgets/blur_container.dart';
