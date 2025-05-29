@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/services/models/word.dart';
 
 /// Saves the collected words to a text file

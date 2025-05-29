@@ -1,5 +1,5 @@
-import 'package:crosswordia/constants/greek_diacritics.dart';
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/constants/greek_diacritics.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 
 List<String> findPossibleWords(String characters, List<String> dict,
     {int minWordLength = 3}) {

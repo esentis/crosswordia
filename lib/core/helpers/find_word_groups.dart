@@ -1,5 +1,5 @@
-import 'package:crosswordia/save_words_to_file.dart';
-import 'package:crosswordia/scraper.dart';
+import 'package:crosswordia/core/helpers/save_words_to_file.dart';
+import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:string_extensions/string_extensions.dart';
 
 Future<void> filterWords(List<String> wordsToLook) async {

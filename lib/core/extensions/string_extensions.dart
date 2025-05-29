@@ -1,4 +1,4 @@
-import 'package:crosswordia/constants/letter_frequencies.dart';
+import 'package:crosswordia/core/constants/letter_frequencies.dart';
 import 'package:string_extensions/string_extensions.dart';
 
 /// Extension on `String` to calculate the score of a word based on letter frequencies.

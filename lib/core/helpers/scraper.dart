@@ -1,5 +1,5 @@
-import 'package:crosswordia/extensions/string_extensions.dart';
-import 'package:crosswordia/save_words_to_file.dart';
+import 'package:crosswordia/core/extensions/string_extensions.dart';
+import 'package:crosswordia/core/helpers/save_words_to_file.dart';
 import 'package:crosswordia/services/models/word.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
