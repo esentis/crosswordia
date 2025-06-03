@@ -322,7 +322,6 @@ class CrosswordBoardController extends ChangeNotifier {
 
               final actualVerticalAfterEndingLocationIfAvailable =
                   '${rowInt + distanceFromRightOfLetter + 1}.$colInt';
-
               // Check if the word can be placed vertically
               final bool canStartVerticallyWithThatLetter = canStartVertically(
                 WordPlacementData(
@@ -512,10 +511,5 @@ class CrosswordBoardController extends ChangeNotifier {
   /// Checks if a letter is revealed (dimmed)
   bool isLetterRevealed(String position) {
     return _revealedLetterPositions.contains(position);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
