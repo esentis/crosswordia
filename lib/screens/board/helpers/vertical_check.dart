@@ -22,7 +22,7 @@ bool canStartVertically(WordPlacementData data) {
     final int currentRow = actualVerticalRow + k;
 
     // If we are at the end of the board, we break
-    if (currentRow > 12 || currentRow < 1) {
+    if (currentRow > data.boardRows || currentRow < 1) {
       hasActualConflicts = true;
       break;
     }

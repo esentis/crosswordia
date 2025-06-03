@@ -21,6 +21,7 @@ bool canStartHorizontally({
   required Map<String, List<String>> letterPositions,
   required List<String> foundLocations,
   required String letter,
+  required int boardRows,
 }) {
   // Checking if there is enough space to the left & right
   if (spaceFromLeft < distanceFromLeftOfLetter ||
@@ -38,7 +39,7 @@ bool canStartHorizontally({
     final int currentCol = actualHorizontalCol + k;
 
     // Check board boundaries
-    if (currentCol > 12 || currentCol < 1) {
+    if (currentCol > boardRows || currentCol < 1) {
       hasActualConflicts = true;
       break;
     }

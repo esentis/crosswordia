@@ -15,6 +15,7 @@ class WordPlacementData {
   final Map<String, List<String>> letterPositions;
   final String letter;
   final int letterIndex;
+  final int boardRows;
   final List<String> foundLocations;
 
   WordPlacementData({
@@ -35,5 +36,6 @@ class WordPlacementData {
     required this.letter,
     required this.letterIndex,
     required this.foundLocations,
+    required this.boardRows,
   });
 }

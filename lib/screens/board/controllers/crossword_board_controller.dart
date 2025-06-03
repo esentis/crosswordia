@@ -346,6 +346,7 @@ class CrosswordBoardController extends ChangeNotifier {
                   letter: letter,
                   letterIndex: i,
                   foundLocations: foundLocations,
+                  boardRows: boardRows,
                 ),
               );
 
@@ -372,6 +373,7 @@ class CrosswordBoardController extends ChangeNotifier {
                 letterPositions: _letterPositions,
                 letter: letter,
                 foundLocations: foundLocations,
+                boardRows: boardRows,
               );
 
               if (canStartVerticallyWithThatLetter) {
