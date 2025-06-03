@@ -254,21 +254,23 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
     return SizedBox(
       height: size.height * 0.26,
       child: Stack(
+        clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
           if (_controller.lettersForTheBoard.isNotEmpty)
             LetterConnector(
               controller: _lettersController,
-              distanceOfLetters: 92, // ✦
+              letterStyle: LetterStyle.circle,
+              distanceOfLetters: 92,
               letterSize: 42,
               borderColor: Colors.white.withValues(alpha: 0.7),
               selectedColor: const Color(0xFFffc93c),
               unselectedColor: const Color(0xFFFFE9A0),
-              lineColor: Colors.black,
+              lineColor: const Color(0xFFffc93c),
               textStyle: GoogleFonts.karla(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: const Color(0xFF2c5364),
                 shadows: [
                   const Shadow(
                     color: Colors.black45,

@@ -24,6 +24,7 @@ class LetterConnector extends StatefulWidget {
     this.selectedColor,
     this.unselectedColor,
     this.textStyle,
+    this.showLettersBackground = true,
     super.key,
   });
 
@@ -40,6 +41,7 @@ class LetterConnector extends StatefulWidget {
   final Color? unselectedColor;
   final TextStyle? textStyle;
   final LettersController controller;
+  final bool showLettersBackground;
 
   @override
   State<StatefulWidget> createState() => _LetterConnectorState();
@@ -441,6 +443,7 @@ class _LetterConnectorState extends State<LetterConnector>
                       widget.unselectedColor ?? Colors.blue.shade200,
                   lineColor: widget.lineColor ?? Colors.blue.shade600,
                   textStyle: widget.textStyle,
+                  showLettersBackground: widget.showLettersBackground,
                 ),
                 size: Size.infinite,
               ),
@@ -469,7 +472,7 @@ class LetterConnectorPainter extends CustomPainter {
   final Color lineColor;
   final TextStyle? textStyle;
   final bool showDebugHitboxes;
-
+  final bool showLettersBackground;
   LetterConnectorPainter({
     required this.letters,
     required this.letterPositions,
@@ -487,14 +490,13 @@ class LetterConnectorPainter extends CustomPainter {
     this.borderColor,
     this.textStyle,
     this.showDebugHitboxes = false,
+    this.showLettersBackground = true,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     // Draw background if wooden style
-    if (letterStyle == LetterStyle.woodenCircle) {
-      _drawWoodenBackground(canvas, size);
-    }
+    if (showLettersBackground) _drawWoodenBackground(canvas, size);
 
     // Draw path lines first
     _drawPaths(canvas);
