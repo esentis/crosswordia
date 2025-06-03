@@ -41,6 +41,7 @@ dependencies:
   lint: ^2.3.0
   percent_indicator: ^4.2.4
   diacritic: ^0.1.6
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

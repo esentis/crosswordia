@@ -191,8 +191,8 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
               child: _buildAnimatedButton(
                 onTap: () => Navigator.of(context).pop(),
                 child: Container(
-                  width: 60,
-                  height: 60,
+                  width: 45,
+                  height: 45,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFF6B6B), Color(0xFFEE5A24)],
@@ -202,7 +202,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -229,7 +229,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
               child: const Text(
                 'ADVENTURE MAP',
                 style: TextStyle(
-                  fontSize: 36,
+                  fontSize: 25,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                   letterSpacing: 2,
@@ -282,8 +282,8 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            Colors.yellow.withOpacity(0.3),
-                            Colors.yellow.withOpacity(0.0),
+                            Colors.yellow.withValues(alpha: 0.3),
+                            Colors.yellow.withValues(alpha: 0.0),
                           ],
                         ),
                       ),
@@ -326,7 +326,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                         color: Colors.amber,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 2,
                           ),
                         ],
@@ -341,7 +341,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                   width: _levelSize,
                   height: _levelSize,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -378,11 +378,11 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
   Color _getLevelShadowColor(LevelStatus status) {
     switch (status) {
       case LevelStatus.completed:
-        return Colors.green.withOpacity(0.5);
+        return Colors.green.withValues(alpha: 0.5);
       case LevelStatus.current:
-        return Colors.orange.withOpacity(0.6);
+        return Colors.orange.withValues(alpha: 0.6);
       case LevelStatus.locked:
-        return Colors.black.withOpacity(0.3);
+        return Colors.black.withValues(alpha: 0.3);
     }
   }
 
@@ -451,7 +451,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
             child: Container(
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.white, width: 2),
               ),
@@ -527,7 +527,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withValues(alpha: 0.4),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -683,7 +683,7 @@ class PathPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -730,7 +730,7 @@ class PathPainter extends CustomPainter {
 
     // Draw dots along the path
     final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
+      ..color = Colors.white.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
 
     for (int i = 1; i < levelCount; i++) {
@@ -758,9 +758,9 @@ class ShimmerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final gradient = LinearGradient(
       colors: [
-        Colors.white.withOpacity(0.0),
-        Colors.white.withOpacity(0.3),
-        Colors.white.withOpacity(0.0),
+        Colors.white.withValues(alpha: 0.0),
+        Colors.white.withValues(alpha: 0.3),
+        Colors.white.withValues(alpha: 0.0),
       ],
       stops: const [0.0, 0.5, 1.0],
       transform: GradientRotation(animation.value * 2 * math.pi),
