@@ -3,16 +3,6 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:string_extensions/string_extensions.dart';
 
 /// Determines if a word can start horizontally from a given letter position.
-///
-/// Returns a boolean value indicating whether the word can start horizontally
-/// from the given letter position, taking into account the distances from the
-/// left and right of the letter, the available space from the left and right,
-/// the word itself, the column it is in, the location of the letter, the actual
-/// horizontal starting and ending locations if available, the actual vertical
-/// before starting location if available, the actual vertical after ending
-/// location if available, the row and column indices, the index of the letter
-/// in the word, the positions of the letters in the board, the locations where
-/// words have already been found, and the letter itself.
 bool canStartHorizontally({
   required int distanceFromRightOfLetter,
   required int distanceFromLeftOfLetter,
@@ -35,9 +25,6 @@ bool canStartHorizontally({
   // Checking if there is enough space to the left & right
   if (spaceFromLeft < distanceFromLeftOfLetter ||
       spaceFromRight < distanceFromRightOfLetter) {
-    if (word == 'ΦΑΕ') {
-      kLog.e('Looking for $letter in $location has conflict');
-    }
     return false;
   }
 
@@ -45,58 +32,47 @@ bool canStartHorizontally({
   final int actualHorizontalCol =
       actualHorizontalStartingLocationIfAvailable.after('.').toInt()!;
 
-  int horizontalColIterator = actualHorizontalCol;
-
-  final int actualHorizontalRow =
-      actualHorizontalStartingLocationIfAvailable.before('.').toInt()!;
-
   bool hasActualConflicts = false;
 
   for (var k = 0; k < word.length; k++) {
-// colInt + k > 10 || (removed from check)
-    if (distanceFromLeftOfLetter - colInt == 0 ||
-        distanceFromLeftOfLetter + distanceFromRightOfLetter > word.length ||
-        horizontalColIterator - 1 < 0) {
+    final int currentCol = actualHorizontalCol + k;
+
+    // Check board boundaries
+    if (currentCol > 12 || currentCol < 1) {
       hasActualConflicts = true;
       break;
     }
 
     // Main location to check
-    final String locationToCheck = '$rowInt.$horizontalColIterator';
-    // Locations to check to the top and bottom
-    final String topLocationToCheck = '${rowInt - 1}.$horizontalColIterator';
-    final String topLeftLocationToCheck =
-        '${rowInt - 1}.${horizontalColIterator - 1}';
-    final String topRightLocationToCheck =
-        '${rowInt - 1}.${horizontalColIterator + 1}';
+    final String locationToCheck = '$rowInt.$currentCol';
 
-    final String bottomLocationToCheck = '${rowInt + 1}.$horizontalColIterator';
-    final String bottomLeftLocationToCheck =
-        '${rowInt + 1}.${horizontalColIterator - 1}';
-    final String bottomRightLocationToCheck =
-        '${rowInt + 1}.${horizontalColIterator + 1}';
-
+    // Boundary locations
     final String beforeStartWordLetterLocation =
-        '$rowInt.${colInt - distanceFromLeftOfLetter - 1}';
-
+        '$rowInt.${actualHorizontalCol - 1}';
     final String afterEndWordLetterLocation =
-        '$rowInt.${colInt - distanceFromLeftOfLetter + word.length}';
+        '$rowInt.${actualHorizontalCol + word.length}';
+
+    // Adjacent locations
+    final String topLocationToCheck = '${rowInt - 1}.$currentCol';
+    final String bottomLocationToCheck = '${rowInt + 1}.$currentCol';
 
     final bool hasConflicts = () {
+      // Get the letter at the current location we're checking
       final letterOfCheckingLocationMap = letterPositions.whereValue(
         (value) => value.contains(locationToCheck),
-        orElse: () {
-          return {};
-        },
+        orElse: () => {},
       );
 
       final String? checkingLocationLetter =
           letterOfCheckingLocationMap.isNotEmpty
               ? letterOfCheckingLocationMap.keys.first
               : null;
+
+      // Check if current letter matches what should be placed
       final bool isCurrentLetterPartOfTheWord =
           word.charAt(k) == checkingLocationLetter;
 
+      // Check boundary conflicts (before start and after end)
       final bool beforeStartHasConflicts = letterPositions
           .anyValue((value) => value.contains(beforeStartWordLetterLocation));
 
@@ -104,131 +80,50 @@ bool canStartHorizontally({
         (v) => v.contains(afterEndWordLetterLocation),
       );
 
-      // final bool startingPointHasConflict = (letterPositions.anyValue(
-      //         (v) => v.contains(actualHorizontalStartingLocationIfAvailable)) &&
-      //     checkingLocationLetter != word.charAt(1));
-
+      // Current location conflict: there's a letter here that doesn't match
+      // what we want to place, and it's not our intersection point
       final bool currentLocationHasConflict = letterPositions
               .anyValue((value) => value.contains(locationToCheck)) &&
           locationToCheck != location &&
-          (locationToCheck == actualHorizontalEndingLocationIfAvailable
-              ? checkingLocationLetter != word.charAt(word.length - 1)
-              : checkingLocationLetter != word.charAt(letterIndex));
+          !isCurrentLetterPartOfTheWord;
 
-      final bool topLeftLocationHasConflict = letterPositions.anyValue(
-            (v) => v.contains(topLeftLocationToCheck),
-          ) &&
-          locationToCheck != location &&
-          beforeStartHasConflicts;
-
-      final bool topRightLocationHasConflict = letterPositions.anyValue(
-            (v) => v.contains(topRightLocationToCheck),
-          ) &&
-          (letterPositions.anyValue(
+      // Top/Bottom conflicts: there are letters adjacent that would create
+      // invalid crossings (unless it's a valid intersection)
+      final bool topLocationHasConflict = letterPositions.anyValue(
             (v) => v.contains(topLocationToCheck),
-          ));
-
-      final bool topLocationConflictExtraCheck = !letterPositions.anyValue(
-            (value) =>
-                value.contains(actualHorizontalStartingLocationIfAvailable),
           ) &&
-          letterPositions.anyValue(
-            (v) =>
-                v.contains(topLocationToCheck) && locationToCheck != location,
-          );
-
-      final bool isRightTopOutOfReach =
-          actualHorizontalCol < topRightLocationToCheck.after('.').toInt()!;
-
-      final bool isLeftTopOutOfReach =
-          actualHorizontalRow > topLeftLocationToCheck.after('.').toInt()!;
-
-      final bool topLocationHasConflict = ((letterPositions
-                      .anyValue((v) => v.contains(topLocationToCheck)) &&
-                  locationToCheck != location &&
-                  !isCurrentLetterPartOfTheWord) ||
-              topLocationConflictExtraCheck && locationToCheck != location) ||
-          // If the top right letter cant conflict with the word since it's right of the end. Thus we only check if it conflicts from top left
-          (isRightTopOutOfReach
-              ? topLeftLocationHasConflict
-              : isLeftTopOutOfReach
-                  ? topRightLocationHasConflict
-                  : topLeftLocationHasConflict && topRightLocationHasConflict);
-
-      final bool bottomLeftLocationHasConflict = (letterPositions.anyValue(
-            (v) => v.contains(bottomLeftLocationToCheck),
-          )) &&
-          (letterPositions.anyValue(
-            (v) => v.contains(bottomLocationToCheck),
-          ));
-
-      final bool isRightBottomOutOfReach =
-          actualHorizontalRow < bottomRightLocationToCheck.after('.').toInt()!;
-
-      final bool bottomRightLocationHasConflict = letterPositions.anyValue(
-        (v) =>
-            v.contains(bottomRightLocationToCheck) && !isRightBottomOutOfReach,
-      );
-
-      final bool isLeftBottomOutOfReach =
-          actualHorizontalRow > bottomLeftLocationToCheck.after('.').toInt()!;
+          checkingLocationLetter ==
+              null; // Only conflict if current cell is empty
 
       final bool bottomLocationHasConflict = letterPositions.anyValue(
             (v) => v.contains(bottomLocationToCheck),
           ) &&
-          checkingLocationLetter == null;
+          checkingLocationLetter ==
+              null; // Only conflict if current cell is empty
 
+      // Debug logging for specific problematic cases
       if (word == 'ΚΑΙ' &&
           actualHorizontalStartingLocationIfAvailable == '7.1') {
         kLog.f('''
-Letter $letter letterIndex $letterIndex
-Iterating over letter ${word.charAt(k)}
-word.charAt(k) != checkingLocationLetter ${word.charAt(k) != checkingLocationLetter}
-Possible start $actualHorizontalStartingLocationIfAvailable
-Possible end $actualHorizontalEndingLocationIfAvailable
-Before start $beforeStartWordLetterLocation
-After end $afterEndWordLetterLocation
+DEBUG HORIZONTAL CHECK for $word:
+k: $k, currentCol: $currentCol
+locationToCheck: $locationToCheck
+checkingLocationLetter: $checkingLocationLetter
+isCurrentLetterPartOfTheWord: $isCurrentLetterPartOfTheWord
+intersection location: $location
 
-locationToCheck $locationToCheck
-locationToCheck letter $checkingLocationLetter
-location $location
-Intersection location $location
+Conflicts:
+- currentLocationHasConflict: $currentLocationHasConflict
+- topLocationHasConflict: $topLocationHasConflict
+- bottomLocationHasConflict: $bottomLocationHasConflict
+- beforeStartHasConflicts: $beforeStartHasConflicts
+- afterEndHasConflicts: $afterEndHasConflicts
 
+Space from left: $spaceFromLeft, Space from right: $spaceFromRight
+Distance from left: $distanceFromLeftOfLetter, Distance from right: $distanceFromRightOfLetter
 
---- Conflicts ---
-Is bottom right out of reach $isRightBottomOutOfReach
-Is bottom left out of reach $isLeftBottomOutOfReach
-Is top right out of reach $isRightTopOutOfReach
-Is top left out of reach $isLeftTopOutOfReach
-
-Bottom location $bottomLocationToCheck conflict $bottomLocationHasConflict
-Bottom left location $bottomLeftLocationToCheck conflict $bottomLeftLocationHasConflict
-Bottom right location $bottomRightLocationToCheck conflict $bottomRightLocationHasConflict
-
-Top location $topLocationToCheck conflict $topLocationHasConflict
-Top left location $topLeftLocationToCheck conflict $topLeftLocationHasConflict
-Top right location $topRightLocationToCheck conflict $topRightLocationHasConflict
-Top location extra check $topLocationConflictExtraCheck
-
-Before start conflict $beforeStartHasConflicts
-After end conflict $afterEndHasConflicts
-
-Current location conflict $currentLocationHasConflict
-
-Has actual conflicts ${currentLocationHasConflict || topLocationHasConflict || bottomLocationHasConflict || beforeStartHasConflicts || afterEndHasConflicts}
-
---- Conflicts ---
-Space from left $spaceFromLeft
-Space from right $spaceFromRight
-Distance from left $distanceFromLeftOfLetter
-Distance from right $distanceFromRightOfLetter
-
-All letter positions: 
-$letterPositions
-
-Found locations
-$foundLocations
-''');
+Letter positions: $letterPositions
+        ''');
       }
 
       return currentLocationHasConflict ||
@@ -236,10 +131,10 @@ $foundLocations
           bottomLocationHasConflict ||
           beforeStartHasConflicts ||
           afterEndHasConflicts;
-    }.call();
+    }();
+
     hasActualConflicts = hasConflicts;
     if (hasActualConflicts) break;
-    horizontalColIterator++;
   }
 
   return !hasActualConflicts;
