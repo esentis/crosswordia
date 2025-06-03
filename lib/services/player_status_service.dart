@@ -373,7 +373,7 @@ ${status.toJson()}
     int level,
     String word,
   ) async {
-    kLog.i('Adding word in level progress for $playerId');
+    kLog.i('Adding $word in level progress for $playerId');
 
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
@@ -403,7 +403,7 @@ ${status.toJson()}
 
       await incrementTotalWordsFound(playerId);
 
-      kLog.f('Successfully added word in level progress');
+      kLog.f('Successfully added $word in level progress');
     } on PostgrestException catch (e) {
       kLog.e(e.message);
       if (e.message.contains('does not exist')) {
