@@ -20,7 +20,7 @@ The `calculateWordScore` algorithm computes a numerical score for words in a cro
 
 Let:
 
-- **$W$** = input word, $W = w₁w₂...wₙ$ where $n = |W|$
+- **$W$** = input word, $W = w₁w₂...wₙ$ where $n = | W |$
 - **$freq(w)$** = frequency of letter $w$ in the language (from lookup table)
 - **$valid(w)$** = predicate indicating if $w$ is a valid single letter
 - **$Score(W)$** = calculated score for word $W$
