@@ -27,42 +27,43 @@ Let:
 
 ### Mathematical Formulation
 
-$$\text{Score}(W) = \sum_{i=1}^{n} \text{LetterScore}(w_i) + \text{LengthBonus}(W)$$
+$$\boxed{\text{Score}(W) = \sum_{i=1}^{n} \text{LetterScore}(w_i) + \text{LengthBonus}(W)}$$
 
 Where:
 
 **Letter Score Function:**
 
 $$
-\text{LetterScore}(w_i) = \begin{cases}
+\boxed{\text{LetterScore}(w_i) = \begin{cases}
 \left\lfloor \frac{1}{\text{freq}(w_i)} + 0.5 \right\rfloor & \text{if } \text{valid}(w_i) \wedge \text{freq}(w_i) > 0 \\
 0 & \text{otherwise}
-\end{cases}
+\end{cases}}
 $$
 
 **Length Bonus Function:**
-$$\text{LengthBonus}(W) = 10 \times |W|$$
+$$\boxed{\text{LengthBonus}(W) = 10 \times |W|}$$
 
 **Complete Score Formula:**
 
 $$
-\text{Score}(W) = \sum_{i=1}^{n} \begin{cases}
+\boxed{\text{Score}(W) = \sum_{i=1}^{n} \begin{cases}
 \left\lfloor \frac{1}{\text{freq}(w_i)} + 0.5 \right\rfloor & \text{if } \text{valid}(w_i) \wedge \text{freq}(w_i) > 0 \\
 0 & \text{otherwise}
-\end{cases} + 10n
+\end{cases} + 10n}
 $$
 
 ### Algorithm Steps
 
-1. **Initialization:** $\text{score} \leftarrow 0$
+1. **Initialization:**
+   $$\boxed{\text{score} \leftarrow 0}$$
 
 2. **Letter Processing:**
-   $$\forall w_i \in W: \text{score} \leftarrow \text{score} + \text{LetterScore}(w_i)$$
+   $$\boxed{\forall w_i \in W: \text{score} \leftarrow \text{score} + \text{LetterScore}(w_i)}$$
 
 3. **Length Bonus Addition:**
-   $$\text{score} \leftarrow \text{score} + 10 \times |W|$$
+   $$\boxed{\text{score} \leftarrow \text{score} + 10 \times |W|}$$
 
-4. **Return:** $\text{score}$
+4. **Return:** $$\boxed{\text{score}}$$
 
 ### Scoring Properties
 
@@ -284,11 +285,11 @@ $Occupied(r,c)$ = letter at position $(r,c)$ if occupied, ∅ otherwise
 Input: Word $W$, intersection point $P(r₀,c₀)$, letter index $i$
 Objective: Determine if $W$ can be placed horizontally starting at position $P(r₀, c₀-i)$
 Mathematical Formulation:
-$$\text{canStartHorizontally}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_h(k)$$
+$$\boxed{\text{canStartHorizontally}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_h(k)}$$
 Where $\Phi_h(k)$ represents the conflict-free condition for position $k$:
-$$\Phi_h(k) = \neg\text{Conflict}_h(r_0, c_0-i+k, w_{k+1})$$
+$$\boxed{\Phi_h(k) = \neg\text{Conflict}_h(r_0, c_0-i+k, w_{k+1})}$$
 Where $\Phi_h(k)$ represents the conflict-free condition for position k:
-$$\Phi_h(k) = \neg\text{Conflict}_h(r_0, c_0-i+k, w_{k+1})$$
+$$\boxed{\Phi_h(k) = \neg\text{Conflict}_h(r_0, c_0-i+k, w_{k+1})}$$
 
 #### Conflict Detection Function:
 
@@ -300,26 +301,26 @@ $\text{EndpointConflict}(r, c) $
 **Component Functions:**
 
 1. **Boundary Violation:**
-   $\text{BoundaryViolation}(r, c) = (c < 1) \vee (c > C)$
+   $$\text{BoundaryViolation}(r, c) = (c < 1) \vee (c > C)$$
 
 2. **Letter Mismatch:**
-   $\text{LetterMismatch}(r, c, w) = \text{Occupied}(r, c) \neq \emptyset \wedge \text{Occupied}(r, c) \neq w \wedge P(r, c) \neq P(r_0, c_0)$
+   $$\text{LetterMismatch}(r, c, w) = \text{Occupied}(r, c) \neq \emptyset \wedge \text{Occupied}(r, c) \neq w \wedge P(r, c) \neq P(r_0, c_0)$$
 
 3. **Adjacent Conflict:**
-   $\text{AdjacentConflict}(r, c) = \text{Occupied}(r, c) = \emptyset \wedge \left(\text{Occupied}(r-1, c) \neq \emptyset \vee \text{Occupied}(r+1, c) \neq \emptyset\right)$
+   $$\text{AdjacentConflict}(r, c) = \text{Occupied}(r, c) = \emptyset \wedge \left(\text{Occupied}(r-1, c) \neq \emptyset \vee \text{Occupied}(r+1, c) \neq \emptyset\right)$$
 
 4. **Endpoint Conflict:**
-   $\text{EndpointConflict}(r, c) = \text{Occupied}(r, c_{start}-1) \neq \emptyset \vee \text{Occupied}(r, c_{end}+1) \neq \emptyset$
+   $$\text{EndpointConflict}(r, c) = \text{Occupied}(r, c_{start}-1) \neq \emptyset \vee \text{Occupied}(r, c_{end}+1) \neq \emptyset$$
 
 ### Vertical Placement Algorithm
 
 **Mathematical Formulation:**
 
-$$\text{canStartVertically}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_v(k)$$
+$$\boxed{\text{canStartVertically}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_v(k)}$$
 
 Where $\Phi_v(k)$ is similar to $\Phi_h(k)$ but with row and column coordinates swapped:
 
-$$\Phi_v(k) = \neg\text{Conflict}_v(r_0-i+k, c_0, w_{k+1})$$
+$$\boxed{\Phi_v(k) = \neg\text{Conflict}_v(r_0-i+k, c_0, w_{k+1})}$$
 
 The conflict detection is analogous but checks left/right adjacency instead of top/bottom.
 
