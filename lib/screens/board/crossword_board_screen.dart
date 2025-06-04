@@ -251,52 +251,56 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
   // ---------------- Letter Connector ----------------
 
   Widget _buildLetterConnector(Size size) {
-    return SizedBox(
-      height: size.height * 0.26,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          if (_controller.lettersForTheBoard.isNotEmpty)
-            LetterConnector(
-              controller: _lettersController,
-              letterStyle: LetterStyle.circle,
-              distanceOfLetters: 92,
-              letterSize: 42,
-              borderColor: Colors.white.withValues(alpha: 0.7),
-              selectedColor: const Color(0xFFffc93c),
-              unselectedColor: const Color(0xFFFFE9A0),
-              lineColor: const Color(0xFFffc93c),
-              textStyle: GoogleFonts.karla(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF2c5364),
-                shadows: [
-                  const Shadow(
-                    color: Colors.black45,
-                    offset: Offset(0, 1),
-                    blurRadius: 5,
-                  ),
-                ],
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: 17.0 + MediaQuery.paddingOf(context).bottom),
+      child: SizedBox(
+        height: size.height * 0.26,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            if (_controller.lettersForTheBoard.isNotEmpty)
+              LetterConnector(
+                controller: _lettersController,
+                letterStyle: LetterStyle.circle,
+                distanceOfLetters: 92,
+                letterSize: 42,
+                borderColor: Colors.white.withValues(alpha: 0.7),
+                selectedColor: const Color(0xFFffc93c),
+                unselectedColor: const Color(0xFFFFE9A0),
+                lineColor: const Color(0xFFffc93c),
+                textStyle: GoogleFonts.karla(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF2c5364),
+                  shadows: [
+                    const Shadow(
+                      color: Colors.black45,
+                      offset: Offset(0, 1),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                onSnap: (letterPosition) {
+                  _controller.addLetterToCurrentWord(letterPosition.letter);
+                },
+                onUnsnap: (letterPosition) {
+                  _controller.removeLastLetterFromCurrentWord();
+                },
+                onCompleted: _checkCreatedWord,
+                letters: _controller.lettersForTheBoard,
+                key: ValueKey(
+                  _controller.lettersForTheBoard.isNotEmpty
+                      ? '${_controller.lettersForTheBoard.last}'
+                          '${_controller.lettersForTheBoard.first}'
+                          '${_controller.lettersForTheBoard.length > 1 ? _controller.lettersForTheBoard[1] : ""}'
+                      : 'empty',
+                ),
               ),
-              onSnap: (letterPosition) {
-                _controller.addLetterToCurrentWord(letterPosition.letter);
-              },
-              onUnsnap: (letterPosition) {
-                _controller.removeLastLetterFromCurrentWord();
-              },
-              onCompleted: _checkCreatedWord,
-              letters: _controller.lettersForTheBoard,
-              key: ValueKey(
-                _controller.lettersForTheBoard.isNotEmpty
-                    ? '${_controller.lettersForTheBoard.last}'
-                        '${_controller.lettersForTheBoard.first}'
-                        '${_controller.lettersForTheBoard.length > 1 ? _controller.lettersForTheBoard[1] : ""}'
-                    : 'empty',
-              ),
-            ),
-          _buildShuffleButton(),
-        ],
+            _buildShuffleButton(),
+          ],
+        ),
       ),
     );
   }
