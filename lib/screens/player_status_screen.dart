@@ -2,6 +2,7 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
 import 'package:crosswordia/screens/levels/choose_level_screen.dart';
+import 'package:crosswordia/screens/test_word_finding_algorith_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
@@ -447,6 +448,21 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
               position: _slideAnimation,
               child: _buildLogoutButton(),
             ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TestWordFindingAlgorithScreen(),
+                ),
+              );
+            },
+            child: Text('Test word finding algorithm',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 16,
+                )),
           ),
         ],
       ),
