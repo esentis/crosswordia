@@ -24,9 +24,9 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 /// final words = findPossibleWords('αβγδε', greekDictionary, minWordLength: 2);
 /// // Returns words like ['αβ', 'γδ', 'αγε'] if they exist in the dictionary
 /// ```
-List<String> findPossibleWords(String characters, List<String> dict,
+Set<String> findPossibleWords(String characters, Iterable<String> dict,
     {int minWordLength = 3}) {
-  if (characters.isEmpty) return [];
+  if (characters.isEmpty) return {};
   // Filter dictionary by length before normalization to save processing
   final List<String> dictionary = dict
       .where((word) =>
@@ -73,7 +73,7 @@ List<String> findPossibleWords(String characters, List<String> dict,
 
   kLog.f('Found ${validWords.length} valid words');
   kLog.f('Valid words: ${validWords.toSet()}');
-  return validWords;
+  return validWords.toSet();
 }
 
 // Improved Greek diacritic removal function
