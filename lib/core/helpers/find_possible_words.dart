@@ -1,6 +1,29 @@
 import 'package:crosswordia/core/constants/greek_diacritics.dart';
 import 'package:crosswordia/core/helpers/scraper.dart';
 
+/// Finds all possible words that can be formed from the given characters.
+///
+/// This function takes a string of characters and searches through a dictionary
+/// to find all valid words that can be formed using only the available characters.
+/// Each character can only be used as many times as it appears in the input string.
+///
+/// The function normalizes both input characters and dictionary words by removing
+/// Greek diacritics and converting to lowercase for accurate comparison.
+///
+/// Parameters:
+/// - [characters]: The available characters to form words from
+/// - [dict]: The dictionary list to search through
+/// - [minWordLength]: Minimum length of words to consider (defaults to 3)
+///
+/// Returns:
+/// A list of valid words that can be formed from the given characters.
+/// Returns an empty list if no characters are provided.
+///
+/// Example:
+/// ```dart
+/// final words = findPossibleWords('αβγδε', greekDictionary, minWordLength: 2);
+/// // Returns words like ['αβ', 'γδ', 'αγε'] if they exist in the dictionary
+/// ```
 List<String> findPossibleWords(String characters, List<String> dict,
     {int minWordLength = 3}) {
   if (characters.isEmpty) return [];
@@ -47,10 +70,7 @@ List<String> findPossibleWords(String characters, List<String> dict,
       validWords.add(originalWord); // Add the original word with diacritics
     }
   }
-  // At the end of the function, before returning
-  validWords.sort((a, b) => a.length != b.length
-      ? b.length.compareTo(a.length) // Sort by length (longest first)
-      : a.compareTo(b)); // Then alphabetically
+
   kLog.f('Found ${validWords.length} valid words');
   kLog.f('Valid words: ${validWords.toSet()}');
   return validWords;
