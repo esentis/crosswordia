@@ -72,17 +72,15 @@ class _TestWordFindingAlgorithScreenState
                 const SizedBox(
                   height: 10,
                 ),
-                Expanded(
-                  child: Wrap(
-                    children: foundWords.map((word) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Chip(
-                          label: Text(word),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                Wrap(
+                  children: foundWords.map((word) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Chip(
+                        label: Text(word),
+                      ),
+                    );
+                  }).toList(),
                 ),
                 if (foundWords.isEmpty)
                   Padding(
