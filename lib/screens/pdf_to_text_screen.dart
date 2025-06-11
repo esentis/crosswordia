@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:string_extensions/string_extensions.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class PdfConverterScreen extends StatefulWidget {
-  const PdfConverterScreen({Key? key}) : super(key: key);
+  const PdfConverterScreen({super.key});
 
   @override
   State<PdfConverterScreen> createState() => _PdfConverterScreenState();
@@ -223,25 +222,39 @@ class _PdfConverterScreenState extends State<PdfConverterScreen>
   }
 
   List<String> _extractWords(String text) {
-    // Regex to match Greek words including accented characters
-    // Includes:
-    // - Basic Greek letters: α-ω (lowercase), Α-Ω (uppercase)
-    // - Accented vowels: ά, έ, ή, ί, ό, ύ, ώ (lowercase with tonos)
-    // - Accented capitals: Ά, Έ, Ή, Ί, Ό, Ύ, Ώ
-    // - Diaeresis: ΐ, ΰ, ϊ, ϋ
+    // Clear previous words
+    _allWords.clear();
 
-    // Extract all words
-    _allWords = text.removeNumbers.removeSpecial.onlyGreek.split(' ');
+    // First, clean the text and split into potential words
+    // Using multiple delimiters for better word separation
+    final List<String> potentialWords = text
+        .replaceAll(RegExp('[0-9]+'), ' ') // Remove numbers
+        .replaceAll(RegExp(r'[^\u0370-\u03FF\u1F00-\u1FFF\s]+'),
+            ' ') // Keep only Greek chars and spaces
+        .replaceAll(RegExp(r'\s+'), ' ') // Normalize whitespace
+        .trim()
+        .split(' ');
 
-    // Remove duplicates while preserving order
+    // Process each potential word
+    for (final String word in potentialWords) {
+      // Clean the word by keeping only Greek characters
+      final String cleanWord =
+          word.replaceAll(RegExp(r'[^\u0370-\u03FF\u1F00-\u1FFF]'), '').trim();
+
+      // Skip if the cleaned word is too short
+      if (cleanWord.length < 3) continue;
+
+      // Add to all words list
+      _allWords.add(cleanWord);
+    }
+
+    // Create unique words list while preserving order
     final Set<String> uniqueWords = {};
     final List<String> orderedUniqueWords = [];
 
     for (final String word in _allWords) {
-      final String sanitizedWord = word.onlyGreek;
-      if (sanitizedWord.length < 3) continue; // Skip short words
-      if (uniqueWords.add(sanitizedWord)) {
-        orderedUniqueWords.add(sanitizedWord);
+      if (uniqueWords.add(word)) {
+        orderedUniqueWords.add(word);
       }
     }
 
