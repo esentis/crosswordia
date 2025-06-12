@@ -320,7 +320,7 @@ $$\boxed{\text{canStartVertically}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_
 
 Where $\Phi_v(k)$ is similar to $\Phi_h(k)$ but with row and column coordinates swapped:
 
-$\Phi_v(k) = \neg\text{Conflict}_v(r_0-i+k, c_0, w_{k+1})$
+$$\Phi_v(k) = \neg\text{Conflict}_v(r_0-i+k, c_0, w_{k+1})$$
 
 The conflict detection is analogous but checks left/right adjacency instead of top/bottom.
 
