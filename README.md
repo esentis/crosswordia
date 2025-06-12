@@ -316,9 +316,9 @@ $\text{EndpointConflict}(r, c) $
 
 **Mathematical Formulation:**
 
-$$\boxed{\text{canStartVertically}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_v(k)}$$
+$$\text{canStartVertically}(W, r_0, c_0, i) = \bigwedge_{k=0}^{n-1} \Phi_v(k)$$
 
-Where $\Phi_v(k)$ is similar to $\Phi_h(k)$ but with row and column coordinates swapped:
+**_Where $\Phi_v(k)$ is similar to $\Phi_h(k)$ but with row and column coordinates swapped:_**
 
 **Conflict-Free Condition for Vertical Placement**
 
