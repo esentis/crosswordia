@@ -144,7 +144,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                     SingleChildScrollView(
                       controller: _scrollController,
                       physics: const BouncingScrollPhysics(),
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: widget.levelCount * _verticalSpacing + 200,
                         child: Stack(
