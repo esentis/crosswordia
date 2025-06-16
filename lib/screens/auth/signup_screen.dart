@@ -336,7 +336,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
+                                            const Text(
                                               'Register as Admin',
                                               style: TextStyle(
                                                 color: Colors.white,
