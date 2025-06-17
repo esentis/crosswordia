@@ -224,7 +224,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen>
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) {
-                              return SignupScreen(isLogin: true);
+                              return const SignupScreen(isLogin: true);
                             },
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
@@ -252,7 +252,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen>
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) {
-                              return SignupScreen(isLogin: false);
+                              return const SignupScreen(isLogin: false);
                             },
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
