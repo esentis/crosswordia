@@ -86,7 +86,6 @@ class CrosswordBoardController extends ChangeNotifier {
     _sortedWords = _inputWords.map((e) => e.toGreekUpperCase()).toList()
       ..sort((a, b) => b.length.compareTo(a.length));
 
-    kLog.i('Found words are $_foundWords');
     _generateBoard();
   }
 
@@ -126,8 +125,8 @@ class CrosswordBoardController extends ChangeNotifier {
     required bool isHorizontal,
     required int startingPoint,
   }) {
-    kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}\n'
-        'starting at $row, $col');
+    // kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}\n'
+    //     'starting at $row, $col');
     _placedWords.add(word);
 
     final int rowInt = int.parse(row);
@@ -167,15 +166,15 @@ class CrosswordBoardController extends ChangeNotifier {
     final bool createdWordExists =
         _inputWords.any((word) => word.toGreekUpperCase() == joinedWord);
 
-    kLog.f(
-      '$word joined word: $joinedWord created word exists: $createdWordExists',
-    );
+    // kLog.f(
+    //   '$word joined word: $joinedWord created word exists: $createdWordExists',
+    // );
 
     // If the word exists and is not in the found words list save it
     if (createdWordExists && !_foundWords.contains(joinedWord)) {
       clearCurrentWord();
 
-      kLog.f('Adding $joinedWord to found words');
+      // kLog.f('Adding $joinedWord to found words');
       _foundWords.add(joinedWord);
 
       final levelId = await PlayerStatusService.instance.getLevelId(_level);
@@ -192,7 +191,7 @@ class CrosswordBoardController extends ChangeNotifier {
         orElse: () => const MapEntry('', []),
       );
 
-      kLog.f('word found ? ${wordFound.key != ''}');
+      // kLog.f('word found ? ${wordFound.key != ''}');
 
       final bool wordExistsOnBoard = wordFound.key != '';
 
@@ -205,7 +204,7 @@ class CrosswordBoardController extends ChangeNotifier {
         _foundLetterPositions.addAll(
           Map.fromEntries([wordFound]),
         );
-        kLog.f(_foundLetterPositions);
+        // kLog.f(_foundLetterPositions);
         notifyListeners();
       }
 
@@ -247,7 +246,7 @@ class CrosswordBoardController extends ChangeNotifier {
         _words.where((w) => !_placedWords.contains(w)).toList();
 
     if (notPlacedWords.isNotEmpty) {
-      kLog.d('Trying to add not placed words $notPlacedWords');
+      //    kLog.d('Trying to add not placed words $notPlacedWords');
       _arrangeWords(notPlacedWords);
     }
 

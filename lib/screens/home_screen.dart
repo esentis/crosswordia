@@ -1,5 +1,4 @@
 import 'package:crosswordia/core/constants/constants.dart';
-import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/admin_screen.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
@@ -15,7 +14,6 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final authProvider = ref.read(authStateProvider.notifier);
-    kLog.i(authProvider.isAdmin);
     return Stack(
       children: [
         Positioned.fill(

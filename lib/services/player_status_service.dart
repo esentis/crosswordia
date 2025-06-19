@@ -1,4 +1,3 @@
-import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PlayerStatusService {
@@ -43,7 +42,6 @@ class PlayerStatusService {
     final PlayerStatus newStatus = PlayerStatus.fromNewUser(currentUser);
     await createPlayerStatus(newStatus);
 
-    kLog.i('Created new player status for $playerId');
     return newStatus;
   }
 
@@ -51,20 +49,17 @@ class PlayerStatusService {
   /// Returns a [PlayerStatus] object representing the current status of the player.
   /// If the player ID is invalid or the player does not exist, returns null.
   Future<PlayerStatus?> getPlayerStatus(String playerId) async {
-    kLog.i('Getting status for $playerId');
     try {
       final data = await Supabase.instance.client
           .from('player_status')
           .select()
           .eq('player_id', playerId);
 
-      kLog.f(data);
       if (data.isNotEmpty) {
         return PlayerStatus.fromJson(data[0]);
       }
       return null;
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         return await getPlayerStatus(playerId);
@@ -91,20 +86,13 @@ class PlayerStatusService {
   ///
   /// Throws a [Exception] if the update fails.
   Future<void> updatePlayerStatus(PlayerStatus status) async {
-    kLog.i('''
-Updating status:
-${status.toJson()}
-''');
     try {
-      final data = await Supabase.instance.client.from('player_status').update({
+      await Supabase.instance.client.from('player_status').update({
         'total_words_found': status.totalWordsFound,
         'coins': status.coins,
         'current_level': status.currentLevel,
       }).eq('player_id', status.playerId);
-
-      kLog.f(data);
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await updatePlayerStatus(status);
@@ -118,7 +106,6 @@ ${status.toJson()}
   ///
   /// Throws a [PostgrestException] if the operation fails.
   Future<void> createPlayerStatus(PlayerStatus status) async {
-    kLog.i('Creating status for ${status.playerId}');
     try {
       await Supabase.instance.client.from('player_status').insert({
         'player_id': status.playerId,
@@ -126,10 +113,7 @@ ${status.toJson()}
         'coins': status.coins,
         'current_level': status.currentLevel,
       });
-
-      kLog.i('Created player status for ${status.playerId}');
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await createPlayerStatus(status);
@@ -144,20 +128,15 @@ ${status.toJson()}
   /// [coins] is the amount of coins to increment.
   /// Returns a [Future] that completes when the operation is done.
   Future<void> incrementTotalCoins(String playerId, int coins) async {
-    kLog.i('Incrementing total coins for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     try {
-      final data = await Supabase.instance.client.rpc(
+      await Supabase.instance.client.rpc(
         'incrementplayercoins',
         params: {'coinstoadd': coins, 'playerid': playerId},
       );
-
-      kLog.f(data);
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await incrementTotalCoins(playerId, coins);
@@ -189,8 +168,6 @@ ${status.toJson()}
   /// Creates player status if it doesn't exist.
   /// Returns a Future that completes when the operation is done.
   Future<void> incrementTotalWordsFound(String playerId) async {
-    kLog.i('Incrementing total words found for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
@@ -199,10 +176,7 @@ ${status.toJson()}
         'incrementtotalwordsfound',
         params: {'wordscount': 1, 'playerid': playerId},
       );
-
-      kLog.f('Incremented total words found for $playerId');
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await incrementTotalWordsFound(playerId);
@@ -214,18 +188,13 @@ ${status.toJson()}
   /// Creates player status if it doesn't exist.
   /// Returns a Future that completes when the operation is done.
   Future<void> incrementLevel(String playerId) async {
-    kLog.i('Incrementing level for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     try {
       await Supabase.instance.client
           .rpc('incrementplayerlevel', params: {'playerid': playerId});
-
-      kLog.f('Incremented level for $playerId');
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await incrementLevel(playerId);
@@ -238,15 +207,12 @@ ${status.toJson()}
   /// If it does not exist, it will be initialized
   /// Creates player status if it doesn't exist.
   Future<void> checkIfLevelProgressExists(String playerId, int level) async {
-    kLog.i('Checking if level progress exists for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.w('Level id is null');
       return;
     }
     try {
@@ -256,12 +222,10 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.f(data);
       if (data.isEmpty) {
         await initLevelProgress(playerId, level);
       }
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
       }
@@ -281,31 +245,25 @@ ${status.toJson()}
     int level,
     List<String> words,
   ) async {
-    kLog.i('Updating found words for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
       return;
     }
     await checkIfLevelProgressExists(playerId, level);
 
     try {
-      final data = await Supabase.instance.client
+      await Supabase.instance.client
           .from('player_level_status')
           .update({
             'found_words': words,
           })
           .eq('player_id', playerId)
           .eq('level_id', levelId);
-
-      kLog.f(data);
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
         await updateLevelProgress(playerId, level, words);
@@ -322,15 +280,12 @@ ${status.toJson()}
     int level,
     String word,
   ) async {
-    kLog.i('Checking if word already found for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.w('Level id is null');
       return false;
     }
     await checkIfLevelProgressExists(playerId, level);
@@ -342,14 +297,12 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.f(data);
       if (data.isNotEmpty) {
         final foundWords = data[0]['found_words'] as List<dynamic>;
         return foundWords.contains(word);
       }
       return false;
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
         return false;
@@ -373,20 +326,18 @@ ${status.toJson()}
     int level,
     String word,
   ) async {
-    kLog.i('Adding $word in level progress for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
+      // .e('Level id is null');
       return;
     }
 
     if (await checkIfWordAlreadyFound(playerId, level, word)) {
-      kLog.w('Word already found');
+      // .w('Word already found');
       return;
     }
     await checkIfLevelProgressExists(playerId, level);
@@ -402,10 +353,7 @@ ${status.toJson()}
       );
 
       await incrementTotalWordsFound(playerId);
-
-      kLog.f('Successfully added $word in level progress');
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
         await updateLevelProgress(playerId, level, [word]);
@@ -425,28 +373,21 @@ ${status.toJson()}
   ///
   /// Returns a Future that completes when the progress is initialized.
   Future<void> initLevelProgress(String playerId, int level) async {
-    kLog.i('Initializing level progress for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final int? levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
       return;
     }
     try {
-      final data =
-          await Supabase.instance.client.from('player_level_status').insert({
+      await Supabase.instance.client.from('player_level_status').insert({
         'player_id': playerId,
         'level_id': levelId,
         'found_words': [],
       });
-
-      kLog.f(data);
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         await initLevelProgress(playerId, level);
@@ -457,19 +398,16 @@ ${status.toJson()}
   /// Returns the level ID for a given level.
   /// If the level does not exist, returns null.
   Future<int?> getLevelId(int level) async {
-    kLog.i('Getting level id for $level');
     try {
       final data = await Supabase.instance.client
           .from('levels')
           .select()
           .eq('level', level);
 
-      kLog.f('Level id is ${data.isNotEmpty ? data[0]['id'] : "not found"}');
       if (data.isNotEmpty) {
         return data[0]['id'] as int;
       }
     } on PostgrestException catch (e) {
-      kLog.e(e);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         return await getLevelId(level);
@@ -488,15 +426,12 @@ ${status.toJson()}
   ///
   /// Throws a [StateError] if the player ID is null or empty.
   Future<Set<String>?> getLevelsFoundWords(String playerId, int level) async {
-    kLog.i('Getting found words for $playerId');
-
     // Ensure player status exists
     await ensurePlayerStatusExists(playerId);
 
     final levelId = await getLevelId(level);
 
     if (levelId == null) {
-      kLog.e('Level id is null');
       return null;
     }
     try {
@@ -506,14 +441,12 @@ ${status.toJson()}
           .eq('player_id', playerId)
           .eq('level_id', levelId);
 
-      kLog.f(data);
       if (data.isNotEmpty) {
         final foundWords = data[0]['found_words'] as List<dynamic>;
         return foundWords.cast<String>().toSet();
       }
       return null;
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('does not exist')) {
         await initLevelProgress(playerId, level);
         return null;
@@ -536,14 +469,11 @@ ${status.toJson()}
   /// print(totalLevels); // prints the total number of levels
   /// ```
   Future<int> getTotalLevelCounts() async {
-    kLog.i('Getting total level counts');
     try {
       final data = await Supabase.instance.client.from('levels').select();
 
-      kLog.f('Total levels are ${data.length}');
       return data.length;
     } on PostgrestException catch (e) {
-      kLog.e(e.message);
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
         return getTotalLevelCounts();
