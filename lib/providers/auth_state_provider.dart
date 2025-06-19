@@ -1,5 +1,6 @@
 import 'package:crosswordia/core/helpers/scraper.dart';
-import 'package:crosswordia/services/player_status_service.dart';
+import 'package:crosswordia/screens/auth/user_created_screen.dart';
+import 'package:crosswordia/screens/player_status_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -56,7 +57,10 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
           isAuthenticated: true,
         );
         if (context.mounted) {
-          Navigator.pop(context);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const PlayerStatusScreen()),
+            (route) => false, // This removes all previous routes
+          );
         }
       } else {
         if (context.mounted) {
@@ -94,22 +98,20 @@ class AppAuthStateProvider extends StateNotifier<AppAuthState> {
         data: options,
       );
 
-      if (response.session != null) {
-        kLog.i(response.session?.toJson());
-        PlayerStatusService.instance.createPlayerStatus(
-          PlayerStatus.fromNewUser(response.session!.user),
-        );
-        state = AppAuthState(
-          isAuthenticated: true,
-        );
+      if (response.user != null) {
         if (context.mounted) {
-          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const UserCreatedScreen(),
+            ),
+          );
         }
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(response.toString()),
+              content: Text(response.user.toString()),
             ),
           );
         }
