@@ -1,9 +1,9 @@
 import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/providers/auth_state_provider.dart';
 import 'package:crosswordia/screens/auth/landing_screen.dart';
+import 'package:crosswordia/screens/create_level_screen.dart';
 import 'package:crosswordia/screens/levels/choose_level_screen.dart';
 import 'package:crosswordia/screens/pdf_to_text_screen.dart';
-import 'package:crosswordia/screens/test_word_finding_algorith_screen.dart';
 import 'package:crosswordia/services/levels_service.dart';
 import 'package:crosswordia/services/player_status_service.dart';
 import 'package:flutter/material.dart';
@@ -307,9 +307,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
                       ),
                     ),
                   )
-                : _playerStatus == null
-                    ? _buildLoginPrompt()
-                    : _buildStatusContent(),
+                : _buildStatusContent(),
           ),
         ],
       ),
@@ -384,7 +382,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
   }
 
   Widget _buildStatusContent() {
-    final currentLevel = _playerStatus!.currentLevel;
+    final currentLevel = _playerStatus?.currentLevel;
     final levelProgress =
         (_foundWords?.length ?? 0) / _totalWordsOfCurrentLevel;
 
@@ -427,7 +425,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
             opacity: _fadeAnimation,
             child: SlideTransition(
               position: _slideAnimation,
-              child: _buildLevelProgressCard(currentLevel, levelProgress),
+              child: _buildLevelProgressCard(currentLevel ?? 0, levelProgress),
             ),
           ),
 
@@ -459,7 +457,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
                 ),
               );
             },
-            child: Text('Test word finding algorithm',
+            child: Text('Add level',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 16,
@@ -474,7 +472,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
                 ),
               );
             },
-            child: Text('Test PDF to TEXT',
+            child: Text('PDF to TEXT',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 16,
@@ -527,7 +525,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
                 ),
                 child: Center(
                   child: Text(
-                    _playerStatus!.playerId.substring(0, 1).toUpperCase(),
+                    _playerStatus?.playerId.substring(0, 1).toUpperCase() ?? '',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -542,7 +540,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Level ${_playerStatus!.currentLevel}',
+                      'Level ${_playerStatus?.currentLevel ?? 0}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -593,19 +591,19 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
             children: [
               _buildStatColumn(
                 'Words',
-                _playerStatus!.totalWordsFound.toString(),
+                _playerStatus?.totalWordsFound.toString() ?? '0',
                 Icons.text_fields,
                 Colors.blue,
               ),
               _buildStatColumn(
                 'Coins',
-                _playerStatus!.coins.toString(),
+                _playerStatus?.coins.toString() ?? '0',
                 Icons.monetization_on,
                 Colors.amber,
               ),
               _buildStatColumn(
                 'Progress',
-                '${_playerStatus!.currentLevel}/$_totalLevels',
+                '${_playerStatus?.currentLevel ?? 0}/$_totalLevels',
                 Icons.emoji_events,
                 Colors.green,
               ),
