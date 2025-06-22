@@ -33,21 +33,21 @@ class CrosswordBoardController extends ChangeNotifier {
   final String _userId;
 
   // Game state
-  final List<List<String>> _board = [];
-  final Set<String> _placedWords = {};
+  final Set<String> _allPlacedWords = {};
+  final Set<String> _foundPlacedWords = {};
+
   List<String> _lettersForTheBoard = [];
   final Set<String> _revealedLetterPositions = {};
   Map<String, List<String>> _letterPositions = {};
   final Map<String, List<String>> _foundLetterPositions = {};
   final Map<String, List<String>> _wordPositions = {};
-  Set<String> _foundWords = {};
+  Set<String> _totalFoundWordsOLevel = {};
   String _currentlyCreatedWord = '';
   late List<String> _sortedWords;
   final List<String> _words = []; // Working list for board generation
 
   // Getters
-  List<List<String>> get board => _board;
-  Set<String> get placedWords => _placedWords;
+  Set<String> get allPlacedWords => _allPlacedWords;
   List<String> get lettersForTheBoard => _lettersForTheBoard;
   Set<String> get revealedLetterPositions => _revealedLetterPositions;
   Map<String, List<String>> get letterPositions => _letterPositions;
@@ -57,6 +57,8 @@ class CrosswordBoardController extends ChangeNotifier {
   PlayerStatus get playerStatus => _playerStatus;
   int get level => _level;
   String get userId => _userId;
+  Set<String> get totalWordsOfLevel => _inputWords;
+  Set<String> get totalFoundWordsOfLevel => _totalFoundWordsOLevel;
 
   // Word list for lookup this is for testing purposes
   final wordsToLook = words1
@@ -82,7 +84,7 @@ class CrosswordBoardController extends ChangeNotifier {
     ..sort((a, b) => b.length.compareTo(a.length));
 
   void initialize() {
-    _foundWords = _inputFoundWords;
+    _totalFoundWordsOLevel = _inputFoundWords;
     _sortedWords = _inputWords.map((e) => e.toGreekUpperCase()).toList()
       ..sort((a, b) => b.length.compareTo(a.length));
 
@@ -127,7 +129,7 @@ class CrosswordBoardController extends ChangeNotifier {
   }) {
     // kLog.i('adding word $word ${isHorizontal ? 'horizontally' : 'vertically'}\n'
     //     'starting at $row, $col');
-    _placedWords.add(word);
+    _allPlacedWords.add(word);
 
     final int rowInt = int.parse(row);
     final int colInt = int.parse(col);
@@ -171,11 +173,11 @@ class CrosswordBoardController extends ChangeNotifier {
     // );
 
     // If the word exists and is not in the found words list save it
-    if (createdWordExists && !_foundWords.contains(joinedWord)) {
+    if (createdWordExists && !_totalFoundWordsOLevel.contains(joinedWord)) {
       clearCurrentWord();
 
       // kLog.f('Adding $joinedWord to found words');
-      _foundWords.add(joinedWord);
+      _totalFoundWordsOLevel.add(joinedWord);
 
       final levelId = await PlayerStatusService.instance.getLevelId(_level);
       final userId = PlayerStatusService.instance.getUserId();
@@ -217,7 +219,7 @@ class CrosswordBoardController extends ChangeNotifier {
 
   /// Maps the positions of each letter in the found words to the foundLetterPositions map.
   void _mapFoundWordLetterPositions() {
-    for (final word in _foundWords) {
+    for (final word in _totalFoundWordsOLevel) {
       final MapEntry<String, List<String>> wordFound =
           _wordPositions.entries.firstWhere(
         (element) => element.key == word,
@@ -235,7 +237,7 @@ class CrosswordBoardController extends ChangeNotifier {
   /// Generates the crossword board by placing words
   void _generateBoard() {
     _letterPositions = {};
-    _foundWords = _inputFoundWords;
+    _totalFoundWordsOLevel = _inputFoundWords;
 
     _words.addAll(_sortedWords);
     _words.sort((a, b) => b.length.compareTo(a.length));
@@ -243,7 +245,7 @@ class CrosswordBoardController extends ChangeNotifier {
     _arrangeWords(_words);
 
     final List<String> notPlacedWords =
-        _words.where((w) => !_placedWords.contains(w)).toList();
+        _words.where((w) => !_allPlacedWords.contains(w)).toList();
 
     if (notPlacedWords.isNotEmpty) {
       //    kLog.d('Trying to add not placed words $notPlacedWords');
@@ -251,7 +253,7 @@ class CrosswordBoardController extends ChangeNotifier {
     }
 
     kLog.f(
-      'all words $_words\nplaced words $_placedWords\nnot placed words $notPlacedWords',
+      'all words $_words\nplaced words $_allPlacedWords\nnot placed words $notPlacedWords',
     );
 
     _generateLettersForConnector();
@@ -262,7 +264,7 @@ class CrosswordBoardController extends ChangeNotifier {
   /// Arranges words on the board
   void _arrangeWords(List<String> wordsForArrangement) {
     for (var i = 0; i < wordsForArrangement.length; i++) {
-      if (i == 0 && _placedWords.isEmpty) {
+      if (i == 0 && _allPlacedWords.isEmpty) {
         // We calculate the approximate middle of the board to put the first word
         final int startAfter =
             (((boardRows - wordsForArrangement[i].length) / 2) + 1).ceil();
@@ -411,7 +413,7 @@ class CrosswordBoardController extends ChangeNotifier {
     final Map<String, int> repeatedLetters = {};
     final List<String> extraLettersToAdd = [];
 
-    for (final word in _placedWords) {
+    for (final word in _allPlacedWords) {
       for (final Map<String, int> charOcc in word.charOccurences) {
         if (charOcc.values.first > 1) {
           // If the occurrence of the letter is greater than the one already in the map
@@ -430,7 +432,7 @@ class CrosswordBoardController extends ChangeNotifier {
     });
 
     _lettersForTheBoard = [
-      ..._placedWords
+      ..._allPlacedWords
           .join()
           .split('')
           .toSet()

@@ -48,11 +48,6 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
       vsync: this,
     )..forward();
 
-    // _floatingAnimationController = AnimationController(
-    //   duration: const Duration(seconds: 3),
-    //   vsync: this,
-    // )..repeat(reverse: true);
-
     _pulseAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -149,14 +144,14 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                         height: widget.levelCount * _verticalSpacing + 200,
                         child: Stack(
                           children: List.generate(widget.levelCount, (index) {
-                            final level = index + 1;
+                            final levelIndex = index + 1;
                             final position = _getLevelPosition(index);
-                            final status = _getLevelStatus(level);
+                            final status = _getLevelStatus(levelIndex);
 
                             return Positioned(
                               left: position.dx - _levelSize / 2,
                               top: position.dy,
-                              child: _buildLevelNode(level, status),
+                              child: _buildLevelNode(levelIndex, status),
                             );
                           }),
                         ),
@@ -249,14 +244,15 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
     );
   }
 
-  Widget _buildLevelNode(int level, LevelStatus status) {
-    final isHovered = _hoveredLevels[level] ?? false;
+  Widget _buildLevelNode(int levelIndex, LevelStatus status) {
+    final isHovered = _hoveredLevels[levelIndex] ?? false;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _hoveredLevels[level] = true),
-      onExit: (_) => setState(() => _hoveredLevels[level] = false),
+      onEnter: (_) => setState(() => _hoveredLevels[levelIndex] = true),
+      onExit: (_) => setState(() => _hoveredLevels[levelIndex] = false),
       child: GestureDetector(
-        onTap: status != LevelStatus.locked ? () => _openLevel(level) : null,
+        onTap:
+            status != LevelStatus.locked ? () => _openLevel(levelIndex) : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           transform: Matrix4.identity()
@@ -310,7 +306,7 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
                     width: 3,
                   ),
                 ),
-                child: _getLevelContent(level, status),
+                child: _getLevelContent(levelIndex, status),
               ),
 
               // Stars for completed levels

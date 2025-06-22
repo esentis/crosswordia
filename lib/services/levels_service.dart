@@ -70,9 +70,41 @@ class LevelsService {
     }
   }
 
+  // Find which level is the latest one in the database and return its id
+  Future<int> getLatestLevelNumber() async {
+    try {
+      final data = await Supabase.instance.client
+          .from('levels')
+          .select('id')
+          .order('id', ascending: false)
+          .limit(1);
+
+      if (data.isNotEmpty) {
+        final latestLevelId = data.first['id'] as int;
+        kLog.f('Latest level in database is $latestLevelId');
+        return latestLevelId;
+      }
+      kLog.i('No levels found in database, starting from level 0');
+      return 0;
+    } on PostgrestException catch (e) {
+      kLog.e('PostgrestException getting latest level: ${e.message}');
+      if (e.code == '404') {
+        kLog.e('Table "levels" might not exist. Check your database schema.');
+      }
+      if (e.message.contains('JWT expired')) {
+        await Supabase.instance.client.auth.refreshSession();
+        return getLatestLevelNumber();
+      }
+      return 0;
+    } catch (e) {
+      kLog.e('Unexpected error getting latest level: $e');
+      return 0;
+    }
+  }
+
   /// Creates a new level with the provided level data
   /// Returns true if successful, false otherwise
-  Future<bool> addGroupedWords(Level levelData) async {
+  Future<bool> addLevel(Level levelData) async {
     try {
       kLog.i(
           'Adding level ${levelData.level} with ${levelData.words.length} words');
@@ -96,7 +128,7 @@ class LevelsService {
       }
       if (e.message.contains('JWT expired')) {
         await Supabase.instance.client.auth.refreshSession();
-        return addGroupedWords(levelData);
+        return addLevel(levelData);
       }
       return false;
     } catch (e) {
@@ -144,10 +176,10 @@ class LevelsService {
             id: 0, // ID will be assigned by the database
             level: level,
             words: Set<String>.from(value as List<dynamic>),
-            letters: key.split('').toSet(),
+            letters: key.split(''),
           );
 
-          final success = await addGroupedWords(newLevel);
+          final success = await addLevel(newLevel);
           if (success) {
             successCount++;
           }
@@ -247,7 +279,7 @@ class Level {
   final int id;
   final int level;
   final Set<String> words;
-  final Set<String> letters;
+  final List<String> letters;
 
   Level({
     required this.id,
@@ -261,7 +293,7 @@ class Level {
       id: json['id'] as int,
       level: json['level'] as int,
       words: Set<String>.from(json['words'] as List<dynamic>),
-      letters: Set<String>.from(json['letters'] as List<dynamic>),
+      letters: List<String>.from(json['letters'] as List<dynamic>),
     );
   }
 

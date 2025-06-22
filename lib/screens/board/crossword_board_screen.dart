@@ -176,21 +176,33 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
                 ),
               ),
               child: Center(
-                child: Text(
-                  'Level ${_controller.level}  •  Coins ${_controller.playerStatus.coins}',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                    shadows: const [
-                      Shadow(
-                          offset: Offset(0, 1),
-                          blurRadius: 5,
-                          color: Colors.black45),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Level ${_controller.level}  •  Coins ${_controller.playerStatus.coins}',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                        shadows: const [
+                          Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 5,
+                              color: Colors.black45),
+                        ],
+                      ),
+                    ),
+                    Text(
+                        '${_controller.totalFoundWordsOfLevel.length} of ${_controller.allPlacedWords.length} placed words \nTotal: ${_controller.totalWordsOfLevel.length} words',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.karla(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white70,
+                        )),
+                  ],
                 ),
               ),
             ),
