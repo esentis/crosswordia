@@ -27,38 +27,37 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 Set<String> findPossibleWords(String characters, Iterable<String> dict,
     {int minWordLength = 3}) {
   if (characters.isEmpty) return {};
-  // Filter dictionary by length before normalization to save processing
+
   final List<String> dictionary = dict
       .where((word) =>
           word.length >= minWordLength && word.length <= characters.length)
       .toList();
-  // Normalize the input characters - remove diacritics and convert to lowercase
+
   final String normalizedChars =
       removeGreekDiacritics(characters.toLowerCase());
 
-  // Create a frequency map of the normalized input characters
   final Map<String, int> inputCharFreq = {};
   for (int i = 0; i < normalizedChars.length; i++) {
     final String char = normalizedChars[i];
     inputCharFreq[char] = (inputCharFreq[char] ?? 0) + 1;
   }
 
-  final List<String> validWords = [];
+  final Set<String> normalizedAdded = {}; // Track normalized forms
+  final Set<String> validWords = {}; // Use Set directly
 
-  // Check each word in the dictionary
   for (final String originalWord in dictionary) {
-    // Normalize the dictionary word for comparison
     final String normalizedWord =
         removeGreekDiacritics(originalWord.toLowerCase());
 
-    // Create frequency map for the normalized word
+    // Skip if we've already added this normalized form
+    if (normalizedAdded.contains(normalizedWord)) continue;
+
     final Map<String, int> wordCharFreq = {};
     for (int i = 0; i < normalizedWord.length; i++) {
       final String char = normalizedWord[i];
       wordCharFreq[char] = (wordCharFreq[char] ?? 0) + 1;
     }
 
-    // Check if we can form this word with our available characters
     bool canForm = true;
     wordCharFreq.forEach((char, count) {
       if (!inputCharFreq.containsKey(char) || inputCharFreq[char]! < count) {
@@ -67,13 +66,14 @@ Set<String> findPossibleWords(String characters, Iterable<String> dict,
     });
 
     if (canForm) {
-      validWords.add(originalWord); // Add the original word with diacritics
+      validWords.add(originalWord);
+      normalizedAdded.add(normalizedWord); // Mark as added
     }
   }
 
   kLog.f('Found ${validWords.length} valid words');
-  kLog.f('Valid words: ${validWords.toSet()}');
-  return validWords.toSet();
+  kLog.f('Valid words: $validWords');
+  return validWords;
 }
 
 // Improved Greek diacritic removal function
