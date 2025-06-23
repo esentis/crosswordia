@@ -2,7 +2,7 @@
 
 #### A mobile game similar to Words of Wonders made with Flutter.
 
-This is an **_unfinished_** thesis project.
+This is an **_unfinished_** (at least not 100%) thesis project.
 
 <image src="crosswordia.gif" height="500"> </image>
 
