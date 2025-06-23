@@ -4,7 +4,9 @@
 
 This is an **_unfinished_** (at least not 100%) thesis project.
 
-<image src="crosswordia.gif" height="500"> </image>
+<image src="crosswordia_first.gif" height="500"> </image>
+<br>
+<image src="crosswordia_second.gif" height="500"> </image>
 
 # Algorithms
 
