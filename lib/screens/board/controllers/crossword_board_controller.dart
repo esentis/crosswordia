@@ -34,7 +34,6 @@ class CrosswordBoardController extends ChangeNotifier {
 
   // Game state
   final Set<String> _allPlacedWords = {};
-  final Set<String> _foundPlacedWords = {};
 
   List<String> _lettersForTheBoard = [];
   final Set<String> _revealedLetterPositions = {};
