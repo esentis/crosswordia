@@ -3,7 +3,7 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/services/models/word_placement_data.dart';
 import 'package:string_extensions/string_extensions.dart';
 
-bool canStartVertically(WordPlacementData data) {
+bool canStartVertically(VerticalPlacementData data) {
   // This is the VERTICAL starting point of the word IF it can be placed
   final int actualVerticalRow =
       data.actualVerticalStartingLocationIfAvailable.before('.').toInt()!;

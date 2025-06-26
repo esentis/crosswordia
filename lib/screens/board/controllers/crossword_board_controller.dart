@@ -324,7 +324,7 @@ class CrosswordBoardController extends ChangeNotifier {
                   '${rowInt + distanceFromRightOfLetter + 1}.$colInt';
               // Check if the word can be placed vertically
               final bool canStartVerticallyWithThatLetter = canStartVertically(
-                WordPlacementData(
+                VerticalPlacementData(
                   distanceFromTopOfLetter: distanceFromTopOfLetter,
                   distanceFromBottomOfLetter: distanceFromBottomOfLetter,
                   spaceFromTop: spaceFromTop,
@@ -352,28 +352,30 @@ class CrosswordBoardController extends ChangeNotifier {
 
               final bool canStartHorizontallyWithThatLetter =
                   canStartHorizontally(
-                distanceFromRightOfLetter: distanceFromRightOfLetter,
-                distanceFromLeftOfLetter: distanceFromLeftOfLetter,
-                spaceFromLeft: spaceFromLeft,
-                spaceFromRight: spaceFromRight,
-                word: word,
-                col: col,
-                location: location,
-                actualHorizontalStartingLocationIfAvailable:
-                    actualHorizontalStartingLocationIfAvailable,
-                actualHorizontalEndingLocationIfAvailable:
-                    actualHorizontalEndingLocationIfAvailable,
-                actualVerticalBeforeStartingLocationIfAvailable:
-                    actualVerticalBeforeStartingLocationIfAvailable,
-                actualVerticalAfterEndingLocationIfAvailable:
-                    actualVerticalAfterEndingLocationIfAvailable,
-                rowInt: rowInt,
-                colInt: colInt,
-                letterIndex: i,
-                letterPositions: _letterPositions,
-                letter: letter,
-                foundLocations: foundLocations,
-                boardRows: boardRows,
+                HorizontalPlacementData(
+                  distanceFromRightOfLetter: distanceFromRightOfLetter,
+                  distanceFromLeftOfLetter: distanceFromLeftOfLetter,
+                  spaceFromLeft: spaceFromLeft,
+                  spaceFromRight: spaceFromRight,
+                  word: word,
+                  col: col,
+                  location: location,
+                  actualHorizontalStartingLocationIfAvailable:
+                      actualHorizontalStartingLocationIfAvailable,
+                  actualHorizontalEndingLocationIfAvailable:
+                      actualHorizontalEndingLocationIfAvailable,
+                  actualVerticalBeforeStartingLocationIfAvailable:
+                      actualVerticalBeforeStartingLocationIfAvailable,
+                  actualVerticalAfterEndingLocationIfAvailable:
+                      actualVerticalAfterEndingLocationIfAvailable,
+                  rowInt: rowInt,
+                  colInt: colInt,
+                  letterIndex: i,
+                  letterPositions: _letterPositions,
+                  letter: letter,
+                  foundLocations: foundLocations,
+                  boardRows: boardRows,
+                ),
               );
 
               if (canStartVerticallyWithThatLetter) {
