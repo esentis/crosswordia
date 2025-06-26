@@ -78,6 +78,9 @@ class _LetterConnectorState extends State<LetterConnector>
   late Animation<double> shakeAnimation;
   late AnimationController successController;
   late Animation<double> successScaleAnimation;
+  late AnimationController particleController;
+  late Animation<double> particleAnimation;
+  List<Offset> particlePositions = [];
 
   @override
   void initState() {
@@ -104,11 +107,11 @@ class _LetterConnectorState extends State<LetterConnector>
     );
 
     letterScaleAnimations = letterAnimControllers.map((controller) {
-      return Tween<double>(begin: 1.0, end: 1.2).animate(
+      return Tween<double>(begin: 1.0, end: 1.35).animate(
         CurvedAnimation(
           parent: controller,
-          curve: Curves.easeOutBack,
-          reverseCurve: Curves.easeInBack,
+          curve: Curves.elasticOut,
+          reverseCurve: Curves.easeInQuart,
         ),
       );
     }).toList();
@@ -142,6 +145,25 @@ class _LetterConnectorState extends State<LetterConnector>
         curve: Curves.easeInOutBack,
       ),
     );
+
+    // Initialize particle animation
+    particleController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    particleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: particleController,
+        curve: Curves.easeInOut,
+      ),
+    )..addListener(() {
+      if (mounted) {
+        setState(() {
+          _updateParticles();
+        });
+      }
+    });
   }
 
   @override
@@ -151,6 +173,7 @@ class _LetterConnectorState extends State<LetterConnector>
     }
     shakeController.dispose();
     successController.dispose();
+    particleController.dispose();
     super.dispose();
   }
 
@@ -318,6 +341,12 @@ class _LetterConnectorState extends State<LetterConnector>
     selectedLetters.add(widget.letters[index]);
     lastSelectedIndex = index;
 
+    // Start particle animation for new selections
+    if (selectedIndices.length > 1) {
+      particleController.reset();
+      particleController.forward();
+    }
+
     widget.onSnap(
       LetterPosition(
         position: letterPositions[index],
@@ -394,6 +423,31 @@ class _LetterConnectorState extends State<LetterConnector>
     HapticFeedback.mediumImpact();
   }
 
+  // Update particle positions along the path
+  void _updateParticles() {
+    if (selectedIndices.length < 2) {
+      particlePositions.clear();
+      return;
+    }
+
+    particlePositions.clear();
+    const int particlesPerSegment = 3;
+    
+    for (int i = 0; i < selectedIndices.length - 1; i++) {
+      final start = letterPositions[selectedIndices[i]];
+      final end = letterPositions[selectedIndices[i + 1]];
+      
+      for (int j = 0; j < particlesPerSegment; j++) {
+        final t = (j / particlesPerSegment) + 
+                 (particleAnimation.value * 0.3) % 1.0;
+        if (t <= 1.0) {
+          final particlePos = Offset.lerp(start, end, t)!;
+          particlePositions.add(particlePos);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -444,6 +498,8 @@ class _LetterConnectorState extends State<LetterConnector>
                   lineColor: widget.lineColor ?? Colors.blue.shade600,
                   textStyle: widget.textStyle,
                   showLettersBackground: widget.showLettersBackground,
+                  particlePositions: particlePositions,
+                  particleAnimation: particleAnimation,
                 ),
                 size: Size.infinite,
               ),
@@ -473,6 +529,9 @@ class LetterConnectorPainter extends CustomPainter {
   final TextStyle? textStyle;
   final bool showDebugHitboxes;
   final bool showLettersBackground;
+  final List<Offset> particlePositions;
+  final Animation<double> particleAnimation;
+  
   LetterConnectorPainter({
     required this.letters,
     required this.letterPositions,
@@ -487,6 +546,8 @@ class LetterConnectorPainter extends CustomPainter {
     required this.selectedColor,
     required this.unselectedColor,
     required this.lineColor,
+    required this.particlePositions,
+    required this.particleAnimation,
     this.borderColor,
     this.textStyle,
     this.showDebugHitboxes = false,
@@ -500,6 +561,9 @@ class LetterConnectorPainter extends CustomPainter {
 
     // Draw path lines first
     _drawPaths(canvas);
+
+    // Draw particles
+    _drawParticles(canvas);
 
     // Draw debug hitboxes if enabled
     if (showDebugHitboxes) {
@@ -547,16 +611,89 @@ class LetterConnectorPainter extends CustomPainter {
     }
   }
 
-  void _drawPaths(Canvas canvas) {
-    final Paint pathPaint = Paint()
-      ..color = lineColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6.0
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
+  void _drawParticles(Canvas canvas) {
+    if (particlePositions.isEmpty) return;
 
-    // Draw fixed path between selected letters
-    canvas.drawPath(path, pathPaint);
+    final Paint particlePaint = Paint()
+      ..color = lineColor.withValues(alpha: 0.8)
+      ..style = PaintingStyle.fill;
+
+    final Paint glowPaint = Paint()
+      ..color = lineColor.withValues(alpha: 0.4)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)
+      ..style = PaintingStyle.fill;
+
+    for (int i = 0; i < particlePositions.length; i++) {
+      final position = particlePositions[i];
+      final animValue = particleAnimation.value;
+      final particleSize = 3.0 + (animValue * 2.0);
+      final glowSize = particleSize * 2;
+      
+      // Glow effect
+      canvas.drawCircle(position, glowSize, glowPaint);
+      
+      // Main particle
+      canvas.drawCircle(position, particleSize, particlePaint);
+      
+      // Inner highlight
+      final Paint highlightPaint = Paint()
+        ..color = Colors.white.withValues(alpha: 0.8)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(position, particleSize * 0.4, highlightPaint);
+    }
+  }
+
+  void _drawPaths(Canvas canvas) {
+    if (selectedIndices.isEmpty) return;
+
+    // Enhanced line styling with multiple layers
+    final List<Paint> linePaints = [
+      // Outer glow
+      Paint()
+        ..color = lineColor.withValues(alpha: 0.2)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 16.0
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+      
+      // Middle glow
+      Paint()
+        ..color = lineColor.withValues(alpha: 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 10.0
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      
+      // Main line with gradient effect
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            lineColor,
+            lineColor.withValues(alpha: 0.8),
+            lineColor,
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        ).createShader(Rect.fromLTWH(0, 0, 1000, 1000))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6.0
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+      
+      // Inner highlight
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    ];
+
+    // Draw fixed path between selected letters with multiple layers
+    for (final paint in linePaints) {
+      canvas.drawPath(path, paint);
+    }
 
     // Draw dynamic line from last letter to finger position
     if (isDragging && currentPosition != null && selectedIndices.isNotEmpty) {
@@ -567,7 +704,34 @@ class LetterConnectorPainter extends CustomPainter {
         ..moveTo(lastPosition.dx, lastPosition.dy)
         ..lineTo(currentPosition!.dx, currentPosition!.dy);
 
-      canvas.drawPath(dynamicPath, pathPaint);
+      // Draw dynamic line with the same layered effect but slightly transparent
+      for (int i = 0; i < linePaints.length; i++) {
+        final Paint dynamicPaint = Paint()
+          ..color = Color.fromARGB(
+            (linePaints[i].color.a * 255.0 * 0.7).round(),
+            (linePaints[i].color.r * 255.0).round(),
+            (linePaints[i].color.g * 255.0).round(),
+            (linePaints[i].color.b * 255.0).round(),
+          )
+          ..style = linePaints[i].style
+          ..strokeWidth = linePaints[i].strokeWidth
+          ..strokeCap = linePaints[i].strokeCap
+          ..strokeJoin = linePaints[i].strokeJoin
+          ..maskFilter = linePaints[i].maskFilter
+          ..shader = linePaints[i].shader;
+
+        canvas.drawPath(dynamicPath, dynamicPaint);
+      }
+
+      // Add pulsing effect for dynamic line
+      final Paint pulsePaint = Paint()
+        ..color = lineColor.withValues(alpha: 0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 8.0
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+      
+      canvas.drawPath(dynamicPath, pulsePaint);
     }
   }
 
@@ -693,28 +857,111 @@ class LetterConnectorPainter extends CustomPainter {
   void _drawCircleLetter(Canvas canvas, String letter, Offset position,
       bool isSelected, double scale) {
     final double radius = letterSize * 0.5 * scale;
+    final double glowRadius = radius * 1.8;
 
-    // Circle
+    // Outer glow for selected letters
+    if (isSelected) {
+      final Paint outerGlowPaint = Paint()
+        ..color = selectedColor.withValues(alpha: 0.3)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(position, glowRadius, outerGlowPaint);
+
+      // Secondary glow
+      final Paint secondaryGlowPaint = Paint()
+        ..color = selectedColor.withValues(alpha: 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(position, radius * 1.3, secondaryGlowPaint);
+    }
+
+    // Drop shadow
+    final Paint shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: isSelected ? 0.4 : 0.2)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(position.translate(0, 3), radius, shadowPaint);
+
+    // Main circle with gradient effect
     final Paint circlePaint = Paint()
-      ..color = isSelected ? selectedColor : unselectedColor
+      ..shader = RadialGradient(
+        colors: isSelected
+            ? [
+                selectedColor.withValues(alpha: 0.9),
+                selectedColor.withValues(alpha: 0.7),
+                selectedColor.withValues(alpha: 0.85),
+              ]
+            : [
+                unselectedColor.withValues(alpha: 0.95),
+                unselectedColor.withValues(alpha: 0.8),
+                unselectedColor.withValues(alpha: 0.9),
+              ],
+        stops: const [0.0, 0.7, 1.0],
+        center: const Alignment(-0.3, -0.3),
+      ).createShader(Rect.fromCircle(center: position, radius: radius))
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(position, radius, circlePaint);
 
-    // Border
-    final Paint borderPaint = Paint()
-      ..color = borderColor ?? Colors.black
+    // Inner highlight for 3D effect
+    final Paint highlightPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isSelected ? 0.4 : 0.6)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      position.translate(-radius * 0.25, -radius * 0.25),
+      radius * 0.3,
+      highlightPaint,
+    );
+
+    // Glass-like border with double ring
+    final Paint outerBorderPaint = Paint()
+      ..color = (borderColor ?? Colors.white).withValues(
+        alpha: isSelected ? 0.8 : 0.6,
+      )
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+      ..strokeWidth = isSelected ? 3.0 : 2.5;
+    canvas.drawCircle(position, radius, outerBorderPaint);
 
-    canvas.drawCircle(position, radius, borderPaint);
+    // Inner border ring
+    final Paint innerBorderPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isSelected ? 0.5 : 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawCircle(position, radius - 2, innerBorderPaint);
 
-    // Letter
+    // Pulsing ring for selected letters
+    if (isSelected) {
+      final Paint pulsePaint = Paint()
+        ..color = selectedColor.withValues(alpha: 0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0;
+      canvas.drawCircle(position, radius * 1.15, pulsePaint);
+    }
+
+    // Letter text with enhanced styling
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
         text: letter,
-        style:
-            textStyle ?? TextStyle(fontSize: radius * 0.9, color: Colors.black),
+        style: textStyle ??
+            TextStyle(
+              fontSize: radius * 0.9,
+              color: isSelected
+                  ? Colors.white
+                  : const Color(0xFF2c5364),
+              fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  offset: const Offset(0, 1),
+                  blurRadius: 3,
+                ),
+                if (isSelected)
+                  Shadow(
+                    color: selectedColor.withValues(alpha: 0.6),
+                    blurRadius: 8,
+                  ),
+              ],
+            ),
       ),
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
