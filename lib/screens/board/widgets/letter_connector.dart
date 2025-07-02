@@ -158,12 +158,12 @@ class _LetterConnectorState extends State<LetterConnector>
         curve: Curves.easeInOut,
       ),
     )..addListener(() {
-      if (mounted) {
-        setState(() {
-          _updateParticles();
-        });
-      }
-    });
+        if (mounted) {
+          setState(() {
+            _updateParticles();
+          });
+        }
+      });
   }
 
   @override
@@ -432,14 +432,14 @@ class _LetterConnectorState extends State<LetterConnector>
 
     particlePositions.clear();
     const int particlesPerSegment = 3;
-    
+
     for (int i = 0; i < selectedIndices.length - 1; i++) {
       final start = letterPositions[selectedIndices[i]];
       final end = letterPositions[selectedIndices[i + 1]];
-      
+
       for (int j = 0; j < particlesPerSegment; j++) {
-        final t = (j / particlesPerSegment) + 
-                 (particleAnimation.value * 0.3) % 1.0;
+        final t =
+            (j / particlesPerSegment) + (particleAnimation.value * 0.3) % 1.0;
         if (t <= 1.0) {
           final particlePos = Offset.lerp(start, end, t)!;
           particlePositions.add(particlePos);
@@ -531,7 +531,7 @@ class LetterConnectorPainter extends CustomPainter {
   final bool showLettersBackground;
   final List<Offset> particlePositions;
   final Animation<double> particleAnimation;
-  
+
   LetterConnectorPainter({
     required this.letters,
     required this.letterPositions,
@@ -628,13 +628,13 @@ class LetterConnectorPainter extends CustomPainter {
       final animValue = particleAnimation.value;
       final particleSize = 3.0 + (animValue * 2.0);
       final glowSize = particleSize * 2;
-      
+
       // Glow effect
       canvas.drawCircle(position, glowSize, glowPaint);
-      
+
       // Main particle
       canvas.drawCircle(position, particleSize, particlePaint);
-      
+
       // Inner highlight
       final Paint highlightPaint = Paint()
         ..color = Colors.white.withValues(alpha: 0.8)
@@ -656,7 +656,7 @@ class LetterConnectorPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
-      
+
       // Middle glow
       Paint()
         ..color = lineColor.withValues(alpha: 0.4)
@@ -665,7 +665,7 @@ class LetterConnectorPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-      
+
       // Main line with gradient effect
       Paint()
         ..shader = LinearGradient(
@@ -675,12 +675,12 @@ class LetterConnectorPainter extends CustomPainter {
             lineColor,
           ],
           stops: const [0.0, 0.5, 1.0],
-        ).createShader(Rect.fromLTWH(0, 0, 1000, 1000))
+        ).createShader(const Rect.fromLTWH(0, 0, 1000, 1000))
         ..style = PaintingStyle.stroke
         ..strokeWidth = 6.0
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round,
-      
+
       // Inner highlight
       Paint()
         ..color = Colors.white.withValues(alpha: 0.6)
@@ -730,7 +730,7 @@ class LetterConnectorPainter extends CustomPainter {
         ..strokeWidth = 8.0
         ..strokeCap = StrokeCap.round
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-      
+
       canvas.drawPath(dynamicPath, pulsePaint);
     }
   }
@@ -945,9 +945,7 @@ class LetterConnectorPainter extends CustomPainter {
         style: textStyle ??
             TextStyle(
               fontSize: radius * 0.9,
-              color: isSelected
-                  ? Colors.white
-                  : const Color(0xFF2c5364),
+              color: isSelected ? Colors.white : const Color(0xFF2c5364),
               fontWeight: FontWeight.bold,
               shadows: [
                 Shadow(

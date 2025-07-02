@@ -24,7 +24,7 @@ class FoundWordsOverlay extends StatelessWidget {
     final foundOtherWords = controller.totalFoundWordsOfLevel
         .where((word) => !controller.allPlacedWords.contains(word))
         .toList();
-    
+
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
@@ -73,7 +73,8 @@ class FoundWordsOverlay extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _OverlayHeader(
-                            foundWordsCount: controller.totalFoundWordsOfLevel.length,
+                            foundWordsCount:
+                                controller.totalFoundWordsOfLevel.length,
                           ),
                           _OverlayContent(
                             foundPlacedWords: foundPlacedWords,
@@ -185,7 +186,7 @@ class _OverlayContent extends StatelessWidget {
               ),
               const SizedBox(height: 16),
             ],
-            if (foundOtherWords.isNotEmpty) 
+            if (foundOtherWords.isNotEmpty)
               WordSection(
                 title: 'Bonus Words',
                 words: foundOtherWords,
@@ -303,7 +304,9 @@ class WordSection extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: words.map((word) => WordChip(word: word, accentColor: accentColor)).toList(),
+          children: words
+              .map((word) => WordChip(word: word, accentColor: accentColor))
+              .toList(),
         ),
       ],
     );

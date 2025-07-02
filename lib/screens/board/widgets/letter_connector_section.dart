@@ -23,9 +23,10 @@ class LetterConnectorSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    
+
     return Padding(
-      padding: EdgeInsets.only(bottom: 17.0 + MediaQuery.paddingOf(context).bottom),
+      padding:
+          EdgeInsets.only(bottom: 17.0 + MediaQuery.paddingOf(context).bottom),
       child: SizedBox(
         height: size.height * 0.26,
         child: Stack(

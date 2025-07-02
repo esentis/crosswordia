@@ -58,7 +58,8 @@ class TopBar extends StatelessWidget {
                     boxShadow: showFoundWords
                         ? [
                             BoxShadow(
-                              color: const Color(0xFFffc93c).withValues(alpha: 0.3),
+                              color: const Color(0xFFffc93c)
+                                  .withValues(alpha: 0.3),
                               blurRadius: 15,
                               spreadRadius: 2,
                             ),
@@ -89,7 +90,9 @@ class TopBar extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              showFoundWords ? Icons.expand_less : Icons.expand_more,
+                              showFoundWords
+                                  ? Icons.expand_less
+                                  : Icons.expand_more,
                               color: Colors.white70,
                               size: 18,
                             ),
@@ -98,11 +101,13 @@ class TopBar extends StatelessWidget {
                         GestureDetector(
                           onTap: onToggleFoundWords,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               color: showFoundWords
-                                  ? const Color(0xFFffc93c).withValues(alpha: 0.2)
+                                  ? const Color(0xFFffc93c)
+                                      .withValues(alpha: 0.2)
                                   : Colors.transparent,
                             ),
                             child: Text(
@@ -111,7 +116,9 @@ class TopBar extends StatelessWidget {
                                 style: GoogleFonts.karla(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  color: showFoundWords ? Colors.white : Colors.white70,
+                                  color: showFoundWords
+                                      ? Colors.white
+                                      : Colors.white70,
                                 )),
                           ),
                         ),

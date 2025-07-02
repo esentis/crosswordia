@@ -34,7 +34,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
 
   /// Animation that rotates the shuffle button each time it is pressed.
   late final AnimationController _shuffleSpin;
-  
+
   /// Animation for found words overlay
   late final AnimationController _overlayController;
   late final Animation<double> _overlayAnimation;
@@ -58,12 +58,12 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
       vsync: this,
       duration: const Duration(milliseconds: 800), // ✦
     );
-    
+
     _overlayController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    
+
     _overlayAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -86,12 +86,12 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
   void _onControllerChange() {
     if (mounted) setState(() {});
   }
-  
+
   void _toggleFoundWordsOverlay() {
     setState(() {
       _showFoundWords = !_showFoundWords;
     });
-    
+
     if (_showFoundWords) {
       _overlayController.forward();
     } else {
@@ -154,7 +154,7 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
                 onToggleFoundWords: _toggleFoundWordsOverlay,
               ),
               _buildMainColumn(size),
-              if (_showFoundWords) 
+              if (_showFoundWords)
                 FoundWordsOverlay(
                   controller: _controller,
                   animation: _overlayAnimation,
@@ -181,7 +181,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
       ),
     );
   }
-
 
   Widget _buildMainColumn(Size size) {
     return Column(
@@ -212,9 +211,6 @@ class _CrosswordBoardScreenState extends State<CrosswordBoardScreen>
       ],
     );
   }
-
-
-
 }
 
 // ===========================================================================
@@ -363,4 +359,3 @@ class _FloatingParticlesState extends State<_FloatingParticles>
     );
   }
 }
-
