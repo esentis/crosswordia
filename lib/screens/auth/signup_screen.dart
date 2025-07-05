@@ -530,7 +530,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
     );
   }
 
-  Widget _buildSubmitButton(authProvider, isAdminProvider) {
+  Widget _buildSubmitButton(AppAuthStateProvider authProvider, IsAdminState isAdminProvider) {
     return Container(
       height: 55,
       decoration: BoxDecoration(
@@ -581,7 +581,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
     );
   }
 
-  Future<void> _handleSubmit(authProvider, isAdminProvider) async {
+  Future<void> _handleSubmit(AppAuthStateProvider authProvider, IsAdminState isAdminProvider) async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -607,7 +607,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('An error occurred: ${e.toString()}'),
+            content: Text('An error occurred: $e'),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
