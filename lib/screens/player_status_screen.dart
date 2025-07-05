@@ -314,73 +314,6 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
     );
   }
 
-  Widget _buildLoginPrompt() {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Center(
-        child: Container(
-          margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.all(30),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 20,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.person_outline,
-                size: 80,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Login Required',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Please log in to view your player status and progress',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              _buildEnhancedButton(
-                title: 'Go to Login',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LandingScreen(),
-                    ),
-                  );
-                },
-                isPrimary: true,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildStatusContent() {
     final currentLevel = _playerStatus?.currentLevel;
     final levelProgress =
@@ -1087,7 +1020,7 @@ class _PlayerStatusScreenState extends ConsumerState<PlayerStatusScreen>
           borderRadius: BorderRadius.circular(15),
           onTap: () async {
             await authProvider.signOut();
-            if (context.mounted) {
+            if (mounted) {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const LandingScreen()),
