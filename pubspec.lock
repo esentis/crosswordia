@@ -777,18 +777,18 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: bfd026c0f9822b49ff26fed11cd3334519acb6a6ad4b0c81d9cd18df6af1c4c0
+      sha256: "917022225a57ddf1287f9cd840acdcfab3197b92e84964476f6a2f9e87a78ace"
       url: "https://pub.dev"
     source: hosted
-    version: "30.2.7"
+    version: "31.1.17"
   syncfusion_flutter_pdf:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdf
-      sha256: f91452a4c88e3a8651d9e79275753b9dc49c099dfdb8db4a554ef799d9262586
+      sha256: "3e0ffd657f1711ce8550f10e555fc3fd5c1392dad0604ad7f5f96e8aee4ae9da"
       url: "https://pub.dev"
     source: hosted
-    version: "30.2.7"
+    version: "31.1.17"
   term_glyph:
     dependency: transitive
     description:
