@@ -36,7 +36,7 @@ dependencies:
   animate_do: ^4.0.0
   logger: ^2.4.0
   string_extensions: ^0.7.3
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: ^3.0.3
   dio: ^5.7.0
   lint: ^2.3.0
   percent_indicator: ^4.2.4
