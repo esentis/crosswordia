@@ -2,7 +2,7 @@ import 'package:crosswordia/core/helpers/scraper.dart';
 import 'package:crosswordia/screens/auth/user_created_screen.dart';
 import 'package:crosswordia/screens/player_status_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final authStateProvider =
