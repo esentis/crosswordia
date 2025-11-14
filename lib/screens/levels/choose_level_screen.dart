@@ -256,8 +256,13 @@ class _ChooseLevelScreenState extends State<ChooseLevelScreen>
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           transform: Matrix4.identity()
-            ..scale(isHovered ? 1.15 : 1.0)
-            ..translate(0.0, isHovered ? -5.0 : 0.0),
+            ..scaleByDouble(
+              isHovered ? 1.15 : 1.0,
+              isHovered ? 1.15 : 1.0,
+              1.0,
+              1.0,
+            )
+            ..translateByDouble(0.0, isHovered ? -5.0 : 0.0, 0.0, 1.0),
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,

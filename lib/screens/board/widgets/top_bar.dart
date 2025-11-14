@@ -26,7 +26,13 @@ class TopBar extends StatelessWidget {
           onTap: onToggleFoundWords,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            transform: Matrix4.identity()..scale(showFoundWords ? 1.05 : 1.0),
+            transform: Matrix4.identity()
+              ..scaleByDouble(
+                showFoundWords ? 1.05 : 1.0,
+                showFoundWords ? 1.05 : 1.0,
+                1.0,
+                1.0,
+              ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: BackdropFilter(

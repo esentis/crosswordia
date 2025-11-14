@@ -81,105 +81,147 @@ class _BoardCellState extends State<BoardCell>
       child: AnimatedBuilder(
         animation: _pulseAnimation,
         builder: (context, child) {
-          return AnimatedContainer(
+          return TweenAnimationBuilder<double>(
+            key: ValueKey(_isPressed),
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOutCubic,
-            transform: Matrix4.identity()
-              ..scale(_isPressed ? 0.95 : 1.0)
-              ..translate(0.0, _isPressed ? 2.0 : 0.0),
-            margin: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: hasLetter
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: _isPressed ? 4 : 8,
-                        offset: Offset(0, _isPressed ? 1 : 3),
-                      ),
-                      if (canReveal && !isVisible)
-                        BoxShadow(
-                          color: const Color(0xFFffc93c).withValues(
-                            alpha: 0.3 + (_pulseAnimation.value * 0.3),
-                          ),
-                          blurRadius: 12 + (_pulseAnimation.value * 8),
-                        ),
-                    ]
-                  : null,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: hasLetter ? 8 : 0,
-                  sigmaY: hasLetter ? 8 : 0,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: hasLetter
-                        ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: isRevealed
-                                ? [
-                                    Colors.white.withValues(alpha: 0.4),
-                                    Colors.white.withValues(alpha: 0.2),
-                                  ]
-                                : [
-                                    Colors.white.withValues(alpha: 0.9),
-                                    Colors.white.withValues(alpha: 0.7),
-                                  ],
-                          )
-                        : null,
-                    borderRadius: BorderRadius.circular(12),
-                    border: hasLetter
-                        ? Border.all(
-                            color: isRevealed
-                                ? Colors.white.withValues(alpha: 0.3)
-                                : Colors.white.withValues(alpha: 0.8),
-                            width: 1.5,
-                          )
-                        : canReveal
-                            ? Border.all(
-                                color: const Color(0xFFffc93c).withValues(
-                                  alpha: 0.4 + (_pulseAnimation.value * 0.4),
+            tween: Tween<double>(
+                begin: _isPressed ? 1.0 : 0.95, end: _isPressed ? 0.95 : 1.0),
+            builder: (context, scale, child) {
+              return TweenAnimationBuilder<double>(
+                key: ValueKey(_isPressed),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                tween: Tween<double>(
+                    begin: _isPressed ? 0.0 : 2.0, end: _isPressed ? 2.0 : 0.0),
+                builder: (context, translateY, child) {
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..scaleByDouble(scale, scale, scale, 1.0)
+                      ..translateByDouble(0.0, translateY, 0.0, 1.0),
+                    child: Container(
+                      margin: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: hasLetter
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: _isPressed ? 4 : 8,
+                                  offset: Offset(0, _isPressed ? 1 : 3),
                                 ),
-                                width: 2,
-                              )
+                                if (canReveal && !isVisible)
+                                  BoxShadow(
+                                    color: const Color(0xFFffc93c).withValues(
+                                      alpha:
+                                          0.3 + (_pulseAnimation.value * 0.3),
+                                    ),
+                                    blurRadius:
+                                        12 + (_pulseAnimation.value * 8),
+                                  ),
+                              ]
                             : null,
-                  ),
-                  child: Center(
-                    child: AnimatedScale(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.elasticOut,
-                      scale: isVisible ? 1 : 0,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 300),
-                        opacity: isVisible ? 1 : 0,
-                        child: Text(
-                          letter ?? '',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: isRevealed
-                                ? Colors.white.withValues(alpha: 0.6)
-                                : const Color(0xFF2c5364),
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                offset: const Offset(0, 1),
-                                blurRadius: 3,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(
+                            sigmaX: hasLetter ? 8 : 0,
+                            sigmaY: hasLetter ? 8 : 0,
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: hasLetter
+                                  ? LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: isRevealed
+                                          ? [
+                                              Colors.white
+                                                  .withValues(alpha: 0.4),
+                                              Colors.white
+                                                  .withValues(alpha: 0.2),
+                                            ]
+                                          : [
+                                              Colors.white
+                                                  .withValues(alpha: 0.9),
+                                              Colors.white
+                                                  .withValues(alpha: 0.7),
+                                            ],
+                                    )
+                                  : null,
+                              borderRadius: BorderRadius.circular(12),
+                              border: hasLetter
+                                  ? Border.all(
+                                      color: isRevealed
+                                          ? Colors.white.withValues(alpha: 0.3)
+                                          : Colors.white.withValues(alpha: 0.8),
+                                      width: 1.5,
+                                    )
+                                  : canReveal
+                                      ? Border.all(
+                                          color: const Color(0xFFffc93c)
+                                              .withValues(
+                                            alpha: 0.4 +
+                                                (_pulseAnimation.value * 0.4),
+                                          ),
+                                          width: 2,
+                                        )
+                                      : null,
+                            ),
+                            child: Center(
+                              child: TweenAnimationBuilder<double>(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.elasticOut,
+                                tween: Tween<double>(
+                                    begin: 0, end: isVisible ? 1 : 0),
+                                builder: (context, scale, child) {
+                                  return TweenAnimationBuilder<double>(
+                                    duration: const Duration(milliseconds: 300),
+                                    tween: Tween<double>(
+                                        begin: 0, end: isVisible ? 1 : 0),
+                                    builder: (context, opacity, child) {
+                                      return Transform.scale(
+                                        scale: scale,
+                                        child: Opacity(
+                                          opacity: opacity,
+                                          child: Text(
+                                            letter ?? '',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                              color: isRevealed
+                                                  ? Colors.white
+                                                      .withValues(alpha: 0.6)
+                                                  : const Color(0xFF2c5364),
+                                              shadows: [
+                                                Shadow(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.3),
+                                                  offset: const Offset(0, 1),
+                                                  blurRadius: 3,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ),
+                  );
+                },
+                child: child,
+              );
+            },
+            child: child,
           );
         },
       ),
